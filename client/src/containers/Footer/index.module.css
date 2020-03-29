@@ -1,0 +1,32 @@
+.container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  padding: 8px 28px 8px 28px;
+  box-sizing: border-box;
+  background-color: #ededed;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+@-webkit-keyframes pound {
+  to {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes pound {
+  to {
+    transform: scale(1.1);
+  }
+}
+
+.heart {
+  color: #E90606;
+  margin: 0 3px;
+  font-size: 10px;
+  animation: pound .35s infinite alternate;
+  -webkit-animation: pound .35s infinite alternate;
+}
