@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from '../../components';
+import { Link } from '..';
 import config from '../../config';
 import styles from './index.module.css';
 

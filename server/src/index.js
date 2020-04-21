@@ -1,5 +1,5 @@
 const Games = require('./games');
-const { uuidv4: uuid } = require('uuid');
+const { v4: uuid } = require('uuid');
 
 const app = require('express')();
 const server = require('http').Server(app);
@@ -13,7 +13,8 @@ const io = require('socket.io')(server, {
 app.get('/ping', (req, res) => res.sendStatus(200))
 
 io.sockets.on('connection', function(socket) {
-  const gameId = null;
+  let gameId = null;
+  socket.emit('player_id', socket.id);
 
   function joinRoom(id) {
     gameId = id;
@@ -25,10 +26,14 @@ io.sockets.on('connection', function(socket) {
     gameId = null;
   }
 
-  function reportError(e) {
-    socket.send('error_encountered', {
+  function reportError(e, data) {
+    const payload = {
+      ...data,
       message: e.message
-    });
+    };
+
+    console.log(payload);
+    socket.emit('game_error', payload);
   }
 
   function create() {
@@ -39,10 +44,16 @@ io.sockets.on('connection', function(socket) {
         Games.new({
           id: gameId,
           playerId: socket.id,
-          emit: io.sockets.in(gameId).emit
+          emit: (...args) => {
+            socket.emit(...args);
+            socket.to(gameId).emit(...args);
+          }
         });
       } catch (e) {
-        reportError(e);
+        reportError(e, {
+          source: 'create'
+        });
+
         leaveRoom();
       }
     }
@@ -58,20 +69,43 @@ io.sockets.on('connection', function(socket) {
           playerId: socket.id
         });
       } catch (e) {
-        reportError(e);
+        reportError(e, {
+          source: 'join'
+        });
+
         leaveRoom();
       }
     }
   }
 
-  function start() {
+  function setData(data) {
     if (gameId) {
       try {
-        Games.start({
-          id: gameId
+        Games.setPlayerData({
+          id: gameId,
+          playerId: socket.id,
+          data
         });
       } catch (e) {
-        reportError(e);
+        reportError(e, {
+          source: 'setData'
+        });
+      }
+    }
+  }
+
+  function setReady(value) {
+    if (gameId) {
+      try {
+        Games.setPlayerReady({
+          id: gameId,
+          playerId: socket.id,
+          value: value
+        });
+      } catch (e) {
+        reportError(e, {
+          source: 'setReady'
+        });
       }
     }
   }
@@ -85,7 +119,9 @@ io.sockets.on('connection', function(socket) {
           data
         });
       } catch (e) {
-        reportError(e);
+        reportError(e, {
+          source: 'move'
+        });
       }
     }
   }
@@ -98,7 +134,9 @@ io.sockets.on('connection', function(socket) {
           playerId: socket.id
         });
       } catch (e) {
-        reportError(e);
+        reportError(e, {
+          source: 'leave'
+        });
       }
 
       leaveRoom();
@@ -107,7 +145,8 @@ io.sockets.on('connection', function(socket) {
 
   socket.on('new_game', create);
   socket.on('join_game', join);
-  socket.on('start_game', start);
+  socket.on('set_data', setData);
+  socket.on('set_ready', setReady);
   socket.on('make_move', move);
   socket.on('leave_game', leave);
   socket.on('disconnect', leave);

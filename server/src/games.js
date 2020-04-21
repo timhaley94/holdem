@@ -13,46 +13,96 @@ function get(id) {
   return game;
 }
 
+function newPlayer(playerId) {
+  return {
+    playerId,
+    isReady: false,
+    data: {}
+  };
+}
+
 function _new({ id, playerId, emit }) {
-  // const game = {
-  //   id,
-  //   emit,
-  //   users: [playerId],
-  //   isStarted: false
-  // };
-  //
-  // game.canStart = () => game.users.length >= MIN_PLAYERS;
-  // game.isFull = () => game.users.length >= MAX_PLAYERS;
-  //
-  // game.emitPlayerAdded = () => game.emit('player_added', {
-  //   isStarted: false,
-  //   canStart: game.canStart(),
-  // });
-  //
-  // game.emitPlayerRemoved = () => game.emit('player_removed', {
-  //
-  // });
-  //
-  // games[id] = game;
-  // game.emitPlayerAdded();
+  const game = {
+    id,
+    isStarted: false,
+    players: {
+      [playerId]: newPlayer(playerId)
+    }
+  };
+
+  game.playerCount = () => Object.entries(game.players).length;
+  game.canStart = () => game.playerCount() >= MIN_PLAYERS;
+  game.isFull = () => game.playerCount() >= MAX_PLAYERS;
+  game.shouldStart = () => game.canStart() && game.players.every(
+    player => player.isReady
+  );
+
+  game.emit = () => emit('game_state_updated', {
+    ...game,
+    playerCount: game.playerCount(),
+    canStart: game.canStart(),
+    isFull: game.isFull()
+  });
+
+  games[id] = game;
+  game.emit();
 }
 
 function addPlayer({ id, playerId }) {
-  // const game = get(id);
-  //
-  // if (game.isFull()) {
-  //   throw new Error('Game is already full.');
-  // }
-  //
-  // game.users.push(playerId);
-  // game.emitPlayerAdded();
+  const game = get(id);
+
+  if (game.isFull()) {
+    throw new Error('Game is already full.');
+  }
+
+  if (game.players[playerId]) {
+    throw new Error('Player already added.');
+  }
+
+  game.players[playerId] = newPlayer(playerId);
+  game.emit();
+}
+
+function setPlayerData({
+  id,
+  playerId,
+  data
+}) {
+  const game = get(id);
+
+  if (!game.players[playerId]) {
+    throw new Error('Player does not exist.');
+  }
+
+  game.players[playerId].data = {
+    ...game.players[playerId].data,
+    ...data
+  };
+
+  game.emit();
+}
+
+function setPlayerReady({
+  id,
+  playerId,
+  value
+}) {
+  const game = get(id);
+
+  if (!game.players[playerId]) {
+    throw new Error('Player does not exist.');
+  }
+
+  game.players[playerId].isReady = value;
+
+  if (game.shouldStart()) {
+    game.isStarted = true;
+  }
+
+  game.emit();
 }
 
 function removePlayer() {
-
-}
-
-function start() {
 
 }
 
@@ -63,7 +113,8 @@ function makeMove() {
 module.exports = {
   new: _new,
   addPlayer,
+  setPlayerData,
+  setPlayerReady,
   removePlayer,
-  start,
   makeMove
 };

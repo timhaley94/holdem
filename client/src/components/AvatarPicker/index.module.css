@@ -1,0 +1,18 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.option {
+  margin: 5px 0;
+  cursor: pointer;
+  flex-basis: 30%;
+  height: 50px;
+  background-color: green;
+}
+
+.option.active {
+  cursor: default;
+}
