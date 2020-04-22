@@ -1,8 +1,16 @@
 import React from 'react';
+import { useError } from '../../models';
+import { Page } from '..';
+
+const defaultMessage = `We're having trouble connecting to the server.`;
 
 function Error() {
+  const [error] = useError();
   return (
-    <p>We're having trouble connecting to the server. :/</p>
+    <Page>
+      <h1>Whoops!</h1>
+      <p>{ error || defaultMessage } :/</p>
+    </Page>
   );
 }
 

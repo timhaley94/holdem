@@ -1,9 +1,3 @@
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  max-width: 450px;
-  margin: 0 auto;
+.header {
+  margin-bottom: 2rem;
 }

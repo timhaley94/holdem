@@ -3,16 +3,18 @@
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.container .label {
+  margin: 1rem 0;
 }
 
 .option {
-  margin: 5px 0;
   cursor: pointer;
-  flex-basis: 30%;
-  height: 50px;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
   background-color: green;
-}
-
-.option.active {
-  cursor: default;
 }

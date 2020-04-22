@@ -4,7 +4,7 @@ import {
   Switch,
   Route
 }from 'react-router-dom';
-import { APIProvider, MetadataProvider } from '../../models';
+import { Provider, APIProvider } from '../../models';
 import {
   // Header,
   Fatal,
@@ -16,7 +16,7 @@ import './index.css';
 
 function App() {
   return (
-    <MetadataProvider>
+    <Provider>
       <div className={ styles.container }>
         <Router>
           { /* <Header /> */ }
@@ -35,7 +35,7 @@ function App() {
           <Footer />
         </Router>
       </div>
-    </MetadataProvider>
+    </Provider>
   );
 }
 

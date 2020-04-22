@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Drawer, Input } from '@material-ui/core';
+import {
+  Button,
+  Drawer,
+  FormControl,
+  Input,
+  InputLabel
+} from '@material-ui/core';
+import avatars from '../../data/avatars';
 import { useMetadata } from '../../models';
 import { AvatarPicker } from '..';
 import styles from './index.module.css';
@@ -38,17 +45,8 @@ function Sidebar({ requireData }) {
       : newAvatar
   );
 
-  console.log(
-    newName,
-    newAvatar,
-    storedName,
-    storedAvatar,
-    name,
-    avatar
-  );
-
   const isStored = storedName !== null && storedAvatar !== null;
-  const isValid = name !== null && avatar !== null;
+  const isValid = name && avatar !== null;
 
   const onNameChange = ({ target: { value } }) => setNewName(value);
   const onAvatarChange = value => setNewAvatar(value);
@@ -68,9 +66,17 @@ function Sidebar({ requireData }) {
         isStored
           ? (
             <div
-              className={ styles.icon }
+              className={ styles.iconContainer }
               onClick={ () => setIsOpen(true) }
             >
+              <div
+                className={ styles.icon }
+                style={{
+                  backgroundColor: avatars.find(
+                    ({ id }) => id === storedAvatar
+                  ).color
+                }}
+              />
               { storedName }
             </div>
           )
@@ -82,22 +88,32 @@ function Sidebar({ requireData }) {
         onClose={ () => setIsOpen(false) }
       >
         <div className={ styles.sidebar }>
-          <Input
-            value={ name || '' }
-            onChange={ onNameChange }
-          />
-          <AvatarPicker
-            value={ avatar }
-            onChange={ onAvatarChange }
-          />
-          <Button
-            size="large"
-            variant="contained"
-            disabled={ !isValid }
-            onClick={ onSubmit }
-          >
-            Submit
-          </Button>
+          <h2 className={ styles.header }>My Profile</h2>
+          <FormControl className={ styles.form }>
+            <div className={ styles.inputContainer }>
+              <InputLabel htmlFor="my-input">Name</InputLabel>
+              <Input
+                id="name"
+                placeholder="E.g. Air Bud"
+                className={ styles.input }
+                value={ name || '' }
+                onChange={ onNameChange }
+              />
+            </div>
+            <AvatarPicker
+              value={ avatar }
+              onChange={ onAvatarChange }
+            />
+            <Button
+              className={ styles.submit }
+              size="large"
+              variant="contained"
+              disabled={ !isValid }
+              onClick={ onSubmit }
+            >
+              Update
+            </Button>
+          </FormControl>
         </div>
       </Drawer>
     </>
