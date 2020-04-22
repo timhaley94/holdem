@@ -7,7 +7,8 @@ import {
   useRouteMatch
 } from 'react-router-dom';
 import { useAPI } from '../../models';
-import { Lobby, Table } from '..';
+import { Chat, Lobby, Table } from '..';
+import styles from './index.module.css';
 
 function Game() {
   const match = useRouteMatch();
@@ -21,17 +22,20 @@ function Game() {
   }, [game, id, joinGame]);
 
   return (
-    <Switch>
-      <Route exact path={ match.path }>
-        <Lobby />
-      </Route>
-      <Route path={ `${match.path}/table` }>
-        <Table />
-      </Route>
-      <Route>
-        <Redirect to={ match.path } />
-      </Route>
-    </Switch>
+    <div className={ styles.container }>
+      <Chat />
+      <Switch>
+        <Route exact path={ match.path }>
+          <Lobby />
+        </Route>
+        <Route path={ `${match.path}/table` }>
+          <Table />
+        </Route>
+        <Route>
+          <Redirect to={ match.path } />
+        </Route>
+      </Switch>
+    </div>
   );
 }
 

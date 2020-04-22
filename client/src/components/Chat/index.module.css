@@ -1,0 +1,7 @@
+.container {
+  height: 100%;
+  flex-grow: 1;
+  max-width: 400px;
+  border: 1px solid;
+  margin-right: 4rem;
+}

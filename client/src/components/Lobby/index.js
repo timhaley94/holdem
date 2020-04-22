@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '@material-ui/core';
 import { useAPI } from '../../models';
+import styles from './index.module.css';
 
 function Lobby() {
   const {
@@ -10,7 +11,7 @@ function Lobby() {
   } = useAPI();
 
   return (
-    <div>
+    <div className={ styles.container }>
       {
         game
           && game.players

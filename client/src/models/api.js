@@ -96,6 +96,7 @@ export function APIProvider({ children }) {
       _socket
       && playerId
       && isConnected
+      && metadata
       && game
       && game.players
       && game.players[playerId]

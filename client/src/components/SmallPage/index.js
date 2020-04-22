@@ -1,12 +1,14 @@
 import React from 'react';
 import styles from './index.module.css';
 
-function Page({ children }) {
+function SmallPage({ children }) {
   return (
     <div className={ styles.container }>
-      { children }
+      <div className={ styles.content }>
+        { children }
+      </div>
     </div>
   );
 }
 
-export default Page;
+export default SmallPage;

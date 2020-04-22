@@ -1,7 +1,12 @@
 import React from 'react';
+import { SmallPage } from '..';
 
 function ProgressIndicator() {
-  return <p>Please wait...</p>;
+  return (
+    <SmallPage>
+      <p>Please wait...</p>
+    </SmallPage>
+  );
 }
 
 export default ProgressIndicator;

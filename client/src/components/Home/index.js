@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button } from '@material-ui/core';
 import { useAPI } from '../../models';
-import { Page } from '..';
+import { SmallPage } from '..';
 import styles from './index.module.css';
 
 function Home() {
@@ -22,7 +22,7 @@ function Home() {
   }, [isCreating, game, push]);
 
   return (
-    <Page>
+    <SmallPage>
       <h1 className={ styles.header }>Texas Hold'em!</h1>
       <Button
         size="large"
@@ -31,7 +31,7 @@ function Home() {
       >
         Create Game
       </Button>
-    </Page>
+    </SmallPage>
   );
 }
 

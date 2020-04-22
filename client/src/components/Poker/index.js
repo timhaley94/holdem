@@ -19,40 +19,38 @@ function Poker() {
 
   return (
     <Boundary>
-      <div>
-        {
-          error
-            ? (
-              <Alert
-                variant="filled"
-                severity="error"
-                onClose={ dismissError }
-              >
-                { error }
-              </Alert>
-            )
-            : null
-        }
-        {
-          !isConnected
-            ? <Progress />
-            : (
-              <Switch>
-                <Route exact path="/">
-                  <Home />
-                  <Sidebar />
-                </Route>
-                <Route path={ `/game/:id` }>
-                  <Game />
-                  <Sidebar requireData />
-                </Route>
-                <Route>
-                  <Redirect to="/" />
-                </Route>
-              </Switch>
-            )
-        }
-      </div>
+      {
+        error
+          ? (
+            <Alert
+              variant="filled"
+              severity="error"
+              onClose={ dismissError }
+            >
+              { error }
+            </Alert>
+          )
+          : null
+      }
+      {
+        !isConnected
+          ? <Progress />
+          : (
+            <Switch>
+              <Route exact path="/">
+                <Home />
+                <Sidebar />
+              </Route>
+              <Route path={ `/game/:id` }>
+                <Game />
+                <Sidebar requireData />
+              </Route>
+              <Route>
+                <Redirect to="/" />
+              </Route>
+            </Switch>
+          )
+      }
     </Boundary>
   );
 }
