@@ -1,14 +1,7 @@
-.iconContainer {
+.container .iconContainer {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  border-radius: 50px;
-  background-color: #ededed;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  top: 1.5rem;
+  right: 1.5rem;
 }
 
 .icon {

@@ -41,7 +41,7 @@ function Poker() {
                 <Home />
                 <Sidebar />
               </Route>
-              <Route path={ `/game/:id` }>
+              <Route path="/game/:id">
                 <Game />
                 <Sidebar requireData />
               </Route>

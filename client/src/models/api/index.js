@@ -6,8 +6,8 @@ import React, {
 } from 'react';
 import io from 'socket.io-client';
 import { useHistory } from 'react-router-dom';
-import config from '../config';
-import { useMetadata } from '.';
+import config from '../../config';
+import { useMetadata } from '..';
 
 const Context = createContext(null);
 
@@ -52,11 +52,15 @@ export function APIProvider({ children }) {
   useEffect(() => {
     const socket = io(config.serverUrl);
 
-    function fatal() {
-      // Log fatal here
+    function reset() {
       setGame(null);
       setPlayerId(null);
       setIsConnected(false);
+    }
+
+    function fatal() {
+      // Log fatal here
+      reset();
       push('/error');
     }
 
@@ -67,7 +71,7 @@ export function APIProvider({ children }) {
     socket.on('connect_error', fatal);
     socket.on('connect_timeout', fatal);
     socket.on('error', fatal);
-    socket.on('disconnect', fatal);
+    socket.on('disconnect', reset);
 
     socket.on('player_id', function(id) {
       setPlayerId(id);

@@ -30,3 +30,9 @@
   animation: pound .35s infinite alternate;
   -webkit-animation: pound .35s infinite alternate;
 }
+
+.link {
+  color: #2d2d2d;
+  text-decoration: none;
+  font-weight: bold;
+}

@@ -1,0 +1,28 @@
+.container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  position: absolute;
+  margin: 1rem 1.5rem;
+}
+
+.logoContainer {
+  margin: 0;
+  text-decoration: none;
+  font-size: 36px;
+}
+
+.logo {
+  position: relative;
+  top: 0.25rem;
+}
+
+.link {
+  margin: 0 0 0 1rem;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.emoji {
+  margin-left: 0.3rem;
+}

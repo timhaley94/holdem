@@ -6,7 +6,8 @@ import {
 }from 'react-router-dom';
 import { Provider, APIProvider } from '../../models';
 import {
-  // Header,
+  About,
+  Header,
   Fatal,
   Footer,
   Poker
@@ -19,9 +20,12 @@ function App() {
     <Provider>
       <div className={ styles.container }>
         <Router>
-          { /* <Header /> */ }
+          <Header />
           <main className={ styles.content }>
             <Switch>
+              <Route path="/about">
+                <About />
+              </Route>
               <Route path="/error">
                 <Fatal />
               </Route>

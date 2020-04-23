@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
+  Avatar,
   Button,
+  Chip,
   Drawer,
   FormControl,
   Input,
   InputLabel
 } from '@material-ui/core';
-import avatars from '../../data/avatars';
-import { useMetadata } from '../../models';
+import { avatars, useMetadata } from '../../models';
 import { AvatarPicker } from '..';
 import styles from './index.module.css';
 
@@ -61,24 +62,24 @@ function Sidebar({ requireData }) {
   };
 
   return (
-    <>
+    <div className={ styles.container }>
       {
         isStored
           ? (
-            <div
+            <Chip
               className={ styles.iconContainer }
               onClick={ () => setIsOpen(true) }
-            >
-              <div
-                className={ styles.icon }
-                style={{
-                  backgroundColor: avatars.find(
-                    ({ id }) => id === storedAvatar
-                  ).color
-                }}
-              />
-              { storedName }
-            </div>
+              label={ storedName }
+              avatar={
+                <Avatar
+                  src={
+                    avatars.find(
+                      ({ id }) => id === storedAvatar
+                    ).image
+                  }
+                />
+              }
+            />
           )
           : null
       }
@@ -116,7 +117,7 @@ function Sidebar({ requireData }) {
           </FormControl>
         </div>
       </Drawer>
-    </>
+    </div>
   );
 }
 

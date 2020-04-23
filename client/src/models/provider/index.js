@@ -1,5 +1,5 @@
 import React from 'react';
-import { ErrorProvider, MetadataProvider } from '.';
+import { ErrorProvider, MetadataProvider } from '..';
 
 export function Provider({ children }) {
   return (
