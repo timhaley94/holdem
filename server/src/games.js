@@ -31,11 +31,13 @@ function _new({ id, playerId, emit }) {
   };
 
   game.playerCount = () => Object.entries(game.players).length;
-  game.canStart = () => game.playerCount() >= MIN_PLAYERS;
-  game.isFull = () => game.playerCount() >= MAX_PLAYERS;
-  game.shouldStart = () => game.canStart() && game.players.every(
+  game.allPlayersReady = () => Object.values(game.players).every(
     player => player.isReady
   );
+
+  game.canStart = () => game.playerCount() >= MIN_PLAYERS;
+  game.isFull = () => game.playerCount() >= MAX_PLAYERS;
+  game.shouldStart = () => game.canStart() && game.allPlayersReady();
 
   game.emit = () => emit('game_state_updated', {
     ...game,

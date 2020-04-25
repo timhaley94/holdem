@@ -1,21 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Avatar } from '@material-ui/core';
-import { avatars, useAPI } from '../../models';
+import { useAPI } from '../../models';
+import { Avatar } from '..';
 import styles from './index.module.css';
 
 function MessageGroup({ playerId, messages }) {
   const { game } = useAPI();
-  const { avatarId, name } = (
+  const { name } = (
     Object
       .values(game.players)
       .find(p => p.playerId === playerId)
       .data
   );
-
-  const avatar = avatars.find(
-    ({ id }) => id === avatarId
-  ).image;
 
   const firstTimestamp = new Date(messages[0].timestamp);
   const hours = firstTimestamp.getHours();
@@ -23,10 +19,7 @@ function MessageGroup({ playerId, messages }) {
 
   return (
     <div className={ styles.container }>
-      <Avatar
-        className={ styles.avatar }
-        src={ avatar }
-      />
+      <Avatar playerId={ playerId } />
       <div className={ styles.content }>
         <div className={ styles.info }>
           <p className={ styles.name }>

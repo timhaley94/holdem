@@ -1,6 +1,15 @@
 import React from 'react';
-import { Button } from '@material-ui/core';
+import {
+  Card,
+  Switch,
+  Table,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell
+} from '@material-ui/core';
 import { useAPI } from '../../models';
+import { Avatar } from '..';
 import styles from './index.module.css';
 
 function Lobby() {
@@ -11,34 +20,60 @@ function Lobby() {
   } = useAPI();
 
   return (
-    <div className={ styles.container }>
-      {
-        game
-          && game.players
-          ? Object.values(game.players).map(
-            player => (
-              <div key={ player.playerId }>
-                <p>{ player.data.name }</p>
-                <Button
-                  disabled={ player.isReady }
-                  onClick={
-                    playerId === player.playerId
-                      ? () => setReady(!player.isReady)
-                      : null
-                  }
-                >
-                  {
-                    player.data.isReady
-                      ? 'Ready!'
-                      : 'Ready?'
-                  }
-                </Button>
-              </div>
-            )
-          )
-          : null
-      }
-    </div>
+    <Card className={ styles.container }>
+      <div>
+        HI
+      </div>
+      <div className={ styles.playersContainer }>
+        <Table className={ styles.players }>
+          <TableHead>
+            <TableRow>
+              <TableCell className={ styles.header }>Player</TableCell>
+              <TableCell
+                className={ styles.header }
+                align="right"
+              >
+                Ready?
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {
+              game
+                && game.players
+                ? Object.values(game.players).map(
+                  player => (
+                    <TableRow
+                      key={ player.playerId }
+                      className={ styles.player }
+                    >
+                      <TableCell className={ styles.cell }>
+                        <div className={ styles.playerInfo }>
+                          <Avatar playerId={ player.playerId } />
+                          <p className={ styles.name }>
+                            { player.data.name }
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell align="right" className={ styles.cell }>
+                        <Switch
+                          checked={ player.isReady }
+                          onChange={
+                            playerId === player.playerId
+                              ? () => setReady(!player.isReady)
+                              : null
+                          }
+                        />
+                      </TableCell>
+                    </TableRow>
+                  )
+                )
+                : null
+            }
+          </TableBody>
+        </Table>
+      </div>
+    </Card>
   );
 }
 

@@ -1,5 +1,6 @@
 export { default as About } from './About';
 export { default as App } from './App';
+export { default as Avatar } from './Avatar';
 export { default as AvatarPicker } from './AvatarPicker';
 export { default as Boundary } from './Boundary';
 export { default as Chat } from './Chat';
