@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import {
   Avatar,
   Button,
@@ -9,11 +8,13 @@ import {
   Input,
   InputLabel
 } from '@material-ui/core';
+import { useRouteMatch } from "react-router-dom";
 import { avatars, useMetadata } from '../../models';
 import { AvatarPicker } from '..';
 import styles from './index.module.css';
 
-function Sidebar({ requireData }) {
+function Sidebar() {
+  const requireData = useRouteMatch('/game');
   const [metadata, setMetadata] = useMetadata();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -120,13 +121,5 @@ function Sidebar({ requireData }) {
     </div>
   );
 }
-
-Sidebar.propTypes = {
-  requireData: PropTypes.bool
-};
-
-Sidebar.defaultProps = {
-  requireData: false
-};
 
 export default Sidebar;

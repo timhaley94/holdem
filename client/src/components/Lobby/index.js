@@ -17,7 +17,7 @@ function Lobby() {
           && game.players
           ? Object.values(game.players).map(
             player => (
-              <div>
+              <div key={ player.playerId }>
                 <p>{ player.data.name }</p>
                 <Button
                   disabled={ player.isReady }

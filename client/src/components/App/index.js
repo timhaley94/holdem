@@ -10,7 +10,8 @@ import {
   Header,
   Fatal,
   Footer,
-  Poker
+  Poker,
+  Sidebar
 } from '..';
 import styles from './index.module.css';
 import './index.css';
@@ -21,6 +22,7 @@ function App() {
       <div className={ styles.container }>
         <Router>
           <Header />
+          <Sidebar />
           <main className={ styles.content }>
             <Switch>
               <Route path="/about">

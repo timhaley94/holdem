@@ -2,6 +2,7 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useReducer,
   useState
 } from 'react';
 import io from 'socket.io-client';
@@ -22,6 +23,24 @@ export function APIProvider({ children }) {
   const [game, setGame] = useState(null);
   const [error, setError] = useState(null);
 
+  const [{ messages }, dispatch] = useReducer(
+    (state, { type, value }) => {
+      switch (type) {
+        case 'add':
+          return {
+            ...state,
+            messages: [
+              ...state.messages,
+              value
+            ]
+          };
+        default:
+          return { ...state };
+      }
+    },
+    { messages: [] }
+  );
+
   function createGame() {
     setGame(null);
     _socket.emit('new_game');
@@ -34,6 +53,10 @@ export function APIProvider({ children }) {
 
   function setReady(value) {
     _socket.emit('set_ready', value);
+  }
+
+  function sendMessage(message) {
+    _socket.emit('send_message', message);
   }
 
   function makeMove(data) {
@@ -77,6 +100,13 @@ export function APIProvider({ children }) {
       setPlayerId(id);
     });
 
+    socket.on('incoming_message', function(message) {
+      dispatch({
+        type: 'add',
+        value: message
+      });
+    });
+
     socket.on('game_state_updated', function(state) {
       console.log('game_state_updated', state);
       setGame(state);
@@ -96,6 +126,14 @@ export function APIProvider({ children }) {
   }, [push]);
 
   useEffect(() => {
+    console.log('use effect');
+    console.log(
+      _socket,
+      playerId,
+      isConnected,
+      metadata,
+      game,
+    )
     if (
       _socket
       && playerId
@@ -105,11 +143,13 @@ export function APIProvider({ children }) {
       && game.players
       && game.players[playerId]
     ) {
+      console.log('run');
       const storedData = game.players[playerId].data || {};
       const matches = Object.entries(metadata).every(
         ([key, value]) => storedData[key] === value
       );
 
+      console.log(matches);
       if (!matches) {
         _socket.emit('set_data', metadata);
       }
@@ -119,11 +159,13 @@ export function APIProvider({ children }) {
   const value = {
     isConnected,
     playerId,
+    messages,
     game,
     error,
     createGame,
     joinGame,
     setReady,
+    sendMessage,
     leaveGame,
     makeMove,
     dismissError,

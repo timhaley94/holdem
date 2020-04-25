@@ -2,6 +2,39 @@
   height: 100%;
   flex-grow: 1;
   max-width: 400px;
-  border: 1px solid;
+  border: 1px solid #6b6b76;;
   margin-right: 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  padding: 0 1rem;
+  overflow: scroll;
+}
+
+.messageContainer {
+  flex-grow: 1;
+  width: 100%;
+  padding: 1rem;
+  overflow: scroll;
+}
+
+.inputContainer {
+  width: 100%;
+  padding: 0;
+}
+
+.input {
+  width: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  padding: 1rem;
+  color: #6b6b76;
+  font-size: 11px;
+  font-family: 'Libre Franklin', sans-serif;
+}
+
+.input:focus {
+  outline: none;
 }

@@ -1,13 +1,8 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
+import { CircularProgress } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import {
-  Boundary,
-  Game,
-  Home,
-  Progress,
-  Sidebar
-} from '..';
+import { Boundary, Game, Home } from '..';
 import { useAPI } from '../../models';
 
 function Poker() {
@@ -34,16 +29,14 @@ function Poker() {
       }
       {
         !isConnected
-          ? <Progress />
+          ? <CircularProgress />
           : (
             <Switch>
               <Route exact path="/">
                 <Home />
-                <Sidebar />
               </Route>
               <Route path="/game/:id">
                 <Game />
-                <Sidebar requireData />
               </Route>
               <Route>
                 <Redirect to="/" />

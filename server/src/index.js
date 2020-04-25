@@ -16,6 +16,11 @@ io.sockets.on('connection', function(socket) {
   let gameId = null;
   socket.emit('player_id', socket.id);
 
+  function massEmit(...args) {
+    socket.emit(...args);
+    socket.to(gameId).emit(...args);
+  }
+
   function joinRoom(id) {
     gameId = id;
     socket.join(gameId);
@@ -44,10 +49,7 @@ io.sockets.on('connection', function(socket) {
         Games.new({
           id: gameId,
           playerId: socket.id,
-          emit: (...args) => {
-            socket.emit(...args);
-            socket.to(gameId).emit(...args);
-          }
+          emit: massEmit
         });
       } catch (e) {
         reportError(e, {
@@ -110,6 +112,14 @@ io.sockets.on('connection', function(socket) {
     }
   }
 
+  function sendMessage(message) {
+    massEmit('incoming_message', {
+      message,
+      playerId: socket.id,
+      timestamp: new Date()
+    });
+  }
+
   function move(data) {
     if (gameId) {
       try {
@@ -147,6 +157,7 @@ io.sockets.on('connection', function(socket) {
   socket.on('join_game', join);
   socket.on('set_data', setData);
   socket.on('set_ready', setReady);
+  socket.on('send_message', sendMessage);
   socket.on('make_move', move);
   socket.on('leave_game', leave);
   socket.on('disconnect', leave);

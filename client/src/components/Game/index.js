@@ -6,6 +6,7 @@ import {
   useParams,
   useRouteMatch
 } from 'react-router-dom';
+import { CircularProgress } from '@material-ui/core';
 import { useAPI } from '../../models';
 import { Chat, Lobby, Table } from '..';
 import styles from './index.module.css';
@@ -23,18 +24,26 @@ function Game() {
 
   return (
     <div className={ styles.container }>
-      <Chat />
-      <Switch>
-        <Route exact path={ match.path }>
-          <Lobby />
-        </Route>
-        <Route path={ `${match.path}/table` }>
-          <Table />
-        </Route>
-        <Route>
-          <Redirect to={ match.path } />
-        </Route>
-      </Switch>
+      {
+        !game
+          ? <CircularProgress />
+          : (
+            <>
+              <Chat />
+              <Switch>
+                <Route exact path={ match.path }>
+                  <Lobby />
+                </Route>
+                <Route path={ `${match.path}/table` }>
+                  <Table />
+                </Route>
+                <Route>
+                  <Redirect to={ match.path } />
+                </Route>
+              </Switch>
+            </>
+          )
+      }
     </div>
   );
 }
