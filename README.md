@@ -1,4 +1,13 @@
-# Holdem
+<h1 align="center">Hold'em</h1>
+
+<p align="center">
+  <a href="https://codeclimate.com/github/timhaley94/holdem/maintainability">
+    <img src="https://api.codeclimate.com/v1/badges/b4b31a8f8cf13a23ca93/maintainability" />
+  </a>
+  <a href="https://codeclimate.com/github/timhaley94/holdem/test_coverage">
+    <img src="https://api.codeclimate.com/v1/badges/b4b31a8f8cf13a23ca93/test_coverage" />
+  </a>
+</p>
 
 ## Directory structure
 
