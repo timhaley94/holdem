@@ -1,0 +1,6 @@
+.container {
+  height: 100%;
+  flex-grow: 1;
+  border: 1px solid #e6e6e6;
+  overflow: scroll !important;
+}

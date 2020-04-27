@@ -1,32 +1,15 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { CircularProgress } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
-import { Boundary, Game, Home } from '..';
+import { Boundary, Errors, Game, Home } from '..';
 import { useAPI } from '../../models';
 
 function Poker() {
-  const {
-    isConnected,
-    error,
-    dismissError
-  } = useAPI();
+  const { isConnected } = useAPI();
 
   return (
     <Boundary>
-      {
-        error
-          ? (
-            <Alert
-              variant="filled"
-              severity="error"
-              onClose={ dismissError }
-            >
-              { error }
-            </Alert>
-          )
-          : null
-      }
+      <Errors />
       {
         !isConnected
           ? <CircularProgress />

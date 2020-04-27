@@ -1,7 +1,13 @@
 import React from 'react';
+import { Card } from '@material-ui/core';
+import styles from './index.module.css';
 
 function Table() {
-  return <p>Hi from table</p>;
+  return (
+    <Card className={ styles.container }>
+      <p>Hi from table</p>
+    </Card>
+  );
 }
 
 export default Table;

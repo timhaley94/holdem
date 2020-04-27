@@ -1,5 +1,7 @@
 import {
+  useCallback,
   useEffect,
+  useReducer,
   useState
 } from 'react';
 
@@ -34,4 +36,51 @@ export function useEnterPress(fn) {
     window.addEventListener('keyup', handler);
     return () => window.removeEventListener('keyup', handler);
   }, [setIsShiftDown]);
+}
+
+export function useArrayState() {
+  const [state, dispatch] = useReducer(
+    (state, action) => {
+      switch (action.type) {
+        case 'push':
+          return {
+            ...state,
+            value: [
+              ...state.value,
+              action.value
+            ]
+          };
+        case 'pull':
+          return {
+            ...state,
+            value: state.value.filter(
+              x => !action.fn(x)
+            )
+          };
+        default:
+          return state;
+      }
+    },
+    {
+      value: []
+    }
+  );
+
+  const push = useCallback(
+    value => dispatch({
+      type: 'push',
+      value
+    }),
+    [dispatch]
+  );
+
+  const pull = useCallback(
+    fn => dispatch({
+      type: 'pull',
+      fn
+    }),
+    [dispatch]
+  );
+
+  return [state.value, push, pull];
 }

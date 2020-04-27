@@ -1,0 +1,11 @@
+.container {
+  position: fixed;
+  bottom: 3rem;
+  left: 2rem;
+  z-index: 1000;
+}
+
+.error {
+  margin: 0.5rem 0;
+  width: 350px;
+}

@@ -2,11 +2,12 @@ import React, {
   createContext,
   useContext,
   useEffect,
-  useReducer,
   useState
 } from 'react';
 import io from 'socket.io-client';
 import { useHistory } from 'react-router-dom';
+import { generate as generateId } from 'shortid';
+import { useArrayState } from '../../models';
 import config from '../../config';
 import { useMetadata } from '..';
 
@@ -21,25 +22,17 @@ export function APIProvider({ children }) {
   const [isConnected, setIsConnected] = useState(false);
   const [playerId, setPlayerId] = useState(null);
   const [game, setGame] = useState(null);
-  const [error, setError] = useState(null);
 
-  const [{ messages }, dispatch] = useReducer(
-    (state, { type, value }) => {
-      switch (type) {
-        case 'add':
-          return {
-            ...state,
-            messages: [
-              ...state.messages,
-              value
-            ]
-          };
-        default:
-          return { ...state };
-      }
-    },
-    { messages: [] }
-  );
+  const [
+    errors,
+    addError,
+    removeError
+  ] = useArrayState();
+
+  const [
+    messages,
+    addMessage
+  ] = useArrayState();
 
   function createGame() {
     setGame(null);
@@ -68,8 +61,8 @@ export function APIProvider({ children }) {
     _socket.emit('leave_game');
   }
 
-  function dismissError() {
-    setError(null);
+  function dismissError(id) {
+    removeError(e => e.id === id);
   }
 
   useEffect(() => {
@@ -101,19 +94,18 @@ export function APIProvider({ children }) {
     });
 
     socket.on('incoming_message', function(message) {
-      dispatch({
-        type: 'add',
-        value: message
-      });
+      addMessage(message);
     });
 
     socket.on('game_state_updated', function(state) {
-      console.log('game_state_updated', state);
       setGame(state);
     });
 
     socket.on('game_error', function({ message }) {
-      setError(message);
+      addError({
+        id: generateId(),
+        message
+      });
     });
 
     setSocket(socket);
@@ -123,17 +115,9 @@ export function APIProvider({ children }) {
       // of 'this' binding inside .disconnect()
       socket.disconnect();
     };
-  }, [push]);
+  }, [addError, addMessage, push]);
 
   useEffect(() => {
-    console.log('use effect');
-    console.log(
-      _socket,
-      playerId,
-      isConnected,
-      metadata,
-      game,
-    )
     if (
       _socket
       && playerId
@@ -143,13 +127,11 @@ export function APIProvider({ children }) {
       && game.players
       && game.players[playerId]
     ) {
-      console.log('run');
       const storedData = game.players[playerId].data || {};
       const matches = Object.entries(metadata).every(
         ([key, value]) => storedData[key] === value
       );
 
-      console.log(matches);
       if (!matches) {
         _socket.emit('set_data', metadata);
       }
@@ -161,7 +143,7 @@ export function APIProvider({ children }) {
     playerId,
     messages,
     game,
-    error,
+    errors,
     createGame,
     joinGame,
     setReady,

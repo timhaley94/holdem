@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button } from '@material-ui/core';
 import { useAPI } from '../../models';
-import { SmallPage } from '..';
+import { Button, SmallPage } from '..';
 import styles from './index.module.css';
 
 function Home() {
@@ -27,6 +26,7 @@ function Home() {
       <Button
         size="large"
         variant="contained"
+        color="primary"
         onClick={ onClick }
       >
         Create Game

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import { useAPI } from '../../models';
 import { Avatar } from '..';
 import styles from './index.module.css';
@@ -13,9 +14,7 @@ function MessageGroup({ playerId, messages }) {
       .data
   );
 
-  const firstTimestamp = new Date(messages[0].timestamp);
-  const hours = firstTimestamp.getHours();
-  const minutes = firstTimestamp.getMinutes();
+  const m = moment(messages[0].timestamp);
 
   return (
     <div className={ styles.container }>
@@ -26,7 +25,7 @@ function MessageGroup({ playerId, messages }) {
             { name }
           </p>
           <p className={ styles.timestamp }>
-            { `${hours}:${minutes}` }
+            { m.format('h:mm') }
           </p>
         </div>
         <div className={ styles.messages }>

@@ -2,12 +2,46 @@
   height: 100%;
   flex-grow: 1;
   border: 1px solid #e6e6e6;
+  overflow: scroll !important;
+}
+
+.container .content {
+  width: 100%;
   padding: 4rem 6rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  overflow: scroll;
+}
+
+.prompt {
+  margin: 0 0 1rem 0;
+}
+
+.link {
+  display: flex;
+  width: 70%;
+}
+
+.linkInput {
+  flex-grow: 1;
+}
+
+.linkInput * {
+  border-bottom-left-radius: 4px;
+}
+
+.linkInput input {
+  padding: 0.6rem 0 0.6rem 0.6rem;
+  color: #6b6b76;
+  font-size: 11px;
+  font-family: 'Libre Franklin', sans-serif;
+}
+
+.container .linkButton {
+  width: 80px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 
 .playersContainer {
