@@ -1,15 +1,19 @@
 import React from 'react';
 import { useError } from '../../models';
-import { SmallPage } from '..';
+import SmallPage from '../SmallPage';
 
-const defaultMessage = `We're having trouble connecting to the server.`;
+const defaultMessage = 'We\'re having trouble connecting to the server.';
 
 function Error() {
   const [error] = useError();
   return (
     <SmallPage>
       <h1>Whoops!</h1>
-      <p>{ error || defaultMessage } :/</p>
+      <p>
+        { error || defaultMessage }
+        {' '}
+        :/
+      </p>
     </SmallPage>
   );
 }

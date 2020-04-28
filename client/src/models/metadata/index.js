@@ -2,18 +2,19 @@ import React, {
   createContext,
   useContext,
   useEffect,
-  useState
+  useState,
 } from 'react';
+import PropTypes from 'prop-types';
 
 const Context = createContext(null);
 const STORAGE_KEY = 'user-data';
 
-export function MetadataProvider({ children }) {
+function MetadataProvider({ children }) {
   const [value, _setValue] = useState(null);
 
   useEffect(() => {
     const storedData = JSON.parse(
-      localStorage.getItem(STORAGE_KEY)
+      localStorage.getItem(STORAGE_KEY),
     );
 
     if (storedData) {
@@ -24,13 +25,13 @@ export function MetadataProvider({ children }) {
   function setValue(data) {
     const next = {
       ...value,
-      ...data
+      ...data,
     };
 
     _setValue(next);
     localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify(next)
+      JSON.stringify(next),
     );
   }
 
@@ -41,7 +42,16 @@ export function MetadataProvider({ children }) {
   );
 }
 
-export function useMetadata() {
+MetadataProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
+function useMetadata() {
   const { value, setValue } = useContext(Context);
   return [value, setValue];
 }
+
+export {
+  MetadataProvider,
+  useMetadata,
+};

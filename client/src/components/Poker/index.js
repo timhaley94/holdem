@@ -1,7 +1,10 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { CircularProgress } from '@material-ui/core';
-import { Boundary, Errors, Game, Home } from '..';
+import Boundary from '../Boundary';
+import Errors from '../Errors';
+import Game from '../Game';
+import Home from '../Home';
 import { useAPI } from '../../models';
 
 function Poker() {

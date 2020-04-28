@@ -17,7 +17,7 @@ function newPlayer(playerId) {
   return {
     playerId,
     isReady: false,
-    data: {}
+    data: {},
   };
 }
 
@@ -26,13 +26,13 @@ function _new({ id, playerId, emit }) {
     id,
     isStarted: false,
     players: {
-      [playerId]: newPlayer(playerId)
-    }
+      [playerId]: newPlayer(playerId),
+    },
   };
 
   game.playerCount = () => Object.entries(game.players).length;
   game.allPlayersReady = () => Object.values(game.players).every(
-    player => player.isReady
+    (player) => player.isReady,
   );
 
   game.canStart = () => game.playerCount() >= MIN_PLAYERS;
@@ -43,7 +43,7 @@ function _new({ id, playerId, emit }) {
     ...game,
     playerCount: game.playerCount(),
     canStart: game.canStart(),
-    isFull: game.isFull()
+    isFull: game.isFull(),
   });
 
   games[id] = game;
@@ -68,7 +68,7 @@ function addPlayer({ id, playerId }) {
 function setPlayerData({
   id,
   playerId,
-  data
+  data,
 }) {
   const game = get(id);
 
@@ -78,7 +78,7 @@ function setPlayerData({
 
   game.players[playerId].data = {
     ...game.players[playerId].data,
-    ...data
+    ...data,
   };
 
   game.emit();
@@ -87,7 +87,7 @@ function setPlayerData({
 function setPlayerReady({
   id,
   playerId,
-  value
+  value,
 }) {
   const game = get(id);
 
@@ -118,5 +118,5 @@ module.exports = {
   setPlayerData,
   setPlayerReady,
   removePlayer,
-  makeMove
+  makeMove,
 };

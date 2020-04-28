@@ -6,8 +6,8 @@ import styles from './index.module.css';
 function Link({ href, children }) {
   return (
     <a
-      className={ styles.link }
-      href={ href }
+      className={styles.link}
+      href={href}
       target="_blank"
       rel="noreferrer noopener"
     >
@@ -18,16 +18,26 @@ function Link({ href, children }) {
 
 Link.propTypes = {
   href: PropTypes.string.isRequired,
-  children: PropTypes.node.isRequired
+  children: PropTypes.node.isRequired,
 };
 
 function Footer() {
   return (
-    <footer className={ styles.container }>
+    <footer className={styles.container}>
       <p>
-        Made by <Link href={ config.timUrl }>Tim</Link> and { ' ' }
-        <Link href={ config.lauraUrl }>Laura Haley</Link> with { ' ' }
-        <i className={ styles.heart + ' icon ion-heart' }></i>{ ' ' }
+        Made by
+        {' '}
+        <Link href={config.timUrl}>Tim</Link>
+        {' '}
+        and
+        {' '}
+        { ' ' }
+        <Link href={config.lauraUrl}>Laura Haley</Link>
+        {' '}
+        with
+        { ' ' }
+        <i className={`${styles.heart} icon ion-heart`} />
+        { ' ' }
         in Chattanooga, TN
       </p>
     </footer>

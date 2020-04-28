@@ -1,27 +1,34 @@
 import React from 'react';
-import { Avatar } from '@material-ui/core';
+import PropTypes from 'prop-types';
+import { Avatar as MUIAvatar } from '@material-ui/core';
 import { avatars, useAPI } from '../../models';
 import styles from './index.module.css';
 
-export default function({ playerId }) {
+function Avatar({ playerId }) {
   const { game } = useAPI();
-  const { avatarId  } = (
+  const { avatarId } = (
     Object
       .values(game.players)
-      .find(p => p.playerId === playerId)
+      .find((p) => p.playerId === playerId)
       .data
   );
 
   const avatar = avatars.find(
-    ({ id }) => id === avatarId
+    ({ id }) => id === avatarId,
   );
 
   return (
-    <div className={ styles.container }>
-      <Avatar
-        className={ styles.avatar }
-        src={ avatar ? avatar.image : null }
+    <div className={styles.container}>
+      <MUIAvatar
+        className={styles.avatar}
+        src={avatar ? avatar.image : null}
       />
     </div>
   );
 }
+
+Avatar.propTypes = {
+  playerId: PropTypes.string.isRequired,
+};
+
+export default Avatar;

@@ -2,11 +2,11 @@ import React, { useState, useRef } from 'react';
 import {
   Card,
   Divider,
-  TextareaAutosize
+  TextareaAutosize,
 } from '@material-ui/core';
 import { useAPI, useEnterPress } from '../../models';
 import { chunkBy } from '../../utils';
-import { MessageGroup } from '..';
+import MessageGroup from '../MessageGroup';
 import styles from './index.module.css';
 
 function Chat() {
@@ -23,50 +23,51 @@ function Chat() {
     setFocused(false);
   }
 
-  function onChange({ target: { value } }) {
-    setValue(value);
+  function onChange(e) {
+    setValue(e.target.value);
   }
 
-  useEnterPress(e => {
+  useEnterPress((e) => {
     if (focused && value) {
       e.preventDefault();
       sendMessage(value);
       setValue('');
       bottomRef.current.scrollIntoView({
         behavior: 'smooth',
-        block: 'start'
+        block: 'start',
       });
     }
   }, [focused, value, setValue, sendMessage]);
 
   return (
-    <Card className={ styles.container }>
-      <div className={ styles.messageContainer }>
+    <Card className={styles.container}>
+      <div className={styles.messageContainer}>
         {
-          chunkBy(messages, m => m.playerId)
+          chunkBy(messages, (m) => m.playerId)
             .map(
               ({ key, entries }) => (
                 <MessageGroup
-                  key={ key }
-                  playerId={ key }
-                  messages={ entries }
+                  key={key}
+                  playerId={key}
+                  messages={entries}
                 />
-              )
+              ),
             )
         }
-        <div ref={ bottomRef } />
+        <div ref={bottomRef} />
       </div>
-      <Divider className={ styles.divider } />
-      <div className={ styles.inputContainer }>
+      <Divider className={styles.divider} />
+      <div className={styles.inputContainer}>
         <TextareaAutosize
-          className={ styles.input }
+          className={styles.input}
           autoComplete="off"
           autoFocus
           name="message"
-          onFocus={ onFocus }
-          onBlur={ onBlur }
-          value={ value }
-          onChange={ onChange }
+          onFocus={onFocus}
+          onBlur={onBlur}
+          value={value}
+          onChange={onChange}
+          placeholder="Start chatting..."
         />
       </div>
     </Card>

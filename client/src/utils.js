@@ -9,8 +9,8 @@ export function chunkBy(array, fn) {
             ...acc,
             chunk: {
               key,
-              entries: [curr]
-            }
+              entries: [curr],
+            },
           };
         }
 
@@ -21,37 +21,44 @@ export function chunkBy(array, fn) {
               ...acc.chunk,
               entries: [
                 ...acc.chunk.entries,
-                curr
-              ]
-            }
-          }
+                curr,
+              ],
+            },
+          };
         }
 
         return {
           ...acc,
           chunks: [
             ...acc.chunks,
-            acc.chunk
+            acc.chunk,
           ],
           chunk: {
             key,
-            entries: [curr]
-          }
-        }
+            entries: [curr],
+          },
+        };
       },
       {
         chunks: [],
-        chunk: null
-      }
+        chunk: null,
+      },
     )
   );
 
   if (chunk) {
     return [
       ...chunks,
-      chunk
+      chunk,
     ];
   }
 
   return chunks;
+}
+
+export function hasOwnProperty(obj, key) {
+  return Object.prototype.hasOwnProperty.call(
+    obj,
+    key,
+  );
 }

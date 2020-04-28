@@ -4,20 +4,20 @@ import styles from './index.module.css';
 
 function Header() {
   return (
-    <div className={ styles.container }>
-      <Link to="/" className={ styles.logoContainer }>
+    <div className={styles.container}>
+      <Link to="/" className={styles.logoContainer}>
         <span
           role="img"
           aria-label="party popper"
-          className={ styles.logo }
+          className={styles.logo}
         >
           🃏
         </span>
       </Link>
-      <Link to="/about" className={ styles.link }>About</Link>
+      <Link to="/about" className={styles.link}>About</Link>
       <a
         href="https://github.com/timhaley94/holdem"
-        className={ styles.link }
+        className={styles.link}
         target="_blank"
         rel="noreferrer noopener"
       >
@@ -25,7 +25,7 @@ function Header() {
         <span
           role="img"
           aria-label="party popper"
-          className={ styles.emoji }
+          className={styles.emoji}
         >
           🎉
         </span>

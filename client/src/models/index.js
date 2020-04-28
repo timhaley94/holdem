@@ -1,6 +1,6 @@
 export * from './api';
-export * from './avatars';
+export { default as avatars } from './avatars';
 export * from './error';
 export * from './hooks';
 export * from './metadata';
-export * from './provider';
+export { default as Provider } from './provider';

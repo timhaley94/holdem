@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./src/index.js",
-    "dev": "nodemon --watch src src/index.js"
+    "dev": "nodemon --watch src src/index.js",
+    "lint": "eslint src",
+    "test": "jest src"
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +17,10 @@
     "uuid": "^7.0.2"
   },
   "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "jest": "^25.5.0",
     "nodemon": "^2.0.2"
   },
   "engines": {

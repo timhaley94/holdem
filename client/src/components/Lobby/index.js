@@ -1,7 +1,7 @@
 import React, {
   useEffect,
   useState,
-  useRef
+  useRef,
 } from 'react';
 import {
   Card,
@@ -11,14 +11,15 @@ import {
   TableHead,
   TableRow,
   TableCell,
-  TextField
+  TextField,
 } from '@material-ui/core';
 import {
   useHistory,
-  useLocation
-} from "react-router-dom";
+  useLocation,
+} from 'react-router-dom';
 import { useAPI } from '../../models';
-import { Avatar, Button } from '..';
+import Avatar from '../Avatar';
+import Button from '../Button';
 import styles from './index.module.css';
 
 function Lobby() {
@@ -31,7 +32,7 @@ function Lobby() {
   const {
     game,
     playerId,
-    setReady
+    setReady,
   } = useAPI();
 
   useEffect(() => {
@@ -40,49 +41,49 @@ function Lobby() {
     }
   }, [game, push, pathname]);
 
-  const href = window.location.href;
+  const { href } = window.location;
 
   const onSelect = () => copyRef.current.select();
   const onCopy = () => {
     onSelect();
-    document.execCommand("copy");
+    document.execCommand('copy');
     setIsCopied(true);
-  }
+  };
 
   return (
-    <Card className={ styles.container }>
-      <div className={ styles.content }>
-        <p className={ styles.prompt }>
+    <Card className={styles.container}>
+      <div className={styles.content}>
+        <p className={styles.prompt}>
           Send to your friends...
         </p>
-        <div className={ styles.link }>
+        <div className={styles.link}>
           <TextField
-            className={ styles.linkInput }
-            inputRef={ copyRef }
+            className={styles.linkInput}
+            inputRef={copyRef}
             variant="filled"
-            value={ href }
-            onFocus={ onSelect }
+            value={href}
+            onFocus={onSelect}
             autoComplete="off"
             InputProps={{ disableUnderline: true }}
           />
           <Button
-            className={ styles.linkButton }
+            className={styles.linkButton}
             variant="contained"
             color="primary"
             size="small"
             disableElevation
-            onClick={ onCopy }
+            onClick={onCopy}
           >
             { isCopied ? 'Copied!' : 'Copy' }
           </Button>
         </div>
-        <div className={ styles.playersContainer }>
-          <Table className={ styles.players }>
+        <div className={styles.playersContainer}>
+          <Table className={styles.players}>
             <TableHead>
               <TableRow>
-                <TableCell className={ styles.header }>Player</TableCell>
+                <TableCell className={styles.header}>Player</TableCell>
                 <TableCell
-                  className={ styles.header }
+                  className={styles.header}
                   align="right"
                 >
                   Ready?
@@ -94,22 +95,22 @@ function Lobby() {
                 game
                   && game.players
                   ? Object.values(game.players).map(
-                    player => (
+                    (player) => (
                       <TableRow
-                        key={ player.playerId }
-                        className={ styles.player }
+                        key={player.playerId}
+                        className={styles.player}
                       >
-                        <TableCell className={ styles.cell }>
-                          <div className={ styles.playerInfo }>
-                            <Avatar playerId={ player.playerId } />
-                            <p className={ styles.name }>
+                        <TableCell className={styles.cell}>
+                          <div className={styles.playerInfo}>
+                            <Avatar playerId={player.playerId} />
+                            <p className={styles.name}>
                               { player.data.name }
                             </p>
                           </div>
                         </TableCell>
-                        <TableCell align="right" className={ styles.cell }>
+                        <TableCell align="right" className={styles.cell}>
                           <Switch
-                            checked={ player.isReady }
+                            checked={player.isReady}
                             onChange={
                               playerId === player.playerId
                                 ? () => setReady(!player.isReady)
@@ -118,7 +119,7 @@ function Lobby() {
                           />
                         </TableCell>
                       </TableRow>
-                    )
+                    ),
                   )
                   : null
               }

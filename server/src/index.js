@@ -1,18 +1,22 @@
-const Games = require('./games');
+const express = require('express');
+const { Server } = require('http');
+const IO = require('socket.io');
 const { v4: uuid } = require('uuid');
+const Games = require('./games');
+const config = require('./config');
 
-const app = require('express')();
-const server = require('http').Server(app);
-const io = require('socket.io')(server, {
+const app = express();
+const server = Server(app);
+const io = IO(server, {
   origins: '*:*',
   serveClient: false,
-  pingInterval: 10000,
-  pingTimeout: 5000
+  pingInterval: config.socket.pingInterval,
+  pingTimeout: config.socket.pingTimeout,
 });
 
-app.get('/ping', (req, res) => res.sendStatus(200))
+app.get('/ping', (req, res) => res.sendStatus(200));
 
-io.sockets.on('connection', function(socket) {
+io.sockets.on('connection', (socket) => {
   let gameId = null;
   socket.emit('player_id', socket.id);
 
@@ -34,7 +38,7 @@ io.sockets.on('connection', function(socket) {
   function reportError(e, data) {
     const payload = {
       ...data,
-      message: e.message
+      message: e.message,
     };
 
     console.log(payload);
@@ -49,11 +53,11 @@ io.sockets.on('connection', function(socket) {
         Games.new({
           id: gameId,
           playerId: socket.id,
-          emit: massEmit
+          emit: massEmit,
         });
       } catch (e) {
         reportError(e, {
-          source: 'create'
+          source: 'create',
         });
 
         leaveRoom();
@@ -68,11 +72,11 @@ io.sockets.on('connection', function(socket) {
       try {
         Games.addPlayer({
           id: gameId,
-          playerId: socket.id
+          playerId: socket.id,
         });
       } catch (e) {
         reportError(e, {
-          source: 'join'
+          source: 'join',
         });
 
         leaveRoom();
@@ -86,11 +90,11 @@ io.sockets.on('connection', function(socket) {
         Games.setPlayerData({
           id: gameId,
           playerId: socket.id,
-          data
+          data,
         });
       } catch (e) {
         reportError(e, {
-          source: 'setData'
+          source: 'setData',
         });
       }
     }
@@ -102,11 +106,11 @@ io.sockets.on('connection', function(socket) {
         Games.setPlayerReady({
           id: gameId,
           playerId: socket.id,
-          value: value
+          value,
         });
       } catch (e) {
         reportError(e, {
-          source: 'setReady'
+          source: 'setReady',
         });
       }
     }
@@ -116,7 +120,7 @@ io.sockets.on('connection', function(socket) {
     massEmit('incoming_message', {
       message,
       playerId: socket.id,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   }
 
@@ -126,11 +130,11 @@ io.sockets.on('connection', function(socket) {
         Games.makeMove({
           id: gameId,
           playerId: socket.id,
-          data
+          data,
         });
       } catch (e) {
         reportError(e, {
-          source: 'move'
+          source: 'move',
         });
       }
     }
@@ -141,17 +145,17 @@ io.sockets.on('connection', function(socket) {
       try {
         Games.removePlayer({
           id: gameId,
-          playerId: socket.id
+          playerId: socket.id,
         });
       } catch (e) {
         reportError(e, {
-          source: 'leave'
+          source: 'leave',
         });
       }
 
       leaveRoom();
     }
-  };
+  }
 
   socket.on('new_game', create);
   socket.on('join_game', join);
@@ -163,4 +167,4 @@ io.sockets.on('connection', function(socket) {
   socket.on('disconnect', leave);
 });
 
-server.listen(80);
+server.listen(config.port);

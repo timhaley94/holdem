@@ -4,7 +4,7 @@ import styles from './index.module.css';
 
 function Table() {
   return (
-    <Card className={ styles.container }>
+    <Card className={styles.container}>
       <p>Hi from table</p>
     </Card>
   );

@@ -4,17 +4,19 @@ import {
   Route,
   Redirect,
   useParams,
-  useRouteMatch
+  useRouteMatch,
 } from 'react-router-dom';
 import { CircularProgress } from '@material-ui/core';
 import { useAPI } from '../../models';
-import { Chat, Lobby, Table } from '..';
+import Chat from '../Chat';
+import Lobby from '../Lobby';
+import Table from '../Table';
 import styles from './index.module.css';
 
 function Game() {
   const match = useRouteMatch();
   const { game, joinGame } = useAPI();
-  let { id } = useParams();
+  const { id } = useParams();
 
   useEffect(() => {
     if (!game) {
@@ -23,7 +25,7 @@ function Game() {
   }, [game, id, joinGame]);
 
   return (
-    <div className={ styles.container }>
+    <div className={styles.container}>
       {
         !game
           ? <CircularProgress />
@@ -31,14 +33,14 @@ function Game() {
             <>
               <Chat />
               <Switch>
-                <Route exact path={ match.path }>
+                <Route exact path={match.path}>
                   <Lobby />
                 </Route>
-                <Route path={ `${match.path}/table` }>
+                <Route path={`${match.path}/table`}>
                   <Table />
                 </Route>
                 <Route>
-                  <Redirect to={ match.path } />
+                  <Redirect to={match.path} />
                 </Route>
               </Switch>
             </>

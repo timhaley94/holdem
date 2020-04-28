@@ -6,7 +6,7 @@ export { default as Boundary } from './Boundary';
 export { default as Button } from './Button';
 export { default as Chat } from './Chat';
 export { default as Errors } from './Errors';
-export { default as Fatal} from './Fatal';
+export { default as Fatal } from './Fatal';
 export { default as Footer } from './Footer';
 export { default as Game } from './Game';
 export { default as Header } from './Header';
