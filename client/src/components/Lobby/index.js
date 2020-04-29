@@ -27,7 +27,6 @@ function Lobby() {
   const copyRef = useRef(null);
   const { push } = useHistory();
   const { pathname } = useLocation();
-  console.log(pathname);
 
   const {
     game,
