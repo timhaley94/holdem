@@ -8,6 +8,8 @@ function Button({ className, ...props }) {
   return (
     <MUIButton
       className={classNames(className, styles.container)}
+      variant="contained"
+      color="primary"
       {...props}
     />
   );

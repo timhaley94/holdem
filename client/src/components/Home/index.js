@@ -26,12 +26,7 @@ function Home() {
       <h1 className={styles.header}>
         Texas Hold&apos;em!
       </h1>
-      <Button
-        size="large"
-        variant="contained"
-        color="primary"
-        onClick={onClick}
-      >
+      <Button size="large" onClick={onClick}>
         Create Game
       </Button>
     </SmallPage>

@@ -119,15 +119,10 @@ function APIProvider({ children }) {
   }, [addError, addMessage, push]);
 
   useEffect(() => {
-    if (
-      _socket
-      && playerId
-      && isConnected
-      && metadata
-      && game
-      && game.players
-      && game.players[playerId]
-    ) {
+    const hasConnection = _socket && playerId && isConnected;
+    const hasGameData = game && game.players && game.players[playerId];
+
+    if (hasConnection && hasGameData && metadata) {
       const storedData = game.players[playerId].data || {};
       const matches = Object.entries(metadata).every(
         ([key, value]) => storedData[key] === value,
