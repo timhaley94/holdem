@@ -8,50 +8,50 @@ import pink from './icons/pink.png';
 import red from './icons/red.png';
 import yellow from './icons/yellow.png';
 
-export const avatars = [
+export default [
   {
     id: '1',
     image: aqua,
-    color: '#92ffd4'
+    color: '#92ffd4',
   },
   {
     id: '2',
     image: darkBlue,
-    color: '#626aa5'
+    color: '#626aa5',
   },
   {
     id: '3',
     image: green,
-    color: '#aff26d'
+    color: '#aff26d',
   },
   {
     id: '4',
     image: grey,
-    color: '#808689'
+    color: '#808689',
   },
   {
     id: '5',
     image: lightBlue,
-    color: '#7997e2'
+    color: '#7997e2',
   },
   {
     id: '6',
     image: orange,
-    color: '#f9a373'
+    color: '#f9a373',
   },
   {
     id: '7',
     image: pink,
-    color: '#c879e2'
+    color: '#c879e2',
   },
   {
     id: '8',
     image: red,
-    color: '#e56373'
+    color: '#e56373',
   },
   {
     id: '9',
     image: yellow,
-    color: '#f9cf58'
-  }
+    color: '#f9cf58',
+  },
 ];

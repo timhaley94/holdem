@@ -1,13 +1,26 @@
 import React from 'react';
-import { Button } from '@material-ui/core';
+import PropTypes from 'prop-types';
+import { Button as MUIButton } from '@material-ui/core';
 import classNames from 'classnames';
 import styles from './index.module.css';
 
-export default function({ className, ...props }) {
+function Button({ className, ...props }) {
   return (
-    <Button
-      className={ classNames(className, styles.container) }
-      { ...props }
+    <MUIButton
+      className={classNames(className, styles.container)}
+      variant="contained"
+      color="primary"
+      {...props}
     />
   );
 }
+
+Button.propTypes = {
+  className: PropTypes.string,
+};
+
+Button.defaultProps = {
+  className: null,
+};
+
+export default Button;

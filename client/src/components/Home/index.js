@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useAPI } from '../../models';
-import { Button, SmallPage } from '..';
+import Button from '../Button';
+import SmallPage from '../SmallPage';
 import styles from './index.module.css';
 
 function Home() {
@@ -22,13 +23,10 @@ function Home() {
 
   return (
     <SmallPage>
-      <h1 className={ styles.header }>Texas Hold'em!</h1>
-      <Button
-        size="large"
-        variant="contained"
-        color="primary"
-        onClick={ onClick }
-      >
+      <h1 className={styles.header}>
+        Texas Hold&apos;em!
+      </h1>
+      <Button size="large" onClick={onClick}>
         Create Game
       </Button>
     </SmallPage>

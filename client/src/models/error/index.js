@@ -1,8 +1,9 @@
 import React, {
   createContext,
   useContext,
-  useState
+  useState,
 } from 'react';
+import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 
 const Context = createContext(null);
@@ -12,16 +13,20 @@ function log(...args) {
   console.log(...args);
 }
 
-export function ErrorProvider({ children }) {
+function ErrorProvider({ children }) {
   const [value, setValue] = useState(null);
   return (
     <Context.Provider value={{ value, setValue }}>
       { children }
     </Context.Provider>
-  )
+  );
 }
 
-export function useError() {
+ErrorProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
+function useError() {
   const { push } = useHistory();
   const { value, setValue } = useContext(Context);
   return [
@@ -30,6 +35,11 @@ export function useError() {
       log(...args);
       setValue(args[0].message);
       push('/error');
-    }
+    },
   ];
 }
+
+export {
+  ErrorProvider,
+  useError,
+};

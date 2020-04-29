@@ -1,6 +1,6 @@
 import React, {
   useCallback,
-  useEffect
+  useEffect,
 } from 'react';
 import PropTypes from 'prop-types';
 import { Alert } from '@material-ui/lab';
@@ -13,7 +13,7 @@ function Error({ id, message }) {
 
   const onDismiss = useCallback(
     () => dismissError(id),
-    [dismissError, id]
+    [dismissError, id],
   );
 
   useEffect(() => {
@@ -24,10 +24,10 @@ function Error({ id, message }) {
   return (
     <Collapse in>
       <Alert
-        className={ styles.error }
+        className={styles.error}
         variant="filled"
         severity="error"
-        onClose={ onDismiss }
+        onClose={onDismiss}
       >
         { message }
       </Alert>
@@ -37,22 +37,22 @@ function Error({ id, message }) {
 
 Error.propTypes = {
   id: PropTypes.string.isRequired,
-  message: PropTypes.string.isRequired
+  message: PropTypes.string.isRequired,
 };
 
 function Errors() {
   const { errors } = useAPI();
 
   return (
-    <div className={ styles.container }>
+    <div className={styles.container}>
       {
         errors.map(
-          error => (
+          (error) => (
             <Error
-              { ...error }
-              key={ error.id }
+              {...error}
+              key={error.id}
             />
-          )
+          ),
         )
       }
     </div>

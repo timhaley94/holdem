@@ -2,18 +2,19 @@ import React, {
   createContext,
   useContext,
   useEffect,
-  useState
+  useState,
 } from 'react';
+import PropTypes from 'prop-types';
 import io from 'socket.io-client';
 import { useHistory } from 'react-router-dom';
 import { generate as generateId } from 'shortid';
-import { useArrayState } from '../../models';
+import { useArrayState } from '../hooks';
+import { useMetadata } from '../metadata';
 import config from '../../config';
-import { useMetadata } from '..';
 
 const Context = createContext(null);
 
-export function APIProvider({ children }) {
+function APIProvider({ children }) {
   const { push } = useHistory();
   const [metadata] = useMetadata();
 
@@ -26,12 +27,12 @@ export function APIProvider({ children }) {
   const [
     errors,
     addError,
-    removeError
+    removeError,
   ] = useArrayState();
 
   const [
     messages,
-    addMessage
+    addMessage,
   ] = useArrayState();
 
   function createGame() {
@@ -62,7 +63,7 @@ export function APIProvider({ children }) {
   }
 
   function dismissError(id) {
-    removeError(e => e.id === id);
+    removeError((e) => e.id === id);
   }
 
   useEffect(() => {
@@ -80,7 +81,7 @@ export function APIProvider({ children }) {
       push('/error');
     }
 
-    socket.on('connect', function() {
+    socket.on('connect', () => {
       setIsConnected(true);
     });
 
@@ -89,22 +90,22 @@ export function APIProvider({ children }) {
     socket.on('error', fatal);
     socket.on('disconnect', reset);
 
-    socket.on('player_id', function(id) {
+    socket.on('player_id', (id) => {
       setPlayerId(id);
     });
 
-    socket.on('incoming_message', function(message) {
+    socket.on('incoming_message', (message) => {
       addMessage(message);
     });
 
-    socket.on('game_state_updated', function(state) {
+    socket.on('game_state_updated', (state) => {
       setGame(state);
     });
 
-    socket.on('game_error', function({ message }) {
+    socket.on('game_error', ({ message }) => {
       addError({
         id: generateId(),
-        message
+        message,
       });
     });
 
@@ -118,18 +119,13 @@ export function APIProvider({ children }) {
   }, [addError, addMessage, push]);
 
   useEffect(() => {
-    if (
-      _socket
-      && playerId
-      && isConnected
-      && metadata
-      && game
-      && game.players
-      && game.players[playerId]
-    ) {
+    const hasConnection = _socket && playerId && isConnected;
+    const hasGameData = game && game.players && game.players[playerId];
+
+    if (hasConnection && hasGameData && metadata) {
       const storedData = game.players[playerId].data || {};
       const matches = Object.entries(metadata).every(
-        ([key, value]) => storedData[key] === value
+        ([key, value]) => storedData[key] === value,
       );
 
       if (!matches) {
@@ -154,12 +150,21 @@ export function APIProvider({ children }) {
   };
 
   return (
-    <Context.Provider value={ value }>
+    <Context.Provider value={value}>
       { children }
     </Context.Provider>
   );
 }
 
-export function useAPI() {
+APIProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
+function useAPI() {
   return useContext(Context);
 }
+
+export {
+  APIProvider,
+  useAPI,
+};

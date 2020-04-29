@@ -2,7 +2,7 @@ import {
   useCallback,
   useEffect,
   useReducer,
-  useState
+  useState,
 } from 'react';
 
 const SHIFT_CODE = 16;
@@ -12,7 +12,7 @@ export function useEnterPress(fn) {
   const [isShiftDown, setIsShiftDown] = useState(false);
 
   useEffect(() => {
-    const handler = e => {
+    const handler = (e) => {
       if (e.keyCode === SHIFT_CODE) {
         setIsShiftDown(true);
       }
@@ -27,7 +27,7 @@ export function useEnterPress(fn) {
   }, [fn, isShiftDown, setIsShiftDown]);
 
   useEffect(() => {
-    const handler = e => {
+    const handler = (e) => {
       if (e.keyCode === SHIFT_CODE) {
         setIsShiftDown(false);
       }
@@ -39,7 +39,7 @@ export function useEnterPress(fn) {
 }
 
 export function useArrayState() {
-  const [state, dispatch] = useReducer(
+  const [s, dispatch] = useReducer(
     (state, action) => {
       switch (action.type) {
         case 'push':
@@ -47,40 +47,40 @@ export function useArrayState() {
             ...state,
             value: [
               ...state.value,
-              action.value
-            ]
+              action.value,
+            ],
           };
         case 'pull':
           return {
             ...state,
             value: state.value.filter(
-              x => !action.fn(x)
-            )
+              (x) => !action.fn(x),
+            ),
           };
         default:
           return state;
       }
     },
     {
-      value: []
-    }
+      value: [],
+    },
   );
 
   const push = useCallback(
-    value => dispatch({
+    (value) => dispatch({
       type: 'push',
-      value
+      value,
     }),
-    [dispatch]
+    [dispatch],
   );
 
   const pull = useCallback(
-    fn => dispatch({
+    (fn) => dispatch({
       type: 'pull',
-      fn
+      fn,
     }),
-    [dispatch]
+    [dispatch],
   );
 
-  return [state.value, push, pull];
+  return [s.value, push, pull];
 }

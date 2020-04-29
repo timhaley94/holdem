@@ -1,5 +1,5 @@
 import React from 'react';
-import { SmallPage } from '..';
+import SmallPage from '../SmallPage';
 
 function About() {
   return (
