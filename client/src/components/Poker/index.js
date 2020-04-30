@@ -5,10 +5,10 @@ import Boundary from '../Boundary';
 import Errors from '../Errors';
 import Game from '../Game';
 import Home from '../Home';
-import { useAPI } from '../../models';
+import { useSocket } from '../../models';
 
 function Poker() {
-  const { isConnected } = useAPI();
+  const { isConnected } = useSocket();
 
   return (
     <Boundary>

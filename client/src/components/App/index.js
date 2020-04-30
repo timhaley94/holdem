@@ -4,7 +4,7 @@ import {
   Switch,
   Route,
 } from 'react-router-dom';
-import { Provider, APIProvider } from '../../models';
+import { StateProvider, APIProvider } from '../../models';
 import About from '../About';
 import Header from '../Header';
 import Fatal from '../Fatal';
@@ -16,7 +16,7 @@ import './index.css';
 
 function App() {
   return (
-    <Provider>
+    <StateProvider>
       <div className={styles.container}>
         <Router>
           <Header />
@@ -39,7 +39,7 @@ function App() {
           <Footer />
         </Router>
       </div>
-    </Provider>
+    </StateProvider>
   );
 }
 

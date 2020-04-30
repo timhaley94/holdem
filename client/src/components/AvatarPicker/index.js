@@ -5,7 +5,7 @@ import {
   Radio,
   RadioGroup,
 } from '@material-ui/core';
-import { avatars } from '../../models';
+import avatars from '../../data/avatars';
 import styles from './index.module.css';
 
 function AvatarPicker({ value, onChange }) {

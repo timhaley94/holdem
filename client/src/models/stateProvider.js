@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ErrorProvider } from '../error';
-import { MetadataProvider } from '../metadata';
+import { ErrorProvider } from './error';
+import { MetadataProvider } from './metadata';
 
-function Provider({ children }) {
+function StateProvider({ children }) {
   return (
     <MetadataProvider>
       <ErrorProvider>
@@ -13,8 +13,8 @@ function Provider({ children }) {
   );
 }
 
-Provider.propTypes = {
+StateProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-export default Provider;
+export default StateProvider;

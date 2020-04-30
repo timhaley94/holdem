@@ -9,19 +9,20 @@ import io from 'socket.io-client';
 import { useHistory } from 'react-router-dom';
 import { generate as generateId } from 'shortid';
 import { useArrayState } from '../hooks';
-import { useMetadata } from '../metadata';
-import config from '../../config';
+import config from '../config';
+import { useAuth } from './auth';
+import { useMetadata } from './metadata';
 
 const Context = createContext(null);
 
-function APIProvider({ children }) {
+function SocketProvider({ children }) {
   const { push } = useHistory();
   const [metadata] = useMetadata();
+  const { playerId, token } = useAuth();
 
-  // API State
+  // Socket State
   const [_socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
-  const [playerId, setPlayerId] = useState(null);
   const [game, setGame] = useState(null);
 
   const [
@@ -67,56 +68,55 @@ function APIProvider({ children }) {
   }
 
   useEffect(() => {
-    const socket = io(config.serverUrl);
-
-    function reset() {
-      setGame(null);
-      setPlayerId(null);
-      setIsConnected(false);
-    }
-
-    function fatal() {
-      // Log fatal here
-      reset();
-      push('/error');
-    }
-
-    socket.on('connect', () => {
-      setIsConnected(true);
-    });
-
-    socket.on('connect_error', fatal);
-    socket.on('connect_timeout', fatal);
-    socket.on('error', fatal);
-    socket.on('disconnect', reset);
-
-    socket.on('player_id', (id) => {
-      setPlayerId(id);
-    });
-
-    socket.on('incoming_message', (message) => {
-      addMessage(message);
-    });
-
-    socket.on('game_state_updated', (state) => {
-      setGame(state);
-    });
-
-    socket.on('game_error', ({ message }) => {
-      addError({
-        id: generateId(),
-        message,
+    if (token) {
+      const socket = io(config.serverUrl, {
+        query: { token },
       });
-    });
 
-    setSocket(socket);
+      const reset = () => {
+        setGame(null);
+        setIsConnected(false);
+      };
 
-    return () => {
-      // Must be wrapped in anonymous function because
-      // of 'this' binding inside .disconnect()
-      socket.disconnect();
-    };
-  }, [addError, addMessage, push]);
+      const fatal = () => {
+        // Log fatal here
+        reset();
+        push('/error');
+      };
+
+      socket.on('connect', () => {
+        setIsConnected(true);
+      });
+
+      socket.on('connect_error', fatal);
+      socket.on('connect_timeout', fatal);
+      socket.on('error', fatal);
+      socket.on('disconnect', reset);
+
+      socket.on('incoming_message', (message) => {
+        addMessage(message);
+      });
+
+      socket.on('game_state_updated', (state) => {
+        setGame(state);
+      });
+
+      socket.on('game_error', ({ message }) => {
+        addError({
+          id: generateId(),
+          message,
+        });
+      });
+
+      setSocket(socket);
+
+      return () => {
+        // Must be wrapped in anonymous function because
+        // of 'this' binding inside .disconnect()
+        socket.disconnect();
+      };
+    }
+  }, [token, addError, addMessage, push]);
 
   useEffect(() => {
     const hasConnection = _socket && playerId && isConnected;
@@ -156,15 +156,15 @@ function APIProvider({ children }) {
   );
 }
 
-APIProvider.propTypes = {
+SocketProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-function useAPI() {
+function useSocket() {
   return useContext(Context);
 }
 
 export {
-  APIProvider,
-  useAPI,
+  SocketProvider,
+  useSocket,
 };

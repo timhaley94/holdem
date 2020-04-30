@@ -17,7 +17,7 @@ import {
   useHistory,
   useLocation,
 } from 'react-router-dom';
-import { useAPI } from '../../models';
+import { useSocket } from '../../models';
 import Avatar from '../Avatar';
 import Button from '../Button';
 import styles from './index.module.css';
@@ -32,7 +32,7 @@ function Lobby() {
     game,
     playerId,
     setReady,
-  } = useAPI();
+  } = useSocket();
 
   useEffect(() => {
     if (game && game.isStarted) {
