@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { useAPI } from '../../models';
+import { useSocket } from '../../models';
 import Avatar from '../Avatar';
 import styles from './index.module.css';
 
 function MessageGroup({ playerId, messages }) {
-  const { game } = useAPI();
+  const { game } = useSocket();
   const { name } = (
     Object
       .values(game.players)

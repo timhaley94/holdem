@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Avatar as MUIAvatar } from '@material-ui/core';
-import { avatars, useAPI } from '../../models';
+import avatars from '../../data/avatars';
+import { useSocket } from '../../models';
 import styles from './index.module.css';
 
 function Avatar({ playerId }) {
-  const { game } = useAPI();
+  const { game } = useSocket();
   const { avatarId } = (
     Object
       .values(game.players)

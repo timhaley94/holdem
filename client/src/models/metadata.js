@@ -1,39 +1,15 @@
 import React, {
   createContext,
   useContext,
-  useEffect,
-  useState,
 } from 'react';
 import PropTypes from 'prop-types';
+import { useStoredState } from '../hooks';
 
 const Context = createContext(null);
 const STORAGE_KEY = 'user-data';
 
 function MetadataProvider({ children }) {
-  const [value, _setValue] = useState(null);
-
-  useEffect(() => {
-    const storedData = JSON.parse(
-      localStorage.getItem(STORAGE_KEY),
-    );
-
-    if (storedData) {
-      _setValue(storedData);
-    }
-  }, []);
-
-  function setValue(data) {
-    const next = {
-      ...value,
-      ...data,
-    };
-
-    _setValue(next);
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(next),
-    );
-  }
+  const [value, setValue] = useStoredState(STORAGE_KEY);
 
   return (
     <Context.Provider value={{ value, setValue }}>

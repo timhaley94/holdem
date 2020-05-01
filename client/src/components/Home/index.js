@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useAPI } from '../../models';
+import { useSocket } from '../../models';
 import Button from '../Button';
 import SmallPage from '../SmallPage';
 import styles from './index.module.css';
 
 function Home() {
   const { push } = useHistory();
-  const { createGame, game } = useAPI();
+  const { createGame, game } = useSocket();
   const [isCreating, setIsCreating] = useState(false);
 
   const onClick = () => {

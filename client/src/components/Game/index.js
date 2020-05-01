@@ -7,7 +7,7 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 import { CircularProgress } from '@material-ui/core';
-import { useAPI } from '../../models';
+import { useSocket } from '../../models';
 import Chat from '../Chat';
 import Lobby from '../Lobby';
 import Table from '../Table';
@@ -15,7 +15,7 @@ import styles from './index.module.css';
 
 function Game() {
   const match = useRouteMatch();
-  const { game, joinGame } = useAPI();
+  const { game, joinGame } = useSocket();
   const { id } = useParams();
 
   useEffect(() => {

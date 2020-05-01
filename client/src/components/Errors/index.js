@@ -5,11 +5,11 @@ import React, {
 import PropTypes from 'prop-types';
 import { Alert } from '@material-ui/lab';
 import { Collapse } from '@material-ui/core';
-import { useAPI } from '../../models';
+import { useSocket } from '../../models';
 import styles from './index.module.css';
 
 function Error({ id, message }) {
-  const { dismissError } = useAPI();
+  const { dismissError } = useSocket();
 
   const onDismiss = useCallback(
     () => dismissError(id),
@@ -41,7 +41,7 @@ Error.propTypes = {
 };
 
 function Errors() {
-  const { errors } = useAPI();
+  const { errors } = useSocket();
 
   return (
     <div className={styles.container}>

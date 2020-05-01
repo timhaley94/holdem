@@ -4,13 +4,14 @@ import {
   Divider,
   TextareaAutosize,
 } from '@material-ui/core';
-import { useAPI, useEnterPress } from '../../models';
+import { useEnterPress } from '../../hooks';
+import { useSocket } from '../../models';
 import { chunkBy } from '../../utils';
 import MessageGroup from '../MessageGroup';
 import styles from './index.module.css';
 
 function Chat() {
-  const { messages, sendMessage } = useAPI();
+  const { messages, sendMessage } = useSocket();
   const [focused, setFocused] = useState(false);
   const [value, setValue] = useState('');
   const bottomRef = useRef(null);

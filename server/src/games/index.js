@@ -50,6 +50,10 @@ function _new({ id, playerId, emit }) {
   game.emit();
 }
 
+function isFull({ id }) {
+  return get(id).isFull();
+}
+
 function addPlayer({ id, playerId }) {
   const game = get(id);
 
@@ -57,11 +61,10 @@ function addPlayer({ id, playerId }) {
     throw new Error('Game is already full.');
   }
 
-  if (game.players[playerId]) {
-    throw new Error('Player already added.');
+  if (!game.players[playerId]) {
+    game.players[playerId] = newPlayer(playerId);
   }
 
-  game.players[playerId] = newPlayer(playerId);
   game.emit();
 }
 
@@ -114,6 +117,7 @@ function makeMove() {
 
 module.exports = {
   new: _new,
+  isFull,
   addPlayer,
   setPlayerData,
   setPlayerReady,

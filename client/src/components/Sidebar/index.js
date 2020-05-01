@@ -9,8 +9,9 @@ import {
   InputLabel,
 } from '@material-ui/core';
 import { useRouteMatch } from 'react-router-dom';
+import avatars from '../../data/avatars';
 import { hasOwnProperty } from '../../utils';
-import { avatars, useMetadata } from '../../models';
+import { useMetadata } from '../../models';
 import AvatarPicker from '../AvatarPicker';
 import styles from './index.module.css';
 
