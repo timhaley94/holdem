@@ -2,8 +2,8 @@ const { v4: uuid } = require('uuid');
 const Games = require('../games');
 
 function onConnect(socket) {
+  const playerId = socket.decoded_token.data.id;
   let gameId = null;
-  socket.emit('player_id', socket.id);
 
   function massEmit(...args) {
     socket.emit(...args);
@@ -20,15 +20,17 @@ function onConnect(socket) {
     gameId = null;
   }
 
-  function reportError(e, data) {
+  function reportError(msg, e, data) {
     const payload = {
       ...data,
       message: e.message,
     };
 
-    console.log(payload);
-    socket.emit('game_error', payload);
+    socket.emit(msg, payload);
   }
+
+  const gameError = (...args) => reportError('game_error', ...args);
+  const roomError = (...args) => reportError('room_error', ...args);
 
   function create() {
     if (!gameId) {
@@ -36,12 +38,12 @@ function onConnect(socket) {
 
       try {
         Games.new({
+          playerId,
           id: gameId,
-          playerId: socket.id,
           emit: massEmit,
         });
       } catch (e) {
-        reportError(e, {
+        roomError(e, {
           source: 'create',
         });
 
@@ -54,17 +56,24 @@ function onConnect(socket) {
     if (!gameId) {
       joinRoom(id);
 
-      try {
-        Games.addPlayer({
-          id: gameId,
-          playerId: socket.id,
-        });
-      } catch (e) {
-        reportError(e, {
-          source: 'join',
-        });
+      if (Games.isFull({ id })) {
+        gameError(
+          new Error('Game is already full.'),
+          { source: 'join' },
+        );
+      } else {
+        try {
+          Games.addPlayer({
+            id: gameId,
+            playerId,
+          });
+        } catch (e) {
+          roomError(e, {
+            source: 'join',
+          });
 
-        leaveRoom();
+          leaveRoom();
+        }
       }
     }
   }
@@ -74,11 +83,11 @@ function onConnect(socket) {
       try {
         Games.setPlayerData({
           id: gameId,
-          playerId: socket.id,
+          playerId,
           data,
         });
       } catch (e) {
-        reportError(e, {
+        gameError(e, {
           source: 'setData',
         });
       }
@@ -90,11 +99,11 @@ function onConnect(socket) {
       try {
         Games.setPlayerReady({
           id: gameId,
-          playerId: socket.id,
+          playerId,
           value,
         });
       } catch (e) {
-        reportError(e, {
+        gameError(e, {
           source: 'setReady',
         });
       }
@@ -104,7 +113,7 @@ function onConnect(socket) {
   function sendMessage(message) {
     massEmit('incoming_message', {
       message,
-      playerId: socket.id,
+      playerId,
       timestamp: new Date(),
     });
   }
@@ -114,11 +123,11 @@ function onConnect(socket) {
       try {
         Games.makeMove({
           id: gameId,
-          playerId: socket.id,
+          playerId,
           data,
         });
       } catch (e) {
-        reportError(e, {
+        gameError(e, {
           source: 'move',
         });
       }
@@ -130,10 +139,10 @@ function onConnect(socket) {
       try {
         Games.removePlayer({
           id: gameId,
-          playerId: socket.id,
+          playerId,
         });
       } catch (e) {
-        reportError(e, {
+        roomError(e, {
           source: 'leave',
         });
       }

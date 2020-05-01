@@ -91,6 +91,7 @@ function SocketProvider({ children }) {
       socket.on('connect_error', fatal);
       socket.on('connect_timeout', fatal);
       socket.on('error', fatal);
+      socket.on('room_error', fatal);
       socket.on('disconnect', reset);
 
       socket.on('incoming_message', (message) => {

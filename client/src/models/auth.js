@@ -43,9 +43,9 @@ function AuthProvider({ children }) {
       let nextToken = null;
       let nextData = null;
 
-      if (data.id && data.secret) {
+      if (data.playerId && data.secret) {
         const res = await auth(
-          data.id,
+          data.playerId,
           data.secret,
         );
 
@@ -55,7 +55,7 @@ function AuthProvider({ children }) {
         const res = await create(secret);
 
         nextToken = res.token;
-        nextData = { id: res.id, secret };
+        nextData = { playerId: res.id, secret };
       }
 
       if (isValid()) {

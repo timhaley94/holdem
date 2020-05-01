@@ -32,7 +32,7 @@ function auth({ id, secret }) {
     throw new AuthError('Invalid secret');
   }
 
-  return jwt.sign({ data: {} }, key);
+  return jwt.sign({ data: { id } }, key);
 }
 
 function verify({ token }) {

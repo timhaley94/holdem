@@ -1,16 +1,8 @@
 const { Server } = require('http');
-const IO = require('socket.io');
-const api = require('./api');
-const onConnect = require('./io');
+const API = require('./api');
+const Socket = require('./socket');
 const config = require('./config');
 
-const server = Server(api);
-const io = IO(server, {
-  origins: '*:*',
-  serveClient: false,
-  pingInterval: config.socket.pingInterval,
-  pingTimeout: config.socket.pingTimeout,
-});
-
-io.sockets.on('connection', onConnect);
+const server = Server(API);
+Socket(server);
 server.listen(config.port);
