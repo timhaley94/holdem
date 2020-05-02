@@ -38,5 +38,5 @@
 .message {
   margin: 0.25rem 0;
   overflow-wrap: break-word;
-  white-space: pre;
+  white-space: pre-wrap;
 }
