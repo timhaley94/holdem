@@ -39,12 +39,14 @@ function _new({ id, playerId, emit }) {
   game.isFull = () => game.playerCount() >= MAX_PLAYERS;
   game.shouldStart = () => game.canStart() && game.allPlayersReady();
 
-  game.emit = () => emit('game_state_updated', {
-    ...game,
-    playerCount: game.playerCount(),
-    canStart: game.canStart(),
-    isFull: game.isFull(),
-  });
+  game.emit = () => {
+    emit('game_state_updated', {
+      ...game,
+      playerCount: game.playerCount(),
+      canStart: game.canStart(),
+      isFull: game.isFull(),
+    })
+  };
 
   games[id] = game;
   game.emit();
