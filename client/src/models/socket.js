@@ -37,12 +37,11 @@ function SocketProvider({ children }) {
   ] = useArrayState();
 
   function createGame() {
-    setGame(null);
     _socket.emit('new_game');
   }
 
   function joinGame(id) {
-    setGame(null);
+    console.log('join');
     _socket.emit('join_game', id);
   }
 
@@ -69,6 +68,7 @@ function SocketProvider({ children }) {
 
   useEffect(() => {
     if (token) {
+      console.log('hi');
       const socket = io(config.serverUrl, {
         query: { token },
       });
@@ -99,6 +99,7 @@ function SocketProvider({ children }) {
       });
 
       socket.on('game_state_updated', (state) => {
+        console.log('game_state_updated');
         setGame(state);
       });
 
@@ -109,6 +110,7 @@ function SocketProvider({ children }) {
         });
       });
 
+      console.log('registered');
       setSocket(socket);
 
       return () => {
@@ -136,7 +138,7 @@ function SocketProvider({ children }) {
   }, [_socket, game, isConnected, metadata, playerId]);
 
   const value = {
-    isConnected,
+    isConnected: !!(isConnected && _socket),
     playerId,
     messages,
     game,

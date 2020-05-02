@@ -12,12 +12,18 @@ function onConnect(socket) {
 
   function joinRoom(id) {
     gameId = id;
-    socket.join(gameId);
+    return new Promise((resolve) => {
+      socket.join(gameId, resolve);
+    });
   }
 
   function leaveRoom() {
-    socket.leave(gameId);
+    const p = new Promise((resolve) => {
+      socket.leave(gameId, resolve);
+    });
+
     gameId = null;
+    return p;
   }
 
   function reportError(msg, e, data) {
@@ -32,9 +38,9 @@ function onConnect(socket) {
   const gameError = (...args) => reportError('game_error', ...args);
   const roomError = (...args) => reportError('room_error', ...args);
 
-  function create() {
+  async function create() {
     if (!gameId) {
-      joinRoom(uuid());
+      await joinRoom(uuid());
 
       try {
         Games.new({
@@ -47,16 +53,26 @@ function onConnect(socket) {
           source: 'create',
         });
 
-        leaveRoom();
+        await leaveRoom();
       }
     }
   }
 
-  function join(id) {
+  async function join(id) {
     if (!gameId) {
-      joinRoom(id);
+      await joinRoom(id);
 
-      if (Games.isFull({ id })) {
+      let isFull;
+
+      try {
+        isFull = Games.isFull({ id });
+      } catch (e) {
+        roomError(e, {
+          source: 'join',
+        });
+      }
+
+      if (isFull) {
         gameError(
           new Error('Game is already full.'),
           { source: 'join' },
@@ -72,7 +88,7 @@ function onConnect(socket) {
             source: 'join',
           });
 
-          leaveRoom();
+          await leaveRoom();
         }
       }
     }
@@ -134,7 +150,7 @@ function onConnect(socket) {
     }
   }
 
-  function leave() {
+  async function leave() {
     if (gameId) {
       try {
         Games.removePlayer({
@@ -147,7 +163,7 @@ function onConnect(socket) {
         });
       }
 
-      leaveRoom();
+      await leaveRoom();
     }
   }
 
