@@ -1,9 +1,8 @@
-const { authorize } = require('socketio-jwt');
+const makeMiddleware = require('express-jwt');
 const config = require('../config');
 
-const middleware = authorize({
+const middleware = makeMiddleware({
   secret: config.auth.privateKey,
-  handshake: true,
 });
 
 module.exports = { middleware };

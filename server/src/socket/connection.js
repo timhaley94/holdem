@@ -1,5 +1,5 @@
 const { v4: uuid } = require('uuid');
-const Games = require('../games');
+const { Games } = require('../models');
 
 function onConnect(socket) {
   const playerId = socket.decoded_token.data.id;

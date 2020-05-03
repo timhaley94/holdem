@@ -1,6 +1,6 @@
 const IO = require('socket.io');
 const config = require('../config');
-const auth = require('./auth');
+const Auth = require('./auth');
 const onConnect = require('./connection');
 
 function Socket(server) {
@@ -11,7 +11,7 @@ function Socket(server) {
     pingTimeout: config.socket.pingTimeout,
   });
 
-  io.use(auth);
+  io.use(Auth.middleware);
   io.sockets.on('connection', onConnect);
 }
 

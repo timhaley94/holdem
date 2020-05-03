@@ -7,4 +7,8 @@ module.exports = {
     pingInterval: 10000,
     pingTimeout: 5000,
   },
+  game: {
+    maxPlayers: 9,
+    minPlayers: 2,
+  },
 };
