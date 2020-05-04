@@ -229,44 +229,130 @@ describe('Models.Games', () => {
   });
 
   describe('addPlayer', () => {
-    it('listens to user updates', () => {
+    it('defaults isReady to false', async () => {
+      const { id } = await Games.create({ name: 'test' });
+      const user = await Users.create({ secret: password });
 
+      await Games.addUser({ id, userId: user.id });
+      await Games.addPlayer({ id, userId: user.id });
+
+      const game = await Games.retrieve({ id });
+
+      expect(game.users).toEqual({
+        [user.id]: {
+          id: user.id,
+          metadata: null,
+        },
+      });
+
+      expect(game.players).toEqual({
+        [user.id]: {
+          isReady: false,
+        },
+      });
     });
 
-    it('throws if game is full', () => {
+    it('throws if game is full', async () => {
+      const { id } = await Games.create({ name: 'test' });
 
-    });
+      await Promise.all(
+        [...Array(config.game.maxPlayers)].map(
+          async () => {
+            const user = await Users.create({ secret: password });
+            await Games.addUser({ id, userId: user.id });
+            await Games.addPlayer({ id, userId: user.id });
+          },
+        ),
+      );
 
-    it('defaults isReady to false', () => {
+      const user = await Users.create({ secret: password });
+      await Games.addUser({ id, userId: user.id });
 
+      return expect(
+        () => Games.addPlayer({ id, userId: user.id }),
+      ).rejects.toThrow(Errors.Conflict);
     });
   });
 
   describe('.isFull()', () => {
-    it('handles full case', () => {
+    it('handles full case', async () => {
+      const { id } = await Games.create({ name: 'test' });
 
+      await Promise.all(
+        [...Array(config.game.maxPlayers)].map(
+          async () => {
+            const user = await Users.create({ secret: password });
+            await Games.addUser({ id, userId: user.id });
+            await Games.addPlayer({ id, userId: user.id });
+          },
+        ),
+      );
+
+      const result = await Games.isFull({ id });
+      expect(result).toBe(true);
     });
 
-    it('handles not full case', () => {
+    it('handles not full case', async () => {
+      const { id } = await Games.create({ name: 'test' });
 
+      const user = await Users.create({ secret: password });
+      await Games.addUser({ id, userId: user.id });
+      await Games.addPlayer({ id, userId: user.id });
+
+      const result = await Games.isFull({ id });
+      expect(result).toBe(false);
     });
   });
 
   describe('.setPlayerReady()', () => {
-    it('sets true', () => {
+    it('sets true', async () => {
+      const { id } = await Games.create({ name: 'test' });
 
+      const user = await Users.create({ secret: password });
+      await Games.addUser({ id, userId: user.id });
+      await Games.addPlayer({ id, userId: user.id });
+      await Games.setPlayerReady({ id, userId: user.id, isReady: true });
+
+      const game = await Games.retrieve({ id });
+      expect(game.players).toEqual({
+        [user.id]: { isReady: true },
+      });
     });
 
-    it('sets false', () => {
+    it('sets false', async () => {
+      const { id } = await Games.create({ name: 'test' });
 
+      const user = await Users.create({ secret: password });
+      await Games.addUser({ id, userId: user.id });
+      await Games.addPlayer({ id, userId: user.id });
+      await Games.setPlayerReady({ id, userId: user.id, isReady: true });
+      await Games.setPlayerReady({ id, userId: user.id, isReady: false });
+
+      const game = await Games.retrieve({ id });
+      expect(game.players).toEqual({
+        [user.id]: { isReady: false },
+      });
     });
 
-    it('attempts start', () => {
+    it('attempts start', async () => {
+      const { id } = await Games.create({ name: 'test' });
 
+      const user1 = await Users.create({ secret: password });
+      await Games.addUser({ id, userId: user1.id });
+      await Games.addPlayer({ id, userId: user1.id });
+      await Games.setPlayerReady({ id, userId: user1.id, isReady: true });
+
+      const user2 = await Users.create({ secret: password });
+      await Games.addUser({ id, userId: user2.id });
+      await Games.addPlayer({ id, userId: user2.id });
+      await Games.setPlayerReady({ id, userId: user2.id, isReady: true });
+
+      const game = await Games.retrieve({ id });
+      expect(game.isStarted).toBe(true);
     });
   });
 
   describe('.makeMove()', () => {
-
+    // TODO
   });
 });

@@ -12,4 +12,4 @@ router.post('/auth', Route.handler(
   (req) => Users.auth(req.body),
 ));
 
-module.exports = router;
+module.exports = { router };

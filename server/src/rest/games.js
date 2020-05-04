@@ -16,4 +16,4 @@ router.post('/', Route.private, Route.handler(
   (req) => Games.create(req.body),
 ));
 
-module.exports = router;
+module.exports = { router };
