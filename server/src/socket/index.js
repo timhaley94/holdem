@@ -1,7 +1,8 @@
 const IO = require('socket.io');
 const config = require('../config');
 const Auth = require('./auth');
-const onConnect = require('./connection');
+const Game = require('./game');
+// const Games = require('./games');
 
 function Socket(server) {
   const io = IO(server, {
@@ -12,7 +13,13 @@ function Socket(server) {
   });
 
   io.use(Auth.middleware);
-  io.sockets.on('connection', onConnect);
+
+  Game.onStart(io.sockets);
+
+  io.sockets.on('connection', (socket) => {
+    Game.onConnect(socket);
+    // Games.onConnect(socket);
+  });
 }
 
 module.exports = Socket;

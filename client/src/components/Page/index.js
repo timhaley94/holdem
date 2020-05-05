@@ -2,18 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './index.module.css';
 
-function SmallPage({ children }) {
+function Page({ children }) {
   return (
     <div className={styles.container}>
-      <div className={styles.content}>
-        { children }
-      </div>
+      { children }
     </div>
   );
 }
 
-SmallPage.propTypes = {
+Page.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-export default SmallPage;
+export default Page;

@@ -8,7 +8,12 @@ const Handler = require('../handler');
 const Errors = require('../errors');
 
 let games = {};
+let subscription;
 const listener = Listener.create();
+
+function listen(fn) {
+  subscription = fn;
+}
 
 const schemas = {
   id: (
@@ -40,9 +45,15 @@ function reset() {
 }
 
 function Game({ name, isPrivate }) {
+  const id = uuid();
+
+  if (subscription) {
+    listener.subscribe(id, () => subscription(id));
+  }
+
   return {
+    id,
     name,
-    id: uuid(),
     isPrivate,
     isStarted: false,
     users: [],
@@ -271,4 +282,5 @@ module.exports = {
   makeMove,
   reset,
   listener,
+  listen,
 };

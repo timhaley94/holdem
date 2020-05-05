@@ -10,15 +10,16 @@ import { useHistory } from 'react-router-dom';
 import { generate as generateId } from 'shortid';
 import { useArrayState } from '../hooks';
 import config from '../config';
-import { useAuth } from './auth';
-import { useMetadata } from './metadata';
+import { useUser } from './user';
 
 const Context = createContext(null);
 
 function SocketProvider({ children }) {
   const { push } = useHistory();
-  const [metadata] = useMetadata();
-  const { playerId, token } = useAuth();
+  const [{
+    id: playerId,
+    token,
+  }] = useUser();
 
   // Socket State
   const [_socket, setSocket] = useState(null);
@@ -36,21 +37,16 @@ function SocketProvider({ children }) {
     addMessage,
   ] = useArrayState();
 
-  function createGame() {
-    _socket.emit('new_game');
+  function sendMessage(message) {
+    _socket.emit('send_message', message);
   }
 
   function joinGame(id) {
-    console.log('join');
     _socket.emit('join_game', id);
   }
 
   function setReady(value) {
     _socket.emit('set_ready', value);
-  }
-
-  function sendMessage(message) {
-    _socket.emit('send_message', message);
   }
 
   function makeMove(data) {
@@ -68,7 +64,6 @@ function SocketProvider({ children }) {
 
   useEffect(() => {
     if (token) {
-      console.log('hi');
       const socket = io(config.serverUrl, {
         query: { token },
       });
@@ -93,16 +88,8 @@ function SocketProvider({ children }) {
       socket.on('error', fatal);
       socket.on('room_error', fatal);
       socket.on('disconnect', reset);
-
-      socket.on('incoming_message', (message) => {
-        addMessage(message);
-      });
-
-      socket.on('game_state_updated', (state) => {
-        console.log('game_state_updated');
-        setGame(state);
-      });
-
+      socket.on('incoming_message', addMessage);
+      socket.on('game_state_updated', setGame);
       socket.on('game_error', ({ message }) => {
         addError({
           id: generateId(),
@@ -110,7 +97,6 @@ function SocketProvider({ children }) {
         });
       });
 
-      console.log('registered');
       setSocket(socket);
 
       return () => {
@@ -121,29 +107,12 @@ function SocketProvider({ children }) {
     }
   }, [token, addError, addMessage, push]);
 
-  useEffect(() => {
-    const hasConnection = _socket && playerId && isConnected;
-    const hasGameData = game && game.players && game.players[playerId];
-
-    if (hasConnection && hasGameData && metadata) {
-      const storedData = game.players[playerId].data || {};
-      const matches = Object.entries(metadata).every(
-        ([key, value]) => storedData[key] === value,
-      );
-
-      if (!matches) {
-        _socket.emit('set_data', metadata);
-      }
-    }
-  }, [_socket, game, isConnected, metadata, playerId]);
-
   const value = {
     isConnected: !!(isConnected && _socket),
     playerId,
     messages,
     game,
     errors,
-    createGame,
     joinGame,
     setReady,
     sendMessage,

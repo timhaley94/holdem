@@ -7,11 +7,11 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 import { CircularProgress } from '@material-ui/core';
-import { useSocket } from '../../models';
+import { useSocket } from '../../state';
 import Chat from '../Chat';
 import Lobby from '../Lobby';
+import Page from '../Page';
 import Table from '../Table';
-import styles from './index.module.css';
 
 function Game() {
   const match = useRouteMatch();
@@ -25,7 +25,7 @@ function Game() {
   }, [game, id, joinGame]);
 
   return (
-    <div className={styles.container}>
+    <Page>
       {
         !game
           ? <CircularProgress />
@@ -46,7 +46,7 @@ function Game() {
             </>
           )
       }
-    </div>
+    </Page>
   );
 }
 

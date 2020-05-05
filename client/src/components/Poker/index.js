@@ -1,17 +1,16 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { CircularProgress } from '@material-ui/core';
-import Boundary from '../Boundary';
 import Errors from '../Errors';
 import Game from '../Game';
 import Home from '../Home';
-import { useSocket } from '../../models';
+import { useSocket } from '../../state';
 
 function Poker() {
   const { isConnected } = useSocket();
 
   return (
-    <Boundary>
+    <>
       <Errors />
       {
         !isConnected
@@ -30,7 +29,7 @@ function Poker() {
             </Switch>
           )
       }
-    </Boundary>
+    </>
   );
 }
 

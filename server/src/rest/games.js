@@ -12,7 +12,7 @@ router.get('/:id', Route.handler(
   (req) => Games.retrieve(req.params),
 ));
 
-router.post('/', Route.private, Route.handler(
+router.post('/', Route.handler(
   (req) => Games.create(req.body),
 ));
 

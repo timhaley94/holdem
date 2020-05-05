@@ -4,8 +4,9 @@ import {
   Switch,
   Route,
 } from 'react-router-dom';
-import { StateProvider, APIProvider } from '../../models';
+import { StateProvider, APIProvider } from '../../state';
 import About from '../About';
+import Boundary from '../Boundary';
 import Header from '../Header';
 import Fatal from '../Fatal';
 import Footer from '../Footer';
@@ -30,9 +31,11 @@ function App() {
                 <Fatal />
               </Route>
               <Route>
-                <APIProvider>
-                  <Poker />
-                </APIProvider>
+                <Boundary>
+                  <APIProvider>
+                    <Poker />
+                  </APIProvider>
+                </Boundary>
               </Route>
             </Switch>
           </main>

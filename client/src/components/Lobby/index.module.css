@@ -50,21 +50,6 @@
   margin-top: 2rem;
 }
 
-.players {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: stretch;
-}
-
-.player {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .playerInfo {
   display: flex;
   justify-content: flex-start;
@@ -73,17 +58,4 @@
 
 .name {
   margin-left: 1rem;
-}
-
-.container .cell {
-  color: #6b6b76;
-  font-size: 11px;
-  font-family: 'Libre Franklin', sans-serif;
-}
-
-.container .header {
-  color: #6b6b76;
-  font-size: 11px;
-  font-family: 'Libre Franklin', sans-serif;
-  font-weight: bold;
 }

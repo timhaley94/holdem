@@ -5,7 +5,7 @@ import React, {
 import PropTypes from 'prop-types';
 import { Alert } from '@material-ui/lab';
 import { Collapse } from '@material-ui/core';
-import { useSocket } from '../../models';
+import { useSocket } from '../../state';
 import styles from './index.module.css';
 
 function Error({ id, message }) {
