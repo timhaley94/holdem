@@ -5,7 +5,7 @@ import {
   TextareaAutosize,
 } from '@material-ui/core';
 import { useEnterPress } from '../../hooks';
-import { useSocket } from '../../models';
+import { useSocket } from '../../state';
 import { chunkBy } from '../../utils';
 import MessageGroup from '../MessageGroup';
 import styles from './index.module.css';

@@ -1,11 +1,10 @@
 import React from 'react';
-import SmallPage from '../SmallPage';
 
 function About() {
   return (
-    <SmallPage>
+    <div>
       <p>Hey from about</p>
-    </SmallPage>
+    </div>
   );
 }
 

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Avatar as MUIAvatar } from '@material-ui/core';
 import avatars from '../../data/avatars';
-import { useSocket } from '../../models';
+import { useSocket } from '../../state';
 import styles from './index.module.css';
 
 function Avatar({ playerId }) {

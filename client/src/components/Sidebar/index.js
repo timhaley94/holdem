@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   Avatar,
-  Button,
   Chip,
   Drawer,
   FormControl,
@@ -10,32 +9,21 @@ import {
 } from '@material-ui/core';
 import { useRouteMatch } from 'react-router-dom';
 import avatars from '../../data/avatars';
-import { hasOwnProperty } from '../../utils';
-import { useMetadata } from '../../models';
+import { useUser } from '../../state';
 import AvatarPicker from '../AvatarPicker';
+import Button from '../Button';
 import styles from './index.module.css';
 
 function Sidebar() {
   const requireData = useRouteMatch('/game');
-  const [metadata, setMetadata] = useMetadata();
+  const [data, setData] = useUser();
   const [isOpen, setIsOpen] = useState(false);
 
   const [newName, setNewName] = useState(null);
   const [newAvatar, setNewAvatar] = useState(null);
 
-  const storedName = (
-    metadata
-      && hasOwnProperty(metadata, 'name')
-      ? metadata.name
-      : null
-  );
-
-  const storedAvatar = (
-    metadata
-      && hasOwnProperty(metadata, 'avatarId')
-      ? metadata.avatarId
-      : null
-  );
+  const storedName = data.name || null;
+  const storedAvatar = data.avatarId || null;
 
   const name = (
     newName === null
@@ -56,7 +44,7 @@ function Sidebar() {
   const onAvatarChange = (value) => setNewAvatar(value);
 
   const onSubmit = () => {
-    setMetadata({
+    setData({
       name,
       avatarId: avatar,
     });
@@ -111,8 +99,6 @@ function Sidebar() {
             <Button
               className={styles.submit}
               size="large"
-              variant="contained"
-              color="primary"
               disabled={!isValid}
               onClick={onSubmit}
             >

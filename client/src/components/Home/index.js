@@ -1,35 +1,33 @@
-import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { useSocket } from '../../models';
+import React, { useState } from 'react';
+import { Card } from '@material-ui/core';
 import Button from '../Button';
-import SmallPage from '../SmallPage';
+import Create from '../Create';
+import Games from '../Games';
+import Page from '../Page';
 import styles from './index.module.css';
 
 function Home() {
-  const { push } = useHistory();
-  const { createGame, game } = useSocket();
-  const [isCreating, setIsCreating] = useState(false);
-
-  const onClick = () => {
-    createGame();
-    setIsCreating(true);
-  };
-
-  useEffect(() => {
-    if (isCreating && game) {
-      push(`/game/${game.id}`);
-    }
-  }, [isCreating, game, push]);
+  const [showModal, setShowModal] = useState(false);
 
   return (
-    <SmallPage>
-      <h1 className={styles.header}>
-        Texas Hold&apos;em!
-      </h1>
-      <Button size="large" onClick={onClick}>
-        Create Game
-      </Button>
-    </SmallPage>
+    <Page>
+      <Create
+        open={showModal}
+        onClose={() => setShowModal(false)}
+      />
+      <Card className={styles.container}>
+        <h1 className={styles.header}>
+          Texas Hold&apos;em!
+        </h1>
+        <Button
+          size="large"
+          onClick={() => setShowModal(true)}
+        >
+          Create Game
+        </Button>
+        <Games />
+      </Card>
+    </Page>
   );
 }
 

@@ -1,21 +1,8 @@
-const express = require('express');
-const cors = require('cors');
-const Users = require('../users');
-const Errors = require('../errors');
+const { Server } = require('http');
+const Rest = require('../rest');
+const Socket = require('../socket');
 
-const api = express();
-const router = express.Router();
+const api = Server(Rest);
+Socket(api);
 
-// Middleware
-router.use(cors());
-router.use(express.json());
-
-// Routes
-router.get('/ping', (req, res) => res.sendStatus(200));
-router.use('/users', Users.router);
-
-// Error Middleware
-router.use(Errors.middleware);
-
-api.use('/api', router);
 module.exports = api;

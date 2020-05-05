@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { useSocket } from '../../models';
+import { useSocket } from '../../state';
 import Avatar from '../Avatar';
 import styles from './index.module.css';
 
