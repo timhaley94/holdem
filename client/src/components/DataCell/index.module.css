@@ -1,5 +1,8 @@
-.container {
+td.container {
   color: #6b6b76;
   font-size: 11px;
   font-family: 'Libre Franklin', sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }

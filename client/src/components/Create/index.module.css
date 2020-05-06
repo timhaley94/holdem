@@ -9,12 +9,20 @@
   width: 100%;
   height: 100%;
   max-width: 400px;
-  max-height: 450px;
+  max-height: 400px;
   padding: 2rem 3rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+}
+
+.content:focus {
+  outline: 0;
+}
+
+.header {
+  margin-bottom: 2rem;
 }
 
 .form {
@@ -31,4 +39,9 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+}
+
+.switch {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
 }

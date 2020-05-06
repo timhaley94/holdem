@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Card } from '@material-ui/core';
+import { Card, Divider } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
 import Button from '../Button';
 import Create from '../Create';
 import Games from '../Games';
@@ -16,16 +17,21 @@ function Home() {
         onClose={() => setShowModal(false)}
       />
       <Card className={styles.container}>
-        <h1 className={styles.header}>
-          Texas Hold&apos;em!
-        </h1>
-        <Button
-          size="large"
-          onClick={() => setShowModal(true)}
-        >
-          Create Game
-        </Button>
-        <Games />
+        <div className={styles.header}>
+          <h2 className={styles.title}>Public Games</h2>
+          <Button
+            className={styles.button}
+            size="large"
+            onClick={() => setShowModal(true)}
+            startIcon={<AddIcon />}
+          >
+            Create Game
+          </Button>
+        </div>
+        <div className={styles.content}>
+          <Divider />
+          <Games />
+        </div>
       </Card>
     </Page>
   );

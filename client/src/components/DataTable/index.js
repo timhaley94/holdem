@@ -12,28 +12,26 @@ import styles from './index.module.css';
 function DataTable({ headers, children }) {
   return (
     <Table className={styles.container}>
-      {
-        headers
-          ? (
-            <TableHead>
-              <TableRow>
-                {
-                  headers.map(
-                    ({ name, align }) => (
-                      <TableCell
-                        className={styles.header}
-                        align={align}
-                      >
-                        { name }
-                      </TableCell>
-                    ),
-                  )
-                }
-              </TableRow>
-            </TableHead>
-          )
-          : null
-      }
+      <TableHead>
+        <TableRow>
+          {
+            headers
+              ? (
+                headers.map(
+                  ({ name, align }) => (
+                    <TableCell
+                      className={styles.header}
+                      align={align}
+                    >
+                      { name }
+                    </TableCell>
+                  ),
+                )
+              )
+              : null
+          }
+        </TableRow>
+      </TableHead>
       <TableBody>
         { children }
       </TableBody>

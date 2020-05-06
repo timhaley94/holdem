@@ -38,7 +38,7 @@ function Create({ open, onClose }) {
     >
       <Fade in={open}>
         <Card className={styles.content}>
-          <h2>New Game</h2>
+          <h2 className={styles.header}>New Game</h2>
           <FormControl className={styles.form}>
             <div className={styles.input}>
               <InputLabel htmlFor="name">Name</InputLabel>
@@ -50,6 +50,7 @@ function Create({ open, onClose }) {
               />
             </div>
             <FormControlLabel
+              className={styles.switch}
               label="Private?"
               labelPlacement="start"
               control={(
