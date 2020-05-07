@@ -2,7 +2,14 @@ const IO = require('socket.io');
 const config = require('../config');
 const Auth = require('./auth');
 const Game = require('./game');
-// const Games = require('./games');
+const Games = require('./games');
+const Table = require('./table');
+
+const modules = [
+  Game,
+  Games,
+  Table,
+];
 
 function Socket(server) {
   const io = IO(server, {
@@ -14,11 +21,20 @@ function Socket(server) {
 
   io.use(Auth.middleware);
 
-  Game.onStart(io.sockets);
+  modules.forEach((module) => {
+    module.onStart(io.sockets);
+  });
 
   io.sockets.on('connection', (socket) => {
-    Game.onConnect(socket);
-    // Games.onConnect(socket);
+    modules.forEach((module) => {
+      module.onConnect(socket);
+    });
+
+    socket.on('disconnect', () => {
+      modules.forEach((module) => {
+        module.onDisconnect(socket);
+      });
+    });
   });
 }
 

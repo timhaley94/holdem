@@ -1,6 +1,7 @@
 import { useCallback, useReducer } from 'react';
 
 const SET = 'set';
+const UNSET = 'unset';
 const initialState = { value: {} };
 
 function reducer(state, action) {
@@ -12,6 +13,14 @@ function reducer(state, action) {
           ...state.value,
           ...action.value,
         },
+      };
+    case UNSET:
+      const copy = { ...state.value };
+      delete copy[action.key];
+
+      return {
+        ...state,
+        value: copy,
       };
     default:
       return state;
@@ -29,5 +38,13 @@ export default function useObjectState() {
     [dispatch],
   );
 
-  return [state.value, set];
+  const unset = useCallback(
+    (key) => dispatch({
+      type: UNSET,
+      key,
+    }),
+    [dispatch],
+  );
+
+  return [state.value, set, unset];
 }

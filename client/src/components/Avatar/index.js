@@ -5,13 +5,15 @@ import avatars from '../../data/avatars';
 import { useSocket } from '../../state';
 import styles from './index.module.css';
 
-function Avatar({ playerId }) {
+function Avatar({ userId }) {
   const { game } = useSocket();
-  const { avatarId } = (
-    Object
-      .values(game.players)
-      .find((p) => p.playerId === playerId)
-      .data
+  const user = game.users[userId];
+  const avatarId = (
+    user
+      && user.metadata
+      && user.metadata.avatarId
+      ? user.metadata.avatarId
+      : null
   );
 
   const avatar = avatars.find(
@@ -29,7 +31,7 @@ function Avatar({ playerId }) {
 }
 
 Avatar.propTypes = {
-  playerId: PropTypes.string.isRequired,
+  userId: PropTypes.string.isRequired,
 };
 
 export default Avatar;

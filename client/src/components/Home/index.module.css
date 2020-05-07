@@ -30,4 +30,7 @@ div.container {
   width: 100%;
   flex-grow: 1;
   margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

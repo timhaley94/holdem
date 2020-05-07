@@ -1,5 +1,4 @@
 import React, {
-  useEffect,
   useState,
   useRef,
 } from 'react';
@@ -8,10 +7,6 @@ import {
   Switch,
   TextField,
 } from '@material-ui/core';
-import {
-  useHistory,
-  useLocation,
-} from 'react-router-dom';
 import { useSocket } from '../../state';
 import Avatar from '../Avatar';
 import Button from '../Button';
@@ -23,20 +18,12 @@ import styles from './index.module.css';
 function Lobby() {
   const [isCopied, setIsCopied] = useState(false);
   const copyRef = useRef(null);
-  const { push } = useHistory();
-  const { pathname } = useLocation();
 
   const {
     game,
-    playerId,
+    userId,
     setReady,
   } = useSocket();
-
-  useEffect(() => {
-    if (game && game.isStarted) {
-      push(`${pathname}/table`);
-    }
-  }, [game, push, pathname]);
 
   const { href } = window.location;
 
@@ -46,6 +33,14 @@ function Lobby() {
     document.execCommand('copy');
     setIsCopied(true);
   };
+
+  const userName = (playerId) => (
+    game.users
+      && game.users[playerId]
+      && game.users[playerId].metadata
+      ? game.users[playerId].metadata.name
+      : null
+  );
 
   return (
     <Card className={styles.container}>
@@ -85,22 +80,22 @@ function Lobby() {
               game
                 && game.players
                 ? Object.values(game.players).map(
-                  (player) => (
-                    <DataRow key={player.playerId}>
+                  ({ playerId, isReady }) => (
+                    <DataRow key={playerId}>
                       <DataCell>
                         <div className={styles.playerInfo}>
-                          <Avatar playerId={player.playerId} />
+                          <Avatar userId={playerId} />
                           <p className={styles.name}>
-                            { player.data.name }
+                            { userName(playerId) }
                           </p>
                         </div>
                       </DataCell>
                       <DataCell align="right">
                         <Switch
-                          checked={player.isReady}
+                          checked={isReady}
                           onChange={
-                            playerId === player.playerId
-                              ? () => setReady(!player.isReady)
+                            playerId === userId
+                              ? () => setReady(!isReady)
                               : null
                           }
                         />

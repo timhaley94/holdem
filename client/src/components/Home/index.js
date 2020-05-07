@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Divider } from '@material-ui/core';
+import { Card } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '../Button';
 import Create from '../Create';
@@ -29,7 +29,6 @@ function Home() {
           </Button>
         </div>
         <div className={styles.content}>
-          <Divider />
           <Games />
         </div>
       </Card>

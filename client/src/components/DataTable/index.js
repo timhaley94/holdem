@@ -12,26 +12,29 @@ import styles from './index.module.css';
 function DataTable({ headers, children }) {
   return (
     <Table className={styles.container}>
-      <TableHead>
-        <TableRow>
-          {
-            headers
-              ? (
-                headers.map(
-                  ({ name, align }) => (
-                    <TableCell
-                      className={styles.header}
-                      align={align}
-                    >
-                      { name }
-                    </TableCell>
-                  ),
-                )
-              )
-              : null
-          }
-        </TableRow>
-      </TableHead>
+      {
+        headers
+          ? (
+            <TableHead>
+              <TableRow>
+                {
+                  headers.map(
+                    ({ name, align }) => (
+                      <TableCell
+                        key={name}
+                        className={styles.header}
+                        align={align || 'left'}
+                      >
+                        { name }
+                      </TableCell>
+                    ),
+                  )
+                }
+              </TableRow>
+            </TableHead>
+          )
+          : null
+      }
       <TableBody>
         { children }
       </TableBody>
@@ -43,7 +46,7 @@ DataTable.propTypes = {
   headers: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.node.isRequired,
-      align: PropTypes.string.isRequired,
+      align: PropTypes.string,
     }),
   ),
   children: PropTypes.node.isRequired,

@@ -1,19 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { UserProvider, useUserSync } from './user';
-import { GamesProvider } from './games';
 import { SocketProvider } from './socket';
+import { GamesProvider } from './games';
+import { GameProvider } from './game';
 import { ErrorProvider } from './error';
 
 function APIProvider({ children }) {
   useUserSync();
 
   return (
-    <GamesProvider>
-      <SocketProvider>
-        { children }
-      </SocketProvider>
-    </GamesProvider>
+    <SocketProvider>
+      <GamesProvider>
+        <GameProvider>
+          { children }
+        </GameProvider>
+      </GamesProvider>
+    </SocketProvider>
   );
 }
 

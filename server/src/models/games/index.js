@@ -7,14 +7,7 @@ const Listener = require('../listener');
 const Handler = require('../handler');
 const Errors = require('../errors');
 
-let games = {};
-let subscription;
-const listener = Listener.create();
-
-function listen(fn) {
-  subscription = fn;
-}
-
+// View and Controller logic
 const schemas = {
   id: (
     Joi
@@ -40,6 +33,78 @@ const schemas = {
   isReady: Joi.boolean(),
 };
 
+const listFields = [
+  'id',
+  'name',
+  'isPrivate',
+  'isStarted',
+  'userCount',
+];
+
+const detailFields = [
+  ...listFields,
+  'users',
+  'players',
+  'tableId',
+];
+
+const renderers = {
+  userCount: async ({ users }) => users.length,
+  users: async ({ users: userIds }) => {
+    const users = await Promise.all(
+      userIds.map(
+        (userId) => Users.retrieve({ id: userId }),
+      ),
+    );
+
+    return users.reduce(
+      (acc, user) => ({
+        ...acc,
+        [user.id]: user,
+      }),
+      {},
+    );
+  },
+};
+
+const render = async (game, useListView) => {
+  const fields = (
+    useListView
+      ? listFields
+      : detailFields
+  );
+
+  const entries = await Promise.all(
+    fields.map(
+      async (field) => {
+        const value = (
+          renderers[field]
+            ? await renderers[field](game)
+            : game[field]
+        );
+
+        return [field, value];
+      },
+    ),
+  );
+
+  return entries.reduce(
+    (acc, [field, value]) => ({
+      ...acc,
+      [field]: value,
+    }),
+  );
+};
+
+// State
+let games = {};
+let subscription;
+const listener = Listener.create();
+
+function listen(fn) {
+  subscription = fn;
+}
+
 function reset() {
   games = {};
 }
@@ -58,31 +123,16 @@ function Game({ name, isPrivate }) {
     isStarted: false,
     users: [],
     players: {},
-    table: null,
+    tableId: null,
     userSubscriptions: {},
+    cleanupTimer: null,
   };
 }
 
-const render = async (game) => {
-  const copy = { ...game };
-  delete copy.userSubscriptions;
-
-  copy.users = await Promise.all(
-    copy.users.map(
-      (userId) => Users.retrieve({ id: userId }),
-    ),
-  );
-
-  copy.users = copy.users.reduce(
-    (acc, user) => ({
-      ...acc,
-      [user.id]: user,
-    }),
-    {},
-  );
-
-  return copy;
-};
+// Helpers
+function has(id) {
+  return !!games[id];
+}
 
 function get(id) {
   if (!games[id]) {
@@ -99,6 +149,11 @@ function set(id, update) {
   };
 }
 
+function remove(id) {
+  delete games[id];
+  listener.emit(id);
+}
+
 function playerCount(id) {
   const game = get(id);
   return Object.entries(game.players).length;
@@ -110,6 +165,10 @@ function canStart(id) {
 
 function isFull(id) {
   return playerCount(id) >= config.game.maxPlayers;
+}
+
+function isEmpty(id) {
+  return playerCount(id) === 0;
 }
 
 function allPlayersReady(id) {
@@ -132,14 +191,52 @@ function attemptStart(id) {
   }
 }
 
+function clearCleanup(id) {
+  const game = get(id);
+
+  if (game.cleanupTimer) {
+    clearTimeout(game.cleanupTimer);
+
+    set(id, {
+      cleanupTimer: null,
+    });
+  }
+}
+
+function attemptCleanup(id) {
+  if (isEmpty(id)) {
+    clearCleanup(id);
+
+    set(id, {
+      cleanupTimer: setTimeout(
+        () => remove(id),
+        config.game.cleanupTimeout,
+      ),
+    });
+  }
+}
+
+// Handlers
 const list = Handler.wrap({
   schemas,
   fn: async () => Promise.all(
     Object
       .values(games)
       .filter((game) => !game.isPrivate)
-      .map(render),
+      .map((game) => render(game, true)),
   ),
+});
+
+const exists = Handler.wrap({
+  schemas,
+  required: ['id'],
+  fn: async ({ id }) => has(id),
+});
+
+const abridged = Handler.wrap({
+  schemas,
+  required: ['id'],
+  fn: async ({ id }) => render(get(id), true),
 });
 
 const retrieve = Handler.wrap({
@@ -159,6 +256,7 @@ const create = Handler.wrap({
     });
 
     games[game.id] = game;
+    attemptCleanup(game.id);
     return render(game);
   },
 });
@@ -179,6 +277,7 @@ const addUser = Handler.wrap({
       },
     });
 
+    clearCleanup(id);
     Users.listener.subscribe(userId, cb);
     listener.emit(id);
   },
@@ -209,6 +308,7 @@ const removeUser = Handler.wrap({
     });
 
     attemptStart(id);
+    attemptCleanup(id);
     listener.emit(id);
   },
 });
@@ -227,7 +327,10 @@ const addPlayer = Handler.wrap({
     set(id, {
       players: {
         ...game.players,
-        [userId]: { isReady: false },
+        [userId]: {
+          playerId: userId,
+          isReady: false,
+        },
       },
     });
 
@@ -266,12 +369,11 @@ const setPlayerReady = Handler.wrap({
   },
 });
 
-function makeMove() {
-
-}
-
 module.exports = {
+  // Handlers
   list,
+  exists,
+  abridged,
   retrieve,
   create,
   addUser,
@@ -279,8 +381,9 @@ module.exports = {
   addPlayer,
   isFull: isFullHandler,
   setPlayerReady,
-  makeMove,
+  // For tests
   reset,
+  // For real time udpates
   listener,
   listen,
 };

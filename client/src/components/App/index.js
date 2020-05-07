@@ -13,6 +13,7 @@ import Footer from '../Footer';
 import Poker from '../Poker';
 import Sidebar from '../Sidebar';
 import styles from './index.module.css';
+import Background from './Background2.jpg';
 import './index.css';
 
 function App() {
@@ -22,7 +23,10 @@ function App() {
         <Router>
           <Header />
           <Sidebar />
-          <main className={styles.content}>
+          <main
+            className={styles.content}
+            style={{ backgroundImage: `url(${Background})` }}
+          >
             <Switch>
               <Route path="/about">
                 <About />

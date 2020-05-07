@@ -1,5 +1,6 @@
 import React, {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -7,8 +8,6 @@ import React, {
 import PropTypes from 'prop-types';
 import io from 'socket.io-client';
 import { useHistory } from 'react-router-dom';
-import { generate as generateId } from 'shortid';
-import { useArrayState } from '../hooks';
 import config from '../config';
 import { useUser } from './user';
 
@@ -16,51 +15,22 @@ const Context = createContext(null);
 
 function SocketProvider({ children }) {
   const { push } = useHistory();
-  const [{
-    id: playerId,
-    token,
-  }] = useUser();
+  const [{ token }] = useUser();
 
   // Socket State
   const [_socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
-  const [game, setGame] = useState(null);
 
-  const [
-    errors,
-    addError,
-    removeError,
-  ] = useArrayState();
+  const reset = useCallback(() => {
+    setIsConnected(false);
+    setSocket(null);
+  }, [setIsConnected, setSocket]);
 
-  const [
-    messages,
-    addMessage,
-  ] = useArrayState();
-
-  function sendMessage(message) {
-    _socket.emit('send_message', message);
-  }
-
-  function joinGame(id) {
-    _socket.emit('join_game', id);
-  }
-
-  function setReady(value) {
-    _socket.emit('set_ready', value);
-  }
-
-  function makeMove(data) {
-    _socket.emit('make_move', data);
-  }
-
-  function leaveGame() {
-    setGame(null);
-    _socket.emit('leave_game');
-  }
-
-  function dismissError(id) {
-    removeError((e) => e.id === id);
-  }
+  const fatal = useCallback(() => {
+    // Log fatal here
+    reset();
+    push('/error');
+  }, [reset, push]);
 
   useEffect(() => {
     if (token) {
@@ -68,34 +38,11 @@ function SocketProvider({ children }) {
         query: { token },
       });
 
-      const reset = () => {
-        setGame(null);
-        setIsConnected(false);
-      };
-
-      const fatal = () => {
-        // Log fatal here
-        reset();
-        push('/error');
-      };
-
-      socket.on('connect', () => {
-        setIsConnected(true);
-      });
-
+      socket.on('connect', () => setIsConnected(true));
       socket.on('connect_error', fatal);
       socket.on('connect_timeout', fatal);
       socket.on('error', fatal);
-      socket.on('room_error', fatal);
       socket.on('disconnect', reset);
-      socket.on('incoming_message', addMessage);
-      socket.on('game_state_updated', setGame);
-      socket.on('game_error', ({ message }) => {
-        addError({
-          id: generateId(),
-          message,
-        });
-      });
 
       setSocket(socket);
 
@@ -105,20 +52,12 @@ function SocketProvider({ children }) {
         socket.disconnect();
       };
     }
-  }, [token, addError, addMessage, push]);
+  }, [token, push, reset, fatal]);
 
   const value = {
+    socket: _socket,
     isConnected: !!(isConnected && _socket),
-    playerId,
-    messages,
-    game,
-    errors,
-    joinGame,
-    setReady,
-    sendMessage,
-    leaveGame,
-    makeMove,
-    dismissError,
+    onFatal: fatal,
   };
 
   return (

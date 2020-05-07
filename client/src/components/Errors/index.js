@@ -5,11 +5,11 @@ import React, {
 import PropTypes from 'prop-types';
 import { Alert } from '@material-ui/lab';
 import { Collapse } from '@material-ui/core';
-import { useSocket } from '../../state';
+import { useGame } from '../../state';
 import styles from './index.module.css';
 
 function Error({ id, message }) {
-  const { dismissError } = useSocket();
+  const { dismissError } = useGame();
 
   const onDismiss = useCallback(
     () => dismissError(id),
@@ -41,7 +41,7 @@ Error.propTypes = {
 };
 
 function Errors() {
-  const { errors } = useSocket();
+  const { errors } = useGame();
 
   return (
     <div className={styles.container}>

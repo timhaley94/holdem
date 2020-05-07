@@ -12,22 +12,25 @@ import {
   Switch,
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-import { useGames } from '../../state';
+import { Games } from '../../api';
 import Button from '../Button';
 import styles from './index.module.css';
 
 function Create({ open, onClose }) {
   const [name, setName] = useState(null);
   const [isPrivate, setIsPrivate] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
   const { push } = useHistory();
-  const { create, isCreating } = useGames();
 
   const onNameChange = ({ target: { value } }) => setName(value);
   const onIsPrivateChange = () => setIsPrivate(!isPrivate);
 
   const onSubmit = async () => {
-    const { id } = await create({ name, isPrivate });
+    setIsCreating(true);
+    const { id } = await Games.create({ name, isPrivate });
+
     push(`/game/${id}`);
+    setIsCreating(false);
   };
 
   return (

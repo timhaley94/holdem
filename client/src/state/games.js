@@ -1,50 +1,48 @@
 import React, {
   createContext,
-  useCallback,
   useContext,
-  useState,
+  useEffect,
 } from 'react';
 import PropTypes from 'prop-types';
-import { useAsyncEffect } from '../hooks';
-import { Games } from '../api';
+import { useObjectState } from '../hooks';
+import { useSocket } from './socket';
 
 const Context = createContext(null);
 
 function GamesProvider({ children }) {
-  const [games, setGames] = useState(null);
-  const [game, setGame] = useState(null);
-  const [isCreating, setIsCreating] = useState(false);
+  const { socket, isConnected } = useSocket();
+  const [games, setGames, unsetKey] = useObjectState(null);
 
-  useAsyncEffect(async (isValid) => {
-    const result = await Games.list();
+  useEffect(() => {
+    if (socket && isConnected) {
+      socket.on('game_list', (data) => {
+        setGames(
+          data.reduce(
+            (acc, item) => ({
+              ...acc,
+              [item.id]: item,
+            }),
+            {},
+          ),
+        );
+      });
 
-    if (isValid()) {
-      setGames(result.data);
+      socket.on('game_list_item', (item) => {
+        setGames({
+          [item.id]: item,
+        });
+      });
+
+      socket.on('game_list_item_removed', (id) => {
+        unsetKey(id);
+      });
+
+      socket.emit('game_list_request');
     }
-
-    return result.data;
-  }, []);
-
-  const create = useCallback(async (...args) => {
-    setIsCreating(true);
-
-    const result = await Games.create(...args);
-
-    setGame(result);
-    setIsCreating(false);
-
-    return result.data;
-  }, [setGame, setIsCreating]);
-
-  const value = {
-    games,
-    game,
-    create,
-    isCreating,
-  };
+  }, [socket, isConnected, setGames, unsetKey]);
 
   return (
-    <Context.Provider value={value}>
+    <Context.Provider value={{ games: Object.values(games) }}>
       { children }
     </Context.Provider>
   );
