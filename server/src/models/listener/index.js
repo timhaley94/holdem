@@ -1,17 +1,12 @@
 const EventEmitter = require('events');
 
+const globalName = 'global';
+const updateName = (id) => `update-${id}`;
+
 function create() {
   const emitter = new EventEmitter();
 
-  const globalName = 'global';
-  const updateName = (id) => `update-${id}`;
-
-  const listen = (fn) => {
-    emitter.addListener(
-      globalName,
-      fn,
-    );
-  };
+  const listen = (fn) => emitter.addListener(globalName, fn);
 
   const subscribe = (id, fn) => {
     emitter.addListener(
