@@ -117,12 +117,8 @@ async function catchError(socket, e) {
 
 function onStart(sockets) {
   Games.listener.listen(async (id) => {
-    console.log('updating', id);
     const state = await Games.retrieve({ id });
-    console.log(
-      events.game.gameStateUpdated,
-      state,
-    );
+
     sockets.to(id).emit(
       events.game.gameStateUpdated,
       state,

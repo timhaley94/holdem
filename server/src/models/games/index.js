@@ -342,7 +342,6 @@ const addUser = Handler.wrap({
 
     addPlayer(id, userId);
     clearCleanup(id);
-    console.log('emitting', id);
     listener.emit(id);
   },
 });

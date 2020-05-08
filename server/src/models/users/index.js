@@ -81,7 +81,6 @@ const update = Handler.wrap({
   schemas,
   required: ['id', 'metadata'],
   fn: async ({ id, metadata }) => {
-    console.log('updating');
     assertId(id);
     users[id].metadata = metadata;
     listener.emit(id);

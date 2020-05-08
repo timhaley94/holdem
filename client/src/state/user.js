@@ -87,11 +87,8 @@ function useUserSync() {
   }, [id, secret, token, setData]);
 
   useAsyncEffect(async (isValid) => {
-    console.log('effect');
     if (token && name && avatarId) {
-      console.log(token, name, avatarId);
       try {
-        console.log('here');
         await Users.update({
           id,
           token,
@@ -101,7 +98,6 @@ function useUserSync() {
           },
         });
       } catch (e) {
-        console.log(e);
         if (isValid()) {
           setError(e);
         }

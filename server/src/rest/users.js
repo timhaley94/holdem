@@ -14,9 +14,6 @@ router.post('/auth', Route.handler(
 
 router.patch('/:id', Route.private, Route.handler(
   (req) => {
-    console.log('here');
-    console.log(req.params.id);
-    console.log(req.user.data.id);
     if (req.params.id !== req.user.data.id) {
       throw new Errors.Unathorized('Cannot update another user.');
     }
