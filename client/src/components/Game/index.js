@@ -12,7 +12,7 @@ function Game() {
   const { id } = useParams();
 
   useEffect(() => {
-    if (!game) {
+    if (!game && joinGame) {
       joinGame(id);
     }
   }, [game, id, joinGame]);

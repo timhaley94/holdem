@@ -7,7 +7,7 @@ import {
   Switch,
   TextField,
 } from '@material-ui/core';
-import { useSocket } from '../../state';
+import { useSocket, useGame } from '../../state';
 import Avatar from '../Avatar';
 import Button from '../Button';
 import DataTable from '../DataTable';
@@ -19,11 +19,8 @@ function Lobby() {
   const [isCopied, setIsCopied] = useState(false);
   const copyRef = useRef(null);
 
-  const {
-    game,
-    userId,
-    setReady,
-  } = useSocket();
+  const { userId, setReady } = useSocket();
+  const { game } = useGame();
 
   const { href } = window.location;
 
@@ -34,11 +31,22 @@ function Lobby() {
     setIsCopied(true);
   };
 
-  const userName = (playerId) => (
+  const userName = (id) => (
     game.users
-      && game.users[playerId]
-      && game.users[playerId].metadata
-      ? game.users[playerId].metadata.name
+      && game.users[id]
+      && game.users[id].metadata
+      ? game.users[id].metadata.name
+      : null
+  );
+
+  const players = (
+    game
+      && game.users
+      ? (
+        Object
+          .values(game.users)
+          .filter(({ player }) => player)
+      )
       : null
   );
 
@@ -77,16 +85,15 @@ function Lobby() {
             ]}
           >
             {
-              game
-                && game.players
-                ? Object.values(game.players).map(
-                  ({ playerId, isReady }) => (
-                    <DataRow key={playerId}>
+              players
+                ? players.map(
+                  ({ id, isReady }) => (
+                    <DataRow key={id}>
                       <DataCell>
                         <div className={styles.playerInfo}>
-                          <Avatar userId={playerId} />
+                          <Avatar userId={id} />
                           <p className={styles.name}>
-                            { userName(playerId) }
+                            { userName(id) }
                           </p>
                         </div>
                       </DataCell>
@@ -94,7 +101,7 @@ function Lobby() {
                         <Switch
                           checked={isReady}
                           onChange={
-                            playerId === userId
+                            id === userId
                               ? () => setReady(!isReady)
                               : null
                           }

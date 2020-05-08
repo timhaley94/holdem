@@ -2,7 +2,7 @@ const { Games } = require('../models');
 const events = require('./events');
 
 function onStart(sockets) {
-  Games.listen(async (id) => {
+  Games.listener.listen(async (id) => {
     const exists = await Games.exists({ id });
 
     if (!exists) {
@@ -26,11 +26,6 @@ function onConnect(socket) {
     events.games.request,
     async () => {
       const games = await Games.list();
-      console.log('emitting');
-      console.log(
-        events.games.list,
-        games,
-      );
       socket.emit(
         events.games.list,
         games,

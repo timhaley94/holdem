@@ -49,14 +49,11 @@ async function join(socket, id) {
   const userId = getUserId(socket);
 
   await joinRoom(socket, id);
-  await Games.addUser({ id, userId });
-  const isFull = await Games.isFull({ id });
-
-  if (isFull) {
-    throw new GameError('Game is already full.');
-  }
-
-  await Games.addPlayer({ id, userId });
+  await Games.addUser({
+    id,
+    userId,
+    socketId: socket.id,
+  });
 }
 
 async function setReady(socket, isReady) {
@@ -80,6 +77,7 @@ async function leave(socket) {
     await Games.removeUser({
       id: gameId,
       userId,
+      socketId: socket.id,
     });
 
     await leaveRoom(socket);
@@ -118,8 +116,9 @@ async function catchError(socket, e) {
 }
 
 function onStart(sockets) {
-  Games.listen(async (id) => {
+  Games.listener.listen(async (id) => {
     const state = await Games.retrieve({ id });
+
     sockets.to(id).emit(
       events.game.gameStateUpdated,
       state,

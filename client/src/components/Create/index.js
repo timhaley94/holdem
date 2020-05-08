@@ -27,10 +27,8 @@ function Create({ open, onClose }) {
 
   const onSubmit = async () => {
     setIsCreating(true);
-    const { id } = await Games.create({ name, isPrivate });
-
+    const { data: { id } } = await Games.create({ name, isPrivate });
     push(`/game/${id}`);
-    setIsCreating(false);
   };
 
   return (

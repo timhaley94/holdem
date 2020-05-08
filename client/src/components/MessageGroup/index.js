@@ -1,24 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { useSocket } from '../../state';
+import { useGame } from '../../state';
 import Avatar from '../Avatar';
 import styles from './index.module.css';
 
-function MessageGroup({ playerId, messages }) {
-  const { game } = useSocket();
+function MessageGroup({ userId, messages }) {
+  const { game } = useGame();
   const { name } = (
     Object
-      .values(game.players)
-      .find((p) => p.playerId === playerId)
-      .data
+      .values(game.users)
+      .find(({ id }) => id === userId)
+      .metadata
   );
 
   const m = moment(messages[0].timestamp);
 
   return (
     <div className={styles.container}>
-      <Avatar playerId={playerId} />
+      <Avatar userId={userId} />
       <div className={styles.content}>
         <div className={styles.info}>
           <p className={styles.name}>
@@ -48,7 +48,7 @@ function MessageGroup({ playerId, messages }) {
 }
 
 MessageGroup.propTypes = {
-  playerId: PropTypes.string.isRequired,
+  userId: PropTypes.string.isRequired,
   messages: PropTypes.arrayOf(
     PropTypes.shape({
       timestamp: PropTypes.string.isRequired,

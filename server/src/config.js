@@ -10,6 +10,6 @@ module.exports = {
   game: {
     maxPlayers: 9,
     minPlayers: 2,
-    cleanupTimeout: 10000,
+    cleanupTimeout: 100000,
   },
 };

@@ -30,26 +30,13 @@ function GameProvider({ children }) {
     addMessage,
   ] = useArrayState();
 
-  function sendMessage(message) {
-    socket.emit('send_message', message);
-  }
+  const wrap = (fn) => {
+    if (!socket || !isConnected) {
+      return null;
+    }
 
-  function joinGame(id) {
-    socket.emit('join_game', id);
-  }
-
-  function setReady(value) {
-    socket.emit('set_ready', value);
-  }
-
-  function makeMove(data) {
-    socket.emit('make_move', data);
-  }
-
-  function leaveGame() {
-    setGame(null);
-    socket.emit('leave_game');
-  }
+    return (...args) => fn(...args);
+  };
 
   function dismissError(id) {
     removeError((e) => e.id === id);
@@ -80,12 +67,15 @@ function GameProvider({ children }) {
     messages,
     game,
     errors,
-    joinGame,
-    setReady,
-    sendMessage,
-    leaveGame,
-    makeMove,
     dismissError,
+    sendMessage: wrap((message) => socket.emit('send_message', message)),
+    joinGame: wrap((id) => socket.emit('join_game', id)),
+    setReady: wrap((isReady) => socket.emit('set_ready', isReady)),
+    makeMove: wrap((data) => socket.emit('make_move', data)),
+    leaveGame: wrap(() => {
+      setGame(null);
+      socket.emit('leave_game');
+    }),
   };
 
   return (
