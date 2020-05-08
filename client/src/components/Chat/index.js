@@ -5,13 +5,13 @@ import {
   TextareaAutosize,
 } from '@material-ui/core';
 import { useEnterPress } from '../../hooks';
-import { useSocket } from '../../state';
+import { useGame } from '../../state';
 import { chunkBy } from '../../utils';
 import MessageGroup from '../MessageGroup';
 import styles from './index.module.css';
 
 function Chat() {
-  const { messages, sendMessage } = useSocket();
+  const { messages, sendMessage } = useGame();
   const [focused, setFocused] = useState(false);
   const [value, setValue] = useState('');
   const bottomRef = useRef(null);
@@ -29,7 +29,7 @@ function Chat() {
   }
 
   useEnterPress((e) => {
-    if (focused && value) {
+    if (focused && value && sendMessage) {
       e.preventDefault();
       sendMessage(value);
       setValue('');
@@ -44,12 +44,12 @@ function Chat() {
     <Card className={styles.container}>
       <div className={styles.messageContainer}>
         {
-          chunkBy(messages, (m) => m.playerId)
+          chunkBy(messages, (m) => m.userId)
             .map(
               ({ key, entries }) => (
                 <MessageGroup
                   key={key}
-                  playerId={key}
+                  userId={key}
                   messages={entries}
                 />
               ),

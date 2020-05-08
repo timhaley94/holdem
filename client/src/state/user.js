@@ -1,6 +1,5 @@
 import React, {
   createContext,
-  useEffect,
   useContext,
   useState,
 } from 'react';
@@ -11,6 +10,7 @@ import {
   useStoredState,
 } from '../hooks';
 import { Users } from '../api';
+import { useError } from './error';
 
 const Context = createContext(null);
 const STORAGE_KEY = 'user-data';
@@ -57,6 +57,7 @@ function useUserSync() {
     secret,
     token,
   }, setData] = useUser();
+  const [, setError] = useError();
 
   useAsyncEffect(async (isValid) => {
     if (!token) {
@@ -85,16 +86,26 @@ function useUserSync() {
     }
   }, [id, secret, token, setData]);
 
-  useEffect(() => {
+  useAsyncEffect(async (isValid) => {
+    console.log('effect');
     if (token && name && avatarId) {
-      Users.update({
-        id,
-        token,
-        metadata: {
-          name,
-          avatarId,
-        },
-      });
+      console.log(token, name, avatarId);
+      try {
+        console.log('here');
+        await Users.update({
+          id,
+          token,
+          metadata: {
+            name,
+            avatarId,
+          },
+        });
+      } catch (e) {
+        console.log(e);
+        if (isValid()) {
+          setError(e);
+        }
+      }
     }
   }, [id, token, name, avatarId]);
 }

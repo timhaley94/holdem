@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Avatar as MUIAvatar } from '@material-ui/core';
 import avatars from '../../data/avatars';
-import { useSocket } from '../../state';
+import { useGame } from '../../state';
 import styles from './index.module.css';
 
 function Avatar({ userId }) {
-  const { game } = useSocket();
+  const { game } = useGame();
   const user = game.users[userId];
   const avatarId = (
     user

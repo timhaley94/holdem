@@ -4,7 +4,11 @@ import config from './config';
 const userRoute = `${config.serverUrl}/api/users`;
 const gameRoute = `${config.serverUrl}/api/games`;
 
-const opts = (token) => ({ headers: `Bearer ${token}` });
+const opts = (token) => ({
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+});
 
 const Users = {
   create: ({ secret }) => post(

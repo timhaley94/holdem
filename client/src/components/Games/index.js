@@ -31,7 +31,7 @@ function Games() {
   }
 
   return (
-    <>
+    <div className={styles.container}>
       <Divider />
       <DataTable>
         {
@@ -61,7 +61,7 @@ function Games() {
           )
         }
       </DataTable>
-    </>
+    </div>
   );
 }
 
