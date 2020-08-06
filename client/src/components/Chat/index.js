@@ -1,44 +1,68 @@
-import React, { useState, useRef } from 'react';
+import React, {
+  useCallback,
+  useState,
+  useRef,
+} from 'react';
 import {
   Card,
   Divider,
   TextareaAutosize,
 } from '@material-ui/core';
-import { useEnterPress } from '../../hooks';
+import { useEvent } from '../../hooks';
 import { useGame } from '../../state';
 import { chunkBy } from '../../utils';
 import MessageGroup from '../MessageGroup';
 import styles from './index.module.css';
 
+const SHIFT_CODE = 16;
+const ENTER_CODE = 13;
+
 function Chat() {
   const { messages, sendMessage } = useGame();
-  const [focused, setFocused] = useState(false);
   const [value, setValue] = useState('');
+  const [isShiftDown, setIsShiftDown] = useState(false);
   const bottomRef = useRef(null);
 
-  function onFocus() {
-    setFocused(true);
-  }
+  const onKeydown = useCallback(
+    (e) => {
+      const { keyCode } = e;
+
+      if (keyCode === SHIFT_CODE) {
+        setIsShiftDown(true);
+      }
+
+      if (keyCode === ENTER_CODE && !isShiftDown && value && sendMessage) {
+        e.preventDefault();
+        sendMessage(value);
+        setValue('');
+        bottomRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }
+    },
+    [value, isShiftDown, setIsShiftDown, sendMessage],
+  );
+
+  const onKeyup = useCallback(
+    ({ keyCode }) => {
+      if (keyCode === SHIFT_CODE) {
+        setIsShiftDown(false);
+      }
+    },
+    [setIsShiftDown],
+  );
+
+  useEvent('keydown', onKeydown);
+  useEvent('keyup', onKeyup);
 
   function onBlur() {
-    setFocused(false);
+    setIsShiftDown(false)
   }
 
   function onChange(e) {
     setValue(e.target.value);
   }
-
-  useEnterPress((e) => {
-    if (focused && value && sendMessage) {
-      e.preventDefault();
-      sendMessage(value);
-      setValue('');
-      bottomRef.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      });
-    }
-  }, [focused, value, setValue, sendMessage]);
 
   return (
     <Card className={styles.container}>
@@ -64,7 +88,6 @@ function Chat() {
           autoComplete="off"
           autoFocus
           name="message"
-          onFocus={onFocus}
           onBlur={onBlur}
           value={value}
           onChange={onChange}
