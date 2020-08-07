@@ -1,24 +1,39 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TableCell } from '@material-ui/core';
 import classNames from 'classnames';
 import styles from './index.module.css';
 
-function DataCell({ className, children, ...props }) {
+function DataCell({
+  isHeader,
+  className,
+  children,
+  ...props
+}) {
   const classes = classNames(className, styles.container);
+
+  if (isHeader) {
+    return (
+      <th className={classes} {...props}>
+        { children }
+      </th>
+    )
+  }
+
   return (
-    <TableCell className={classes} {...props}>
+    <td className={classes} {...props}>
       { children }
-    </TableCell>
+    </td>
   );
 }
 
 DataCell.propTypes = {
+  isHeader: PropTypes.bool,
   className: PropTypes.string,
   children: PropTypes.node.isRequired,
 };
 
 DataCell.defaultProps = {
+  isHeader: false,
   className: null,
 };
 

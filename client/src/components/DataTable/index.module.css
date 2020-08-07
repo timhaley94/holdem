@@ -1,6 +1,6 @@
 .container {
   width: 100%;
-  display: flex;
+  display: flex !important;
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
@@ -11,4 +11,8 @@
   font-size: 11px;
   font-family: 'Libre Franklin', sans-serif;
   font-weight: bold;
+}
+
+.row {
+  width: 100%;
 }
