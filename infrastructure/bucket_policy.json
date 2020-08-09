@@ -1,0 +1,15 @@
+{
+  "Id": "poker-app-frontend-perms",
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "1",
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Effect": "Allow",
+      "Resource": "arn:aws:s3:::poker-frontend-app/*",
+      "Principal": "*"
+    }
+  ]
+}

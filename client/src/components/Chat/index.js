@@ -57,7 +57,7 @@ function Chat() {
   useEvent('keyup', onKeyup);
 
   function onBlur() {
-    setIsShiftDown(false)
+    setIsShiftDown(false);
   }
 
   function onChange(e) {
