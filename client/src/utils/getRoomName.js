@@ -10,7 +10,21 @@ const words = [
 		'The Vet\'s',
 		'Canine\'s',
 		'Old Yeller\'s',
-		'Wolf\'s'
+		'Wolf\'s',
+		'Lassie\'s',
+		'Tramp\'s',
+		'Marley\'s',
+		'Beethoven\'s',
+		'The Foxy',
+		'Coyote',
+		'Toto\'s',
+		'The Runaway\'s',
+		'Rottweiler',
+		'Husky',
+		'Dalmation',
+		'Paw-paw\'s',
+		'Airbud\'s',
+		'Spot\'s'
 	],
 	[
 		'Pound', // places
@@ -19,7 +33,22 @@ const words = [
 		'Hammock',
 		'Yard',
 		'Kennel',
-		'Bowl'
+		'Bowl',
+		'Foxhole',
+		'Pen',
+		'Woods',
+		'Junkyard',
+		'Lounge',
+		'Basement',
+		'Crib',
+		'Nook',
+		'Garage',
+		'Pad',
+		'Humidor',
+		'Emporium',
+		'Casino',
+		'Joint',
+		'Diner'
 	]
 ];
 
@@ -30,7 +59,7 @@ function getRandomElement(list) {
 function getRoomName() {
 	return (
 		words
-			.map(randomElement)
+			.map(getRandomElement)
 			.reduce((a, b) => `${a} ${b}`)
 	);
 
