@@ -146,7 +146,7 @@ workflows:
           name: build-server-image
           context: AWS Prod
           path: ./server
-          repo: poker-app
+          repo: poker_app
           tag: $CIRCLE_SHA1
           filters:
             branches:
