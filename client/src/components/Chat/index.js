@@ -31,9 +31,13 @@ function Chat() {
         setIsShiftDown(true);
       }
 
-      if (keyCode === ENTER_CODE && !isShiftDown && value && sendMessage) {
+      if (keyCode === ENTER_CODE && !isShiftDown && sendMessage) {
         e.preventDefault();
-        sendMessage(value);
+
+        if (value) {
+          sendMessage(value);
+        }
+
         setValue('');
         bottomRef.current.scrollIntoView({
           behavior: 'smooth',
