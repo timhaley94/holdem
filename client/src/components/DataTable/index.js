@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Divider } from '@material-ui/core';
 import DataRow from '../DataRow';
 import DataCell from '../DataCell';
 import styles from './index.module.css';
-import { Divider } from '@material-ui/core';
 
 function DataTable({ headers, children }) {
   return (

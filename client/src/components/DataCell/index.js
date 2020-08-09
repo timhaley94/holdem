@@ -16,7 +16,7 @@ function DataCell({
       <th className={classes} {...props}>
         { children }
       </th>
-    )
+    );
   }
 
   return (

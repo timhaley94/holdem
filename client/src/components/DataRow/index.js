@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import styles from './index.module.css';
 
-function DataRow({ isHeader, className, children }) {
+function DataRow({ className, children }) {
   const classes = classNames(className, styles.container);
   return (
     <tr className={classes}>
