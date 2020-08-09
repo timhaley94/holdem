@@ -104,33 +104,33 @@ jobs:
           to: s3://poker-frontend-app
 
 workflows:
-  commit:
+  deploy:
     jobs:
       - lint-javascript:
           name: lint-client-js
           directory: client
-          context: Poker build
+          context: AWS Prod
       - test-javascript:
           name: test-client-js
           directory: client
-          context: Poker build
+          context: AWS Prod
       - build-javascript:
           name: build-client-js
-          context: Poker build
+          context: AWS Prod
       - lint-javascript:
           name: lint-server-js
           directory: server
-          context: Poker build
+          context: AWS Prod
       - test-javascript:
           name: test-server-js
           directory: server
-          context: Poker build
+          context: AWS Prod
       - lint-terraform:
-          context: Poker build
+          context: AWS Prod
       - plan-terraform:
-          context: Poker build
+          context: AWS Prod
       - apply-terraform:
-          context: Poker deploy
+          context: AWS Prod
           filters:
             branches:
               only: master
@@ -144,7 +144,7 @@ workflows:
             - plan-terraform
       - aws-ecr/build-and-push-image:
           name: build-server-image
-          context: Poker deploy
+          context: AWS Prod
           path: ./server
           repo: poker-app
           tag: "{{ .Environment.CIRCLE_SHA1 }}"
