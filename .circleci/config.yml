@@ -147,7 +147,7 @@ workflows:
           context: AWS Prod
           path: ./server
           repo: poker-app
-          tag: ${.Environment.CIRCLE_SHA1}
+          tag: $CIRCLE_SHA1
           filters:
             branches:
               only: master
