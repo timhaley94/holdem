@@ -1,15 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TableRow } from '@material-ui/core';
 import classNames from 'classnames';
 import styles from './index.module.css';
 
 function DataRow({ className, children }) {
   const classes = classNames(className, styles.container);
   return (
-    <TableRow className={classes}>
+    <tr className={classes}>
       { children }
-    </TableRow>
+    </tr>
   );
 }
 

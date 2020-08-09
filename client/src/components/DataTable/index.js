@@ -1,44 +1,44 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Table,
-  TableHead,
-  TableRow,
-  TableBody,
-  TableCell,
-} from '@material-ui/core';
+import { Divider } from '@material-ui/core';
+import DataRow from '../DataRow';
+import DataCell from '../DataCell';
 import styles from './index.module.css';
 
 function DataTable({ headers, children }) {
   return (
-    <Table className={styles.container}>
+    <table className={styles.container}>
       {
         headers
           ? (
-            <TableHead>
-              <TableRow>
-                {
-                  headers.map(
-                    ({ name, align }) => (
-                      <TableCell
-                        key={name}
-                        className={styles.header}
-                        align={align || 'left'}
-                      >
-                        { name }
-                      </TableCell>
-                    ),
-                  )
-                }
-              </TableRow>
-            </TableHead>
+            <>
+              <thead>
+                <DataRow>
+                  {
+                    headers.map(
+                      ({ name, align }) => (
+                        <DataCell
+                          key={name}
+                          className={styles.header}
+                          align={align || 'left'}
+                          isHeader
+                        >
+                          { name }
+                        </DataCell>
+                      ),
+                    )
+                  }
+                </DataRow>
+              </thead>
+              <Divider />
+            </>
           )
           : null
       }
-      <TableBody>
+      <tbody>
         { children }
-      </TableBody>
-    </Table>
+      </tbody>
+    </table>
   );
 }
 
