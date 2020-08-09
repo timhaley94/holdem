@@ -154,6 +154,7 @@ workflows:
           requires:
             - apply-terraform
       - deploy-client:
+          context: AWS Prod
           filters:
             branches:
               only: master
