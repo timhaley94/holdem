@@ -1,5 +1,5 @@
 {
-  "name": "ui",
+  "name": "holdem_client",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
