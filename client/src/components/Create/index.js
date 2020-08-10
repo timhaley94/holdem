@@ -6,23 +6,23 @@ import {
   Fade,
   FormControl,
   FormControlLabel,
-  InputLabel,
-  Input,
   Modal,
   Switch,
 } from '@material-ui/core';
+import AutorenewIcon from '@material-ui/icons/Autorenew';
 import { useHistory } from 'react-router-dom';
+import getRoomName from '../../utils/getRoomName';
 import { Games } from '../../api';
 import Button from '../Button';
 import styles from './index.module.css';
 
 function Create({ open, onClose }) {
-  const [name, setName] = useState(null);
+  const [name, setName] = useState(getRoomName());
   const [isPrivate, setIsPrivate] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const { push } = useHistory();
 
-  const onNameChange = ({ target: { value } }) => setName(value);
+  const onNameChange = () => setName(getRoomName());
   const onIsPrivateChange = () => setIsPrivate(!isPrivate);
 
   const onSubmit = async () => {
@@ -39,17 +39,17 @@ function Create({ open, onClose }) {
     >
       <Fade in={open}>
         <Card className={styles.content}>
-          <h2 className={styles.header}>New Game</h2>
-          <FormControl className={styles.form}>
-            <div className={styles.input}>
-              <InputLabel htmlFor="name">Name</InputLabel>
-              <Input
-                id="name"
-                placeholder="E.g. Coolest game"
-                value={name || ''}
-                onChange={onNameChange}
-              />
+          <div className={styles.header}>
+            <div className={styles.nameContainer}>
+              <p className={styles.nameLabel}>Room:</p>
+              <h2 className={styles.name}>{name}</h2>
             </div>
+            <AutorenewIcon
+              className={styles.nameIcon}
+              onClick={onNameChange}
+            />
+          </div>
+          <FormControl className={styles.form}>
             <FormControlLabel
               className={styles.switch}
               label="Private?"

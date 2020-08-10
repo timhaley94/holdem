@@ -25,6 +25,32 @@
   margin-bottom: 2rem;
 }
 
+.header {
+  align-self: stretch;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 1rem;
+  box-sizing: border-box;
+}
+
+.nameContainer {
+  margin-right: 1rem;
+}
+
+.nameLabel {
+
+}
+
+.name {
+  margin: 0;
+}
+
+.nameIcon {
+  cursor: pointer;
+}
+
 .form {
   flex-grow: 1;
   display: flex;
