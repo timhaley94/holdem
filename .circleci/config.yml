@@ -133,7 +133,7 @@ workflows:
           context: AWS Prod
           filters:
             branches:
-              only: master
+              only: main
           requires:
             - lint-client-js
             - test-client-js
@@ -150,13 +150,13 @@ workflows:
           tag: $CIRCLE_SHA1
           filters:
             branches:
-              only: master
+              only: main
           requires:
             - apply-terraform
       - deploy-client:
           context: AWS Prod
           filters:
             branches:
-              only: master
+              only: main
           requires:
             - apply-terraform
