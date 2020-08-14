@@ -105,15 +105,12 @@ jobs:
       plan_name:
         default: ""
         type: string
-      vars:
-        default: ""
-        type: string
     working_directory: ~/repo/infrastructure/<<parameters.directory>>
     steps:
       - terraform-setup
       - attach_workspace:
           at: .
-      - run: terraform apply ./<<parameters.plan_name>>.plan <<parameters.vars>>
+      - run: terraform apply ./<<parameters.plan_name>>.plan
   deploy-client:
     executor: aws
     working_directory: ~/repo/client
@@ -210,7 +207,6 @@ workflows:
           context: AWS Prod
           directory: app
           plan_name: app
-          vars: -var='repo_url=$AWS_ECR_ACCOUNT_URL/poker-app'
           filters:
             branches:
               only: main
