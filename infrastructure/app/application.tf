@@ -107,26 +107,13 @@ resource "aws_s3_bucket" "app_version_bucket" {
   tags   = local.tags
 }
 
-resource "local_file" "docker_run" {
-  filename = "${path.module}/bundle/Dockerrun.aws.json"
-  content = templatefile(
-    "${path.module}/templates/Dockerrun.aws.json.tmpl",
-    { repo_url = aws_ecr_repository.image_repo.repository_url }
-  )
-}
-
-data "archive_file" "zip_bundle" {
-  type        = "zip"
-  output_path = "${path.module}/bundle.zip"
-  source_dir  = "${path.module}/bundle"
-  depends_on  = [local_file.docker_run]
-}
-
 resource "aws_s3_bucket_object" "app_version_bundle" {
-  bucket = aws_s3_bucket.app_version_bucket.id
-  key    = "latest.zip"
-  source = "bundle.zip"
-  tags   = local.tags
+  bucket  = aws_s3_bucket.app_version_bucket.id
+  key     = "latest/Dockerrun.aws.json"
+  content = templatefile("${path.module}/templates/Dockerrun.aws.json.tmpl", {
+    repo_url = var.repo_url
+  })
+  tags    = local.tags
 }
 
 resource "aws_elastic_beanstalk_application_version" "latest" {
@@ -134,6 +121,7 @@ resource "aws_elastic_beanstalk_application_version" "latest" {
   application = aws_elastic_beanstalk_application.server_app.name
   description = "Version latest of Poker App"
   bucket      = aws_s3_bucket.app_version_bucket.id
-  key         = aws_s3_bucket_object.app_version_bundle.id
+  key         = "latest"
   tags        = local.tags
+  depends_on  = [aws_s3_bucket_object.app_version_bundle]
 }
