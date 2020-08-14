@@ -131,4 +131,5 @@ resource "aws_elastic_beanstalk_application_version" "latest" {
   bucket      = aws_s3_bucket.app_version_bucket.id
   key         = aws_s3_bucket_object.app_version_bundle.id
   tags        = local.tags
+  depends_on  = [aws_s3_bucket_object.app_version_bundle]
 }
