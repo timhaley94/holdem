@@ -17,3 +17,4 @@ client/build
 # terraform
 **/.terraform
 **/*.plan
+infrastructure/**/bundle*
