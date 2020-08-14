@@ -61,7 +61,7 @@ module "vpc" {
   private_subnets     = local.cidr_blocks.private
   elasticache_subnets = local.cidr_blocks.elasticache
 
-  enable_nat_gateway = false
+  enable_nat_gateway = true
   enable_vpn_gateway = false
 
   public_dedicated_network_acl      = true
