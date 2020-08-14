@@ -4,6 +4,24 @@ terraform {
     key    = "tf-state"
     region = "us-east-2"
   }
+
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+    }
+
+    archive = {
+      source  = "hashicorp/archive"
+      version = "~> 1.3.0"
+    }
+
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 1.4.0"
+    }
+  }
+
+  required_version = ">= 0.13"
 }
 
 provider "aws" {
@@ -11,27 +29,9 @@ provider "aws" {
   region  = "us-east-2"
 }
 
-resource "aws_s3_bucket" "app_bucket" {
-  bucket        = "poker-frontend-app"
-  acl           = "public-read"
-  force_destroy = true
-  policy        = file("${path.module}/bucket_policy.json")
-
-  website {
-    index_document = "index.html"
-    error_document = "index.html"
+locals {
+  tags = {
+    app = "Poker"
+    IaC = "Terraform"
   }
-}
-
-resource "aws_ecr_repository" "image_repo" {
-  name                 = "poker_app"
-  image_tag_mutability = "IMMUTABLE"
-}
-
-output "image_repo_url" {
-  value = "${aws_ecr_repository.image_repo.repository_url}"
-}
-
-output "website_endpoint" {
-  value = "${aws_s3_bucket.app_bucket.website_endpoint}"
 }
