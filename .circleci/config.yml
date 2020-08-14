@@ -86,9 +86,6 @@ jobs:
       plan_name:
         default: ""
         type: string
-      store_path:
-        default: ""
-        type: string
     working_directory: ~/repo/infrastructure/<<parameters.directory>>
     steps:
       - terraform-setup
@@ -99,11 +96,6 @@ jobs:
             - <<parameters.plan_name>>.plan
       - store_artifacts:
           path: ./<<parameters.plan_name>>.plan
-      - when:
-          condition: <<parameters.store_path>>
-          steps:
-            - store_artifacts:
-                path: <<parameters.store_path>>
   apply-terraform:
     executor: terraform
     parameters:
@@ -113,12 +105,20 @@ jobs:
       plan_name:
         default: ""
         type: string
+      store_path:
+        default: ""
+        type: string
     working_directory: ~/repo/infrastructure/<<parameters.directory>>
     steps:
       - terraform-setup
       - attach_workspace:
           at: .
       - run: terraform apply ./<<parameters.plan_name>>.plan
+      - when:
+          condition: <<parameters.store_path>>
+          steps:
+            - store_artifacts:
+                path: <<parameters.store_path>>
   deploy-client:
     executor: aws
     working_directory: ~/repo/client
@@ -181,7 +181,6 @@ workflows:
           context: AWS Prod
           directory: app
           plan_name: app
-          store_path: ./bundle.zip
       - apply-terraform:
           name: apply-repo-terraform
           context: AWS Prod
@@ -216,6 +215,7 @@ workflows:
           context: AWS Prod
           directory: app
           plan_name: app
+          store_path: ./bundle.zip
           filters:
             branches:
               only: main
