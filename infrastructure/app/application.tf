@@ -70,6 +70,12 @@ resource "aws_elastic_beanstalk_environment" "prod_env" {
   }
 
   setting {
+    namespace = "aws:ec2:vpc"
+    name = "AssociatePublicIpAddress"
+    value = true
+  }
+
+  setting {
     namespace = "aws:autoscaling:asg"
     name      = "MinSize"
     value     = 1
