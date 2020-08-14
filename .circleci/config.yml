@@ -11,7 +11,7 @@ executors:
       - image: cimg/node:12.18.3
   terraform:
     docker:
-      - image: hashicorp/terraform:light
+      - image: hashicorp/terraform:0.13.0
   aws:
     docker:
       - image: circleci/python:3.7.1
@@ -68,31 +68,52 @@ jobs:
             - build
   lint-terraform:
     executor: terraform
-    working_directory: ~/repo/infrastructure
+    parameters:
+      directory:
+        default: ""
+        type: string
+    working_directory: ~/repo/infrastructure/<<parameters.directory>>
     steps:
       - terraform-setup
       - run: terraform fmt
       - run: terraform validate
   plan-terraform:
     executor: terraform
-    working_directory: ~/repo/infrastructure
+    parameters:
+      directory:
+        default: ""
+        type: string
+      plan_name:
+        default: ""
+        type: string
+    working_directory: ~/repo/infrastructure/<<parameters.directory>>
     steps:
       - terraform-setup
-      - run: terraform plan -out=./terraform.plan
+      - run: terraform plan -out=./<<parameters.plan_name>>.plan
       - persist_to_workspace:
           root: ./
           paths:
-            - terraform.plan
+            - <<parameters.plan_name>>.plan
       - store_artifacts:
-          path: ./terraform.plan
+          path: ./<<parameters.plan_name>>.plan
   apply-terraform:
     executor: terraform
-    working_directory: ~/repo/infrastructure
+    parameters:
+      directory:
+        default: ""
+        type: string
+      plan_name:
+        default: ""
+        type: string
+      vars:
+        default: ""
+        type: string
+    working_directory: ~/repo/infrastructure/<<parameters.directory>>
     steps:
       - terraform-setup
       - attach_workspace:
           at: .
-      - run: terraform apply ./terraform.plan
+      - run: terraform apply ./<<parameters.plan_name>>.plan <<parameters.vars>>
   deploy-client:
     executor: aws
     working_directory: ~/repo/client
@@ -138,11 +159,28 @@ workflows:
           directory: server
           context: AWS Prod
       - lint-terraform:
+          name: lint-repo-terraform
           context: AWS Prod
+          directory: repo
       - plan-terraform:
+          name: plan-repo-terraform
           context: AWS Prod
+          directory: repo
+          plan_name: repo
+      - lint-terraform:
+          name: lint-app-terraform
+          context: AWS Prod
+          directory: app
+      - plan-terraform:
+          name: plan-app-terraform
+          context: AWS Prod
+          directory: app
+          plan_name: app
       - apply-terraform:
+          name: apply-repo-terraform
           context: AWS Prod
+          directory: repo
+          plan_name: repo
           filters:
             branches:
               only: main
@@ -152,8 +190,10 @@ workflows:
             - build-client-js
             - lint-server-js
             - test-server-js
-            - lint-terraform
-            - plan-terraform
+            - lint-repo-terraform
+            - plan-repo-terraform
+            - lint-app-terraform
+            - plan-app-terraform
       - aws-ecr/build-and-push-image:
           name: build-server-image
           context: AWS Prod
@@ -164,18 +204,29 @@ workflows:
             branches:
               only: main
           requires:
-            - apply-terraform
+            - apply-repo-terraform
+      - apply-terraform:
+          name: apply-app-terraform
+          context: AWS Prod
+          directory: app
+          plan_name: app
+          vars: -var='repo_url=$AWS_ECR_ACCOUNT_URL/poker-app'
+          filters:
+            branches:
+              only: main
+          requires:
+            - build-server-image
       - deploy-client:
           context: AWS Prod
           filters:
             branches:
               only: main
           requires:
-            - apply-terraform
+            - apply-app-terraform
       - deploy-server:
           context: AWS Prod
           filters:
             branches:
               only: main
           requires:
-            - build-server-image
+            - apply-app-terraform
