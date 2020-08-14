@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   aws-s3: circleci/aws-s3@1.0.16
   aws-ecr: circleci/aws-ecr@6.12.2
+  awsebcli: sbc-orbs/awsebcli@0.0.3
 
 executors:
   node:
@@ -102,6 +103,17 @@ jobs:
       - aws-s3/sync:
           from: ./build
           to: s3://poker-frontend-app
+  deploy-server:
+    executor: aws
+    working_directory: ~/repo
+    steps:
+      - awsebcli/install
+      - awsebcli/configure
+      - run: >
+          aws elasticbeanstalk update-environment
+            --application-name poker-app-ebs-application
+            --version-label latest
+            --environment-name poker-app-ebs-prod
 
 workflows:
   deploy:
@@ -147,7 +159,7 @@ workflows:
           context: AWS Prod
           path: ./server
           repo: poker_app
-          tag: $CIRCLE_SHA1
+          tag: latest,$CIRCLE_SHA1
           filters:
             branches:
               only: main
@@ -160,3 +172,10 @@ workflows:
               only: main
           requires:
             - apply-terraform
+      - deploy-server:
+          context: AWS Prod
+          filters:
+            branches:
+              only: main
+          requires:
+            - build-server-image
