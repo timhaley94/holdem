@@ -60,7 +60,7 @@ resource "aws_elastic_beanstalk_environment" "prod_env" {
   setting {
     namespace = "aws:ec2:vpc"
     name      = "Subnets"
-    value     = join(",", module.vpc.private_subnets)
+    value     = join(",", module.vpc.public_subnets)
   }
 
   setting {
