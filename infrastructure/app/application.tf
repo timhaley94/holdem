@@ -113,21 +113,13 @@ resource "aws_s3_bucket" "app_version_bucket" {
   tags   = local.tags
 }
 
-data "archive_file" "app_bundle" {
-  type                    = "zip"
-  output_path             = "${path.module}/bundle.zip"
-  source_content_filename = "Dockerrun.aws.json"
-  source_content = templatefile("${path.module}/templates/Dockerrun.aws.json.tmpl", {
+resource "aws_s3_bucket_object" "app_version_bundle" {
+  bucket  = aws_s3_bucket.app_version_bucket.id
+  key     = "Dockerrun.aws.jso"
+  tags    = local.tags
+  content = templatefile("${path.module}/templates/Dockerrun.aws.json.tmpl", {
     repo_url = var.repo_url
   })
-}
-
-resource "aws_s3_bucket_object" "app_version_bundle" {
-  bucket     = aws_s3_bucket.app_version_bucket.id
-  key        = "latest.zip"
-  source     = "${path.module}/bundle.zip"
-  tags       = local.tags
-  depends_on = [data.archive_file.app_bundle]
 }
 
 resource "aws_elastic_beanstalk_application_version" "latest" {
