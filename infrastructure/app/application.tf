@@ -115,7 +115,7 @@ resource "aws_s3_bucket" "app_version_bucket" {
 
 resource "aws_s3_bucket_object" "app_version_bundle" {
   bucket  = aws_s3_bucket.app_version_bucket.id
-  key     = "Dockerrun.aws.jso"
+  key     = "Dockerrun.aws.json"
   tags    = local.tags
   content = templatefile("${path.module}/templates/Dockerrun.aws.json.tmpl", {
     repo_url = var.repo_url
