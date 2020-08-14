@@ -86,10 +86,13 @@ jobs:
       plan_name:
         default: ""
         type: string
+      vars:
+        default: ""
+        type: string
     working_directory: ~/repo/infrastructure/<<parameters.directory>>
     steps:
       - terraform-setup
-      - run: terraform plan -out=./<<parameters.plan_name>>.plan
+      - run: terraform plan -out=./<<parameters.plan_name>>.plan <<parameters.vars>>
       - persist_to_workspace:
           root: ./
           paths:
@@ -181,6 +184,7 @@ workflows:
           context: AWS Prod
           directory: app
           plan_name: app
+          vars: -var='repo_url=${AWS_ECR_ACCOUNT_URL}/poker-app'
       - apply-terraform:
           name: apply-repo-terraform
           context: AWS Prod
