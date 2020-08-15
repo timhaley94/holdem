@@ -13,11 +13,19 @@ Summary of the feature
 
 ### Current Behavior
 
-What it does
+What it does:
+
+  -
+  -
+  -
 
 ### Proposed Behavior
 
-What it should do
+What it should do:
+
+  -
+  -
+  -
 
 ### Open Questions
 
