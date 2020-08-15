@@ -86,13 +86,20 @@ jobs:
       plan_name:
         default: ""
         type: string
-      vars:
-        default: ""
-        type: string
+      with_vars:
+        default: false
+        type: boolean
     working_directory: ~/repo/infrastructure/<<parameters.directory>>
     steps:
       - terraform-setup
-      - run: terraform plan -out=./<<parameters.plan_name>>.plan <<parameters.vars>>
+      - when:
+          condition: <<parameters.with_vars>>
+          steps:
+            - run: terraform plan -out=./<<parameters.plan_name>>.plan -var="repo_url=$AWS_ECR_ACCOUNT_URL/poker_app"
+      - unless:
+          condition: <<parameters.with_vars>>
+          steps:
+            - run: terraform plan -out=./<<parameters.plan_name>>.plan
       - persist_to_workspace:
           root: ./
           paths:
@@ -108,20 +115,12 @@ jobs:
       plan_name:
         default: ""
         type: string
-      store_path:
-        default: ""
-        type: string
     working_directory: ~/repo/infrastructure/<<parameters.directory>>
     steps:
       - terraform-setup
       - attach_workspace:
           at: .
       - run: terraform apply ./<<parameters.plan_name>>.plan
-      - when:
-          condition: <<parameters.store_path>>
-          steps:
-            - store_artifacts:
-                path: <<parameters.store_path>>
   deploy-client:
     executor: aws
     working_directory: ~/repo/client
@@ -139,9 +138,9 @@ jobs:
       - awsebcli/install
       - awsebcli/configure
       - run: >
-          aws elasticbeanstalk update-environment
-            --application-name poker-app-ebs-application
-            --version-label latest
+          aws elasticbeanstalk update-environment \
+            --application-name poker-app-ebs-application \
+            --version-label latest \
             --environment-name poker-app-ebs-prod
 
 workflows:
@@ -184,7 +183,7 @@ workflows:
           context: AWS Prod
           directory: app
           plan_name: app
-          vars: -var='repo_url=${AWS_ECR_ACCOUNT_URL}/poker-app'
+          with_vars: true
       - apply-terraform:
           name: apply-repo-terraform
           context: AWS Prod
@@ -219,7 +218,6 @@ workflows:
           context: AWS Prod
           directory: app
           plan_name: app
-          store_path: ./bundle.zip
           filters:
             branches:
               only: main
