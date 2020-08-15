@@ -140,7 +140,7 @@ jobs:
       - run: >
           aws elasticbeanstalk update-environment \
             --application-name poker-app-ebs-application \
-            --version-label latest \
+            --version-label poker-app-latest-version \
             --environment-name poker-app-ebs-prod
 
 workflows:
