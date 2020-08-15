@@ -8,6 +8,7 @@ assignees: ''
 ---
 
 ### TL;DR
+Summary of the bug
 
 ### How to Reproduce:
 
@@ -17,7 +18,7 @@ assignees: ''
 4. See error
 
 ### Expected behavior:
-What you expected to happen.
+What you expected to happen
 
 ### Screenshots
 If applicable...
