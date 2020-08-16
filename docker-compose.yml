@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+  server:
+    build: server/
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    ports:
+      - 8080:8080
+    environment:
+      - NODE_ENV=development
+  client:
+    stdin_open: true
+    build: client/
+    volumes:
+      - ./client/src:/app/src
+      - ./client/public:/app/public
+      - /app/node_modules
+    ports:
+      - 3000:3000
+      - 3001:3001
+    depends_on:
+      - server

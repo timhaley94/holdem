@@ -10,6 +10,7 @@ RUN npm ci
 # Bundle app source
 COPY . .
 
-EXPOSE 8080
+EXPOSE 3000
+EXPOSE 3001
 
-CMD [ "bash", "./start.sh" ]
+CMD [ "npm", "start" ]

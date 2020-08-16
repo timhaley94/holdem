@@ -1,0 +1,2 @@
+# Don't copy dependencies
+node_modules
