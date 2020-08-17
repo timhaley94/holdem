@@ -4,7 +4,7 @@ const api = require('./index');
 describe('API', () => {
   it('pings successfully', () => (
     request(api)
-      .get('/api/ping')
+      .get('/ping')
       .expect(200)
   ));
 });
