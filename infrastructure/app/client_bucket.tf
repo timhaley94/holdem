@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "app_bucket" {
-  bucket        = "poker-frontend-app"
+  bucket        = "www.holdemhounds.com"
   acl           = "public-read"
   force_destroy = true
   policy        = file("${path.module}/policies/bucket_policy.json")
