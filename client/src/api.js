@@ -1,8 +1,8 @@
 import { get, post, patch } from 'axios';
 import config from './config';
 
-const userRoute = `${config.serverUrl}/api/users`;
-const gameRoute = `${config.serverUrl}/api/games`;
+const userRoute = `${config.serverUrl}/users`;
+const gameRoute = `${config.serverUrl}/games`;
 
 const opts = (token) => ({
   headers: {

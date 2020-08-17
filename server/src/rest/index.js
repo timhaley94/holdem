@@ -5,19 +5,17 @@ const Users = require('./users');
 const Games = require('./games');
 
 const api = express();
-const router = express.Router();
 
 // Middleware
-router.use(cors());
-router.use(express.json());
+api.use(cors());
+api.use(express.json());
 
 // Routes
-router.get('/ping', (req, res) => res.sendStatus(200));
-router.use('/users', Users.router);
-router.use('/games', Games.router);
+api.get('/ping', (req, res) => res.sendStatus(200));
+api.use('/users', Users.router);
+api.use('/games', Games.router);
 
 // Error Middleware
-router.use(Errors.middleware);
+api.use(Errors.middleware);
 
-api.use('/api', router);
 module.exports = api;
