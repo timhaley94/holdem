@@ -1,4 +1,5 @@
 const IO = require('socket.io');
+const redisAdapter = require('socket.io-redis');
 const config = require('../config');
 const Auth = require('./auth');
 const Game = require('./game');
@@ -19,6 +20,7 @@ function Socket(server) {
     pingTimeout: config.socket.pingTimeout,
   });
 
+  io.adapter(redisAdapter(config.redis));
   io.use(Auth.middleware);
 
   modules.forEach((module) => {

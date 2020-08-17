@@ -3,6 +3,10 @@ module.exports = {
   auth: {
     privateKey: 'developmentkey',
   },
+  redis: {
+    host: 'redis',
+    port: 6379
+  },
   socket: {
     pingInterval: 10000,
     pingTimeout: 5000,

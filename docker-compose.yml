@@ -1,14 +1,31 @@
 version: "3.8"
 services:
+  redis:
+    image: redis:6.0.6
+    expose:
+      - 6379
   server:
     build: server/
     volumes:
       - ./server:/app
       - /app/node_modules
     ports:
-      - 8080:8080
+      - 4000-4001:8080
     environment:
       - NODE_ENV=development
+    depends_on:
+      - redis
+  haproxy:
+    image: eeacms/haproxy:1.8-1.5
+    depends_on:
+      - server
+    ports:
+      - 8080:5000
+      - 8081:1936
+    environment:
+      BACKENDS: server
+      DNS_ENABLED: "true"
+      LOG_LEVEL: info
   client:
     stdin_open: true
     build: client/
@@ -20,4 +37,4 @@ services:
       - 3000:3000
       - 3001:3001
     depends_on:
-      - server
+      - haproxy
