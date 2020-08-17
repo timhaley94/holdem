@@ -1,4 +1,5 @@
 const IO = require('socket.io');
+const redisAdapter = require('socket.io-redis');
 const config = require('../config');
 const Auth = require('./auth');
 const Game = require('./game');
@@ -18,6 +19,11 @@ function Socket(server) {
     pingInterval: config.socket.pingInterval,
     pingTimeout: config.socket.pingTimeout,
   });
+
+  if (process.env.NODE_ENV !== 'test') {
+    // Figure out a way to mock redis in tests
+    io.adapter(redisAdapter(config.redis));
+  }
 
   io.use(Auth.middleware);
 
