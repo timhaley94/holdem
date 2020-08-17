@@ -4,7 +4,11 @@ module.exports = {
     privateKey: 'developmentkey',
   },
   redis: {
-    host: 'redis',
+    host: (
+      process.env.NODE_ENV === 'production'
+        ? 'poker-app-cache-replication-group.fojvth.ng.0001.use2.cache.amazonaws.com'
+        : 'redis'
+    ),
     port: 6379,
   },
   socket: {
