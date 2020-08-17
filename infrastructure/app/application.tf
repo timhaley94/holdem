@@ -71,8 +71,8 @@ resource "aws_elastic_beanstalk_environment" "prod_env" {
 
   setting {
     namespace = "aws:ec2:vpc"
-    name = "AssociatePublicIpAddress"
-    value = true
+    name      = "AssociatePublicIpAddress"
+    value     = true
   }
 
   setting {
@@ -114,9 +114,9 @@ resource "aws_s3_bucket" "app_version_bucket" {
 }
 
 resource "aws_s3_bucket_object" "app_version_bundle" {
-  bucket  = aws_s3_bucket.app_version_bucket.id
-  key     = "Dockerrun.aws.json"
-  tags    = local.tags
+  bucket = aws_s3_bucket.app_version_bucket.id
+  key    = "Dockerrun.aws.json"
+  tags   = local.tags
   content = templatefile("${path.module}/templates/Dockerrun.aws.json.tmpl", {
     repo_url = var.repo_url
   })

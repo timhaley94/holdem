@@ -20,7 +20,11 @@ function Socket(server) {
     pingTimeout: config.socket.pingTimeout,
   });
 
-  io.adapter(redisAdapter(config.redis));
+  if (process.env.NODE_ENV !== 'test') {
+    // Figure out a way to mock redis in tests
+    io.adapter(redisAdapter(config.redis));
+  }
+
   io.use(Auth.middleware);
 
   modules.forEach((module) => {

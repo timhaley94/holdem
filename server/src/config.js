@@ -5,7 +5,7 @@ module.exports = {
   },
   redis: {
     host: 'redis',
-    port: 6379
+    port: 6379,
   },
   socket: {
     pingInterval: 10000,
