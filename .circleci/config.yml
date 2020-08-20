@@ -55,7 +55,46 @@ jobs:
     working_directory: ~/repo/<<parameters.directory>>
     steps:
       - javascript-setup
-      - run: npm run test
+      - attach_workspace:
+          at: .
+      - run: |
+          npm run test
+          ./cc/cc-test-reporter format-coverage --add-prefix=<<parameters.directory>> -t lcov -o cc/codeclimate.<<parameters.directory>>.json coverage/lcov.info
+      - persist_to_workspace:
+          root: .
+          paths:
+            - cc/codeclimate.<<parameters.directory>>.json
+  setup-coverage:
+    executor: node
+    working_directory: ~/repo
+    steps:
+      - checkout:
+          path: ~/repo
+      - run:
+          name:  Download cc-test-reporter
+          command: |
+            mkdir -p cc/
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc/cc-test-reporter
+            chmod +x ./cc/cc-test-reporter
+      - persist_to_workspace:
+          root: .
+          paths:
+            - cc
+  upload-coverage:
+    executor: node
+    working_directory: ~/repo
+    environment: 
+      - CC_TEST_REPORTER_ID: bccf9e20854b07b071ff25debf9d45fb35f99999febc7730a3458d023229386e
+    steps:
+      - checkout:
+          path: ~/repo
+      - attach_workspace:
+          at: .
+      - run:
+          name: Upload coverage results to Code Climate
+          command: |
+            cc/cc-test-reporter sum-coverage cc/codeclimate.*.json -p 2 -o cc/codeclimate.total.json
+            cc/cc-test-reporter upload-coverage -i cc/codeclimate.total.json
   build-javascript:
     executor: node
     working_directory: ~/repo/client
@@ -146,6 +185,8 @@ jobs:
 workflows:
   deploy:
     jobs:
+      - setup-coverage:
+          context: AWS Prod
       - lint-javascript:
           name: lint-client-js
           directory: client
@@ -154,6 +195,8 @@ workflows:
           name: test-client-js
           directory: client
           context: AWS Prod
+          requires:
+            - setup-coverage
       - build-javascript:
           name: build-client-js
           context: AWS Prod
@@ -165,6 +208,8 @@ workflows:
           name: test-server-js
           directory: server
           context: AWS Prod
+          requires:
+            - setup-coverage
       - lint-terraform:
           name: lint-repo-terraform
           context: AWS Prod
@@ -184,6 +229,11 @@ workflows:
           directory: app
           plan_name: app
           with_vars: true
+      - upload-coverage:
+          context: AWS Prod
+          requires:
+            - test-client-js
+            - test-server-js
       - apply-terraform:
           name: apply-repo-terraform
           context: AWS Prod
@@ -194,14 +244,13 @@ workflows:
               only: main
           requires:
             - lint-client-js
-            - test-client-js
             - build-client-js
             - lint-server-js
-            - test-server-js
             - lint-repo-terraform
             - plan-repo-terraform
             - lint-app-terraform
             - plan-app-terraform
+            - upload-coverage
       - aws-ecr/build-and-push-image:
           name: build-server-image
           context: AWS Prod

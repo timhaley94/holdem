@@ -4,9 +4,9 @@
   <a href="https://codeclimate.com/github/timhaley94/holdem/maintainability">
     <img src="https://api.codeclimate.com/v1/badges/b4b31a8f8cf13a23ca93/maintainability" />
   </a>
-  <!-- <a href="https://codeclimate.com/github/timhaley94/holdem/test_coverage">
+  <a href="https://codeclimate.com/github/timhaley94/holdem/test_coverage">
     <img src="https://api.codeclimate.com/v1/badges/b4b31a8f8cf13a23ca93/test_coverage" />
-  </a> -->
+  </a>
   <a href="https://circleci.com/gh/timhaley94/holdem">
     <img src="https://circleci.com/gh/timhaley94/holdem.svg?style=shield" />
   </a>
@@ -38,13 +38,13 @@ holdem/
   server/           --> Server (Node.js) code
 ```
 
-## Running locally
+## Development
 
 While you you could set up each individual piece of the system locally (i.e. server, client, redis)
 the easiest way to run the project is through `docker-compose`. Make sure you have `docker` and
-`docker-compose` and then you can run `docker-compose up` in the root directory.
+`docker-compose` installed and then you can run `docker-compose up` in the root directory.
 
-Viola, http:localhost:3000.
+Viola, [http:localhost:3000](http:localhost:3000).
 
 The `docker-compose` configuration supports hot reloading, so once you have it running, your
 changes to `./client` and `./server` will be respected. However, if you ever need to force a
@@ -61,6 +61,18 @@ docker-compose up --scale server=2
 ```sh
 docker-compose up -d
 ```
+
+### Bring system down
+
+```sh
+docker-compose down
+```
+
+### High level docs
+
+We have a couple of diagrams to get a high level feel for the implementation:
+- [Our technical stack](docs/diagrams/the_stack.png)
+- [Our infrastructure](docs/diagrams/infrastructure.png)
 
 ## Contributing
 
