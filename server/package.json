@@ -7,7 +7,7 @@
     "start": "pm2 start ./src/index.js",
     "dev": "nodemon --watch src src/index.js",
     "lint": "eslint src",
-    "test": "jest src",
+    "test": "jest src --coverage",
     "stop": "pm2 stop ./src/index.js"
   },
   "author": "",

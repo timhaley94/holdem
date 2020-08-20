@@ -17,3 +17,6 @@ client/build
 # terraform
 **/.terraform
 **/*.plan
+
+# coverage
+**/coverage
