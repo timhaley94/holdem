@@ -1,7 +1,6 @@
 version: 2.1
 
 orbs:
-  aws-s3: circleci/aws-s3@1.0.16
   aws-ecr: circleci/aws-ecr@6.12.2
   awsebcli: sbc-orbs/awsebcli@0.0.3
 
@@ -160,16 +159,6 @@ jobs:
       - attach_workspace:
           at: .
       - run: terraform apply ./<<parameters.plan_name>>.plan
-  deploy-client:
-    executor: aws
-    working_directory: ~/repo/client
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - aws-s3/sync:
-          from: ./build
-          to: s3://www.holdemhounds.com
   deploy-server:
     executor: aws
     working_directory: ~/repo
@@ -272,13 +261,6 @@ workflows:
               only: main
           requires:
             - build-server-image
-      - deploy-client:
-          context: AWS Prod
-          filters:
-            branches:
-              only: main
-          requires:
-            - apply-app-terraform
       - deploy-server:
           context: AWS Prod
           filters:
