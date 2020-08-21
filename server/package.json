@@ -4,11 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --watch src src/index.js",
+    "start": "node src/index.js",
     "dev": "nodemon --watch src src/index.js",
     "lint": "eslint src",
-    "test": "jest src --coverage",
-    "stop": "pm2 stop ./src/index.js"
+    "test": "jest src --coverage"
   },
   "author": "",
   "license": "ISC",
