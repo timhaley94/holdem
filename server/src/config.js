@@ -5,9 +5,9 @@ module.exports = {
   },
   redis: {
     host: (
-      process.env.NODE_ENV === 'production'
-        ? 'poker-app-cache-replication-group.fojvth.ng.0001.use2.cache.amazonaws.com'
-        : 'redis'
+      process.env.NODE_ENV === 'development'
+        ? 'redis'
+        : 'poker-app-cache-replication-group.fojvth.ng.0001.use2.cache.amazonaws.com'
     ),
     port: 6379,
   },
