@@ -12,4 +12,4 @@ COPY . .
 
 EXPOSE 8080
 
-CMD [ "bash", "./start.sh" ]
+CMD [ "npm", "start" ]

@@ -20,3 +20,6 @@ client/build
 
 # coverage
 **/coverage
+
+# misc
+**/temp
