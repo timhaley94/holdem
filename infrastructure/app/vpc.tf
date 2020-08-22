@@ -14,8 +14,8 @@ locals {
       {
         rule_number = 100 + index(local.cidr_blocks.public, block)
         rule_action = "allow"
-        from_port   = 5000
-        to_port     = 5000
+        from_port   = 6379
+        to_port     = 6379
         protocol    = "tcp"
         cidr_block  = block
       }
