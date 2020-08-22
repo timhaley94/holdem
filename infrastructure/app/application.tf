@@ -1,3 +1,14 @@
+# HTTPS cert
+resource "aws_acm_certificate" "ebs_lb_cert" {
+  domain_name       = "api.holdemhounds.com"
+  validation_method = "DNS"
+  tags              = local.tags
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 # Service role
 resource "aws_iam_role" "ebs_service_role" {
   name               = "poker-app-ebs-service-role"
@@ -44,6 +55,10 @@ resource "aws_elastic_beanstalk_application" "server_app" {
   tags        = local.tags
 }
 
+locals {
+  https_port_namespace = "aws:elb:listener:443"
+}
+
 resource "aws_elastic_beanstalk_environment" "prod_env" {
   name                = "poker-app-ebs-prod"
   description         = "Prod Env for Poker App"
@@ -51,6 +66,14 @@ resource "aws_elastic_beanstalk_environment" "prod_env" {
   solution_stack_name = "64bit Amazon Linux 2 v3.1.0 running Docker"
   tags                = local.tags
 
+  # Environment-wide settings
+  setting {
+    namespace = "aws:elasticbeanstalk:environment"
+    name      = "ServiceRole"
+    value     = aws_iam_role.ebs_service_role.name
+  }
+
+  # Instance settings
   setting {
     namespace = "aws:ec2:vpc"
     name      = "VPCId"
@@ -76,6 +99,13 @@ resource "aws_elastic_beanstalk_environment" "prod_env" {
   }
 
   setting {
+    namespace = "aws:ec2:instances"
+    name      = "InstanceTypes"
+    value     = "t2.micro"
+  }
+
+  # Autoscaling settings
+  setting {
     namespace = "aws:autoscaling:asg"
     name      = "MinSize"
     value     = 1
@@ -88,21 +118,28 @@ resource "aws_elastic_beanstalk_environment" "prod_env" {
   }
 
   setting {
-    namespace = "aws:ec2:instances"
-    name      = "InstanceTypes"
-    value     = "t2.micro"
-  }
-
-  setting {
-    namespace = "aws:elasticbeanstalk:environment"
-    name      = "ServiceRole"
-    value     = aws_iam_role.ebs_service_role.name
-  }
-
-  setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "IamInstanceProfile"
     value     = aws_iam_instance_profile.ebs_instance_profile.name
+  }
+
+  # Load balancer settings
+  setting {
+    namespace = local.https_port_namespace
+    name      = "ListenerProtocol"
+    value     = "HTTPS"
+  }
+
+  setting {
+    namespace = local.https_port_namespace
+    name      = "InstancePort"
+    value     = 80
+  }
+
+  setting {
+    namespace = local.https_port_namespace
+    name      = "SSLCertificateId"
+    value     = aws_acm_certificate.ebs_lb_cert.id
   }
 }
 
