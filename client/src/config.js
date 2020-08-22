@@ -1,7 +1,7 @@
 export default {
   serverUrl: (
     process.env.NODE_ENV === 'production'
-      ? 'http://api.holdemhounds.com'
+      ? 'https://api.holdemhounds.com'
       : 'http://localhost:8080'
   ),
   timUrl: 'https://timhaley.me',
