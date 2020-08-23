@@ -138,19 +138,13 @@ resource "aws_elastic_beanstalk_environment" "prod_env" {
   # Load balancer settings
   setting {
     namespace = local.https_port_namespace
-    name      = "ListenerProtocol"
+    name      = "Protocol"
     value     = "HTTPS"
   }
 
   setting {
     namespace = local.https_port_namespace
-    name      = "InstancePort"
-    value     = 80
-  }
-
-  setting {
-    namespace = local.https_port_namespace
-    name      = "SSLCertificateId"
+    name      = "SSLCertificateArns"
     value     = aws_acm_certificate.ebs_lb_cert.id
   }
 }
