@@ -34,7 +34,10 @@ describe('Engine.card', () => {
 
   it('randomly selects suit', () => {
     expectEventuallyWorks(() => {
-      if (Card().suit === Card().suit) {
+      const a = Card();
+      const b = Card();
+
+      if (a.suit === b.suit) {
         throw new Error('suits are equal');
       }
     });
@@ -42,7 +45,10 @@ describe('Engine.card', () => {
 
   it('randomly selects rank', () => {
     expectEventuallyWorks(() => {
-      if (Card().rank === Card().rank) {
+      const a = Card();
+      const b = Card();
+
+      if (a.rank === b.rank) {
         throw new Error('ranks are equal');
       }
     });
