@@ -73,6 +73,12 @@ resource "aws_elastic_beanstalk_environment" "prod_env" {
     value     = aws_iam_role.ebs_service_role.name
   }
 
+  setting {
+    namespace = "aws:elasticbeanstalk:environment"
+    name      = "LoadBalancerType"
+    value     = "application"
+  }
+
   # Instance settings
   setting {
     namespace = "aws:ec2:vpc"
