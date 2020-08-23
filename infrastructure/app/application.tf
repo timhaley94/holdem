@@ -56,7 +56,7 @@ resource "aws_elastic_beanstalk_application" "server_app" {
 }
 
 locals {
-  https_port_namespace = "aws:elb:listener:443"
+  https_port_namespace = "aws:elbv2:listener:443"
 }
 
 resource "aws_elastic_beanstalk_environment" "prod_env" {
@@ -77,6 +77,12 @@ resource "aws_elastic_beanstalk_environment" "prod_env" {
     namespace = "aws:elasticbeanstalk:environment"
     name      = "LoadBalancerType"
     value     = "application"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application"
+    name      = "ApplicationHealthcheckURL"
+    value     = "HTTPS:443/ping"
   }
 
   # Instance settings
