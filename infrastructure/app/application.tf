@@ -81,7 +81,7 @@ resource "aws_elastic_beanstalk_environment" "prod_env" {
 
   setting {
     namespace = "aws:elasticbeanstalk:application"
-    name      = "ApplicationHealthcheckURL"
+    name      = "Application Healthcheck URL"
     value     = "HTTPS:443/ping"
   }
 
