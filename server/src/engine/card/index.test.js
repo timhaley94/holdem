@@ -32,19 +32,22 @@ describe('Engine.card', () => {
     expect(ranks).toContain(Card().rank);
   });
 
-  it('randomly selects suit', () => {
+  function expectRandomAttribute(attr) {
     expectEventuallyWorks(() => {
-      if (Card().suit === Card().suit) {
-        throw new Error('suits are equal');
+      const a = Card();
+      const b = Card();
+
+      if (a[attr] === b[attr]) {
+        throw new Error(`attribute, ${attr}, is equal`);
       }
     });
+  }
+
+  it('randomly selects suit', () => {
+    expectRandomAttribute('suit');
   });
 
   it('randomly selects rank', () => {
-    expectEventuallyWorks(() => {
-      if (Card().rank === Card().rank) {
-        throw new Error('ranks are equal');
-      }
-    });
+    expectRandomAttribute('rank');
   });
 });
