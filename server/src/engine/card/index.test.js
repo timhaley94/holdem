@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { Card, ranks, suits } = require('./index');
+const Card = require('./index');
 
 function retries(fn, n = 5) {
   try {
@@ -17,6 +17,8 @@ function expectEventuallyWorks(fn) {
   expect(() => retries(fn)).not.toThrow();
 }
 
+const { suits, ranks } = Card;
+
 describe('Engine.card', () => {
   it('models rank as a range from 2 to 14', () => {
     expect(_.min(ranks)).toBe(2);
@@ -25,17 +27,17 @@ describe('Engine.card', () => {
   });
 
   it('selects valid suit', () => {
-    expect(suits).toContain(Card().suit);
+    expect(suits).toContain(Card.create().suit);
   });
 
   it('selects valid rank', () => {
-    expect(ranks).toContain(Card().rank);
+    expect(ranks).toContain(Card.create().rank);
   });
 
   function expectRandomAttribute(attr) {
     expectEventuallyWorks(() => {
-      const a = Card();
-      const b = Card();
+      const a = Card.create();
+      const b = Card.create();
 
       if (a[attr] === b[attr]) {
         throw new Error(`attribute, ${attr}, is equal`);
