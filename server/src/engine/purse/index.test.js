@@ -39,7 +39,7 @@ describe('Engine.purse', () => {
     
   });
 
-  describe('.resolveBet()', () => {
+  describe('.resolve()', () => {
 
   });
 

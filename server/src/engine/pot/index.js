@@ -1,13 +1,8 @@
-function Pot({ users }) {
+function create({ purses }) {
   return {
     value: 0,
     sidepot: null,
-    users: users.map(
-      ({ id, bankroll }) => ({
-        id,
-        bankroll,
-      }),
-    ),
+    purses,
   };
 }
 
@@ -18,3 +13,14 @@ function bet() {
 function fold() {
 
 }
+
+function resolve() {
+
+}
+
+module.exports = {
+  create,
+  bet,
+  fold,
+  resolve,
+};
