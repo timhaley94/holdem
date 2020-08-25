@@ -1,3 +1,7 @@
-const Engine = require('./engine');
+const DB = require('./db');
+const Game = require('./game');
 
-module.exports = Engine;
+module.exports = {
+  init: DB.init,
+  Game,
+};
