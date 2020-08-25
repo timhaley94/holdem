@@ -1,7 +1,7 @@
 const config = require('../../config');
 const Errors = require('../errors');
 
-const DEFAULT_BANKROLL = config.engine.defaultBankroll;
+const DEFAULT_BANKROLL = config.Domain.defaultBankroll;
 
 function create(bankroll = DEFAULT_BANKROLL) {
   return {
@@ -12,7 +12,7 @@ function create(bankroll = DEFAULT_BANKROLL) {
 
 function bet(purse, value) {
   if (value < 0) {
-    throw new Errors.RequestError('Cannot bet negative value');
+    throw new Errors.BadRequest('Cannot bet negative value');
   }
 
   return {

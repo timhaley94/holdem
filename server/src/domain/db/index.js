@@ -4,7 +4,7 @@ const Errors = require('../errors');
 
 function die(err) {
   // We've encountered an unrecoverable error
-  throw new Errors.FatalError(err);
+  throw new Errors.Fatal(err);
 }
 
 let client;
@@ -29,7 +29,7 @@ function wrap(method, ) {
       const result = await fn();
       return result;
     } catch (err) {
-      throw new Errors.DBError();
+      throw new Errors.Fatal(err);
     }
   };
 }

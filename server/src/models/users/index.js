@@ -1,7 +1,7 @@
 const Joi = require('@hapi/joi');
 const { v4: uuid } = require('uuid');
 const Auth = require('../auth');
-const Errors = require('../errors');
+const Errors = require('../../domain/errors');
 const Listener = require('../listener');
 const Handler = require('../handler');
 

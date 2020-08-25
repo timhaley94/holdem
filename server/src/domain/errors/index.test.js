@@ -1,6 +1,6 @@
 const Errors = require('./index');
 
-describe('Models.Errors', () => {
+describe('Domain.Errors', () => {
   const tests = {
     BadRequest: 400,
     Unauthorized: 401,
@@ -11,9 +11,9 @@ describe('Models.Errors', () => {
       const e = (...args) => new Errors[name](...args);
 
       describe(name, () => {
-        it('extends HTTPError', () => {
+        it('extends DomainError', () => {
           const error = e('foo');
-          expect(error).toBeInstanceOf(Errors.HTTPError);
+          expect(error).toBeInstanceOf(Errors.DomainError);
         });
 
         it('preserves message', () => {

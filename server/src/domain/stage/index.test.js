@@ -1,6 +1,6 @@
 const Stage = require('./index');
 
-describe('Engine.stage', () => {
+describe('Domain.Stage', () => {
   describe('.first()', () => {
     it('returns ante', () => {
       expect(Stage.first()).toEqual(Stage.ANTE);

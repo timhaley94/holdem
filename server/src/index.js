@@ -1,8 +1,8 @@
-const Engine = require('../engine');
+const Domain = require('../domain');
 const config = require('./config');
 const api = require('./api');
 
-Engine.init().then(
+Domain.init().then(
   () => {
     api.listen(config.port);
   },

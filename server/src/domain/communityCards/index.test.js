@@ -1,7 +1,7 @@
 const CommunityCards = require('./index');
 const Stage = require('../stage');
 
-describe('Engine.communityCards', () => {
+describe('Domain.CommunityCards', () => {
   describe('.create()', () => {
     it('starts stage at ante', () => {
       expect(

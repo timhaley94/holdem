@@ -1,4 +1,4 @@
-describe('Engine.hand', () => {
+describe('Domain.Hand', () => {
   describe('.create()', () => {
 
   });

@@ -19,7 +19,7 @@ function expectEventuallyWorks(fn) {
 
 const { suits, ranks } = Card;
 
-describe('Engine.card', () => {
+describe('Domain.Card', () => {
   it('models rank as a range from 2 to 14', () => {
     expect(_.min(ranks)).toBe(2);
     expect(_.max(ranks)).toBe(14);

@@ -3,9 +3,10 @@ const types = {
   Unauthorized: 401,
   NotFound: 404,
   Conflict: 409,
+  Fatal: 500,
 };
 
-class HTTPError extends Error {
+class DomainError extends Error {
   constructor(message) {
     super();
     this.message = message;
@@ -13,7 +14,7 @@ class HTTPError extends Error {
 }
 
 const error = (status) => (
-  class extends HTTPError {
+  class extends DomainError {
     constructor(...args) {
       super(...args);
       this.status = status;
@@ -31,5 +32,5 @@ const errors = Object.entries(types).reduce(
 
 module.exports = {
   ...errors,
-  HTTPError,
+  DomainError,
 };

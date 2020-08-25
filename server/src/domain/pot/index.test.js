@@ -1,4 +1,4 @@
-describe('Engine.pot', () => {
+describe('Domain.Pot', () => {
   describe('.create()', () => {
 
   });

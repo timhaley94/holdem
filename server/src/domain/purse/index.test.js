@@ -1,6 +1,6 @@
 const Purse = require('./index');
 
-describe('Engine.purse', () => {
+describe('Domain.Purse', () => {
   describe('.create()', () => {
     it('can handle bankroll arg', () => {
       const bankroll = Purse.DEFAULT_BANKROLL * 2;
