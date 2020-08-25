@@ -4,7 +4,7 @@ const Stage = require('../stage');
 const counts = {
   [Stage.FLOP]: 3,
   [Stage.TURN]: 1,
-  [Stage.RIVER]: 1
+  [Stage.RIVER]: 1,
 };
 
 function dealCount(stage) {
@@ -25,7 +25,7 @@ function deal({ stage, cards }) {
   next.cards = [
     ...cards,
     ...Array(
-      dealCount(next.stage)
+      dealCount(next.stage),
     ).map(Card.create),
   ];
 

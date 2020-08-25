@@ -1,8 +1,8 @@
 describe('Engine.pot', () => {
   describe('.create()', () => {
-    
+
   });
-  
+
   describe('.bet()', () => {
     it('throws error on invalid user id', () => {
 
@@ -12,12 +12,12 @@ describe('Engine.pot', () => {
 
     });
   });
-  
+
   describe('.fold()', () => {
-    
+
   });
 
   describe('.resolve()', () => {
-    
+
   });
 });

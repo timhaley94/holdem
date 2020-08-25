@@ -1,6 +1,6 @@
 class DBError extends Error {
   constructor(err) {
-    super(`Unable to interact with DB`);
+    super('Unable to interact with DB');
     this.name = 'DBError';
     this.err = err;
   }
@@ -8,7 +8,7 @@ class DBError extends Error {
 
 class FatalError extends Error {
   constructor(err) {
-    super(`Engine crashing`);
+    super('Engine crashing');
     this.name = 'FatalError';
     this.err = err;
   }

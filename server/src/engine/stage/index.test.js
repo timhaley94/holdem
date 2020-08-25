@@ -10,7 +10,7 @@ describe('Engine.stage', () => {
   describe('.next()', () => {
     it('errors on invalid stage', () => {
       expect(() => {
-        Stage.next('invalid stage')
+        Stage.next('invalid stage');
       }).toThrow();
     });
 

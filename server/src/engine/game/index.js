@@ -1,3 +1,6 @@
+const { v4: uuid } = require('uuid');
+const Round = require('../round');
+
 let get;
 let set;
 
@@ -70,7 +73,7 @@ async function move({ id, ...rest }) {
 }
 
 function quit() {
-  
+
 }
 
 module.exports = {
@@ -79,4 +82,5 @@ module.exports = {
   setter,
   create,
   move,
+  quit,
 };

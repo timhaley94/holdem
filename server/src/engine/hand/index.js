@@ -1,61 +1,61 @@
 const TYPES = [
   {
     name: 'ROYAL_FLUSH',
-    evaluate: cards => {},
+    evaluate: (cards) => {},
     breakTie: () => 0,
   },
   {
     name: 'STRAIGHT_FLUSH',
-    evaluate: cards => {},
+    evaluate: (cards) => {},
     breakTie: (a, b) => {
 
     },
   },
   {
     name: 'FOUR_OF_A_KIND',
-    evaluate: cards => {},
+    evaluate: (cards) => {},
     breakTie: (a, b) => {
 
     },
   },
   {
     name: 'FULL_HOUSE',
-    evaluate: cards => {},
+    evaluate: (cards) => {},
     breakTie: (a, b) => {
 
     },
   },
   {
     name: 'FLUSH',
-    evaluate: cards => {},
+    evaluate: (cards) => {},
     breakTie: (a, b) => {
 
     },
   },
   {
     name: 'STRAIGHT',
-    evaluate: cards => {},
+    evaluate: (cards) => {},
     breakTie: (a, b) => {
 
     },
   },
   {
     name: 'THREE_OF_A_KIND',
-    evaluate: cards => {},
+    evaluate: (cards) => {},
     breakTie: (a, b) => {
 
     },
   },
   {
     name: 'TWO_PAIR',
-    evaluate: cards => {},
+    evaluate: (cards) => {},
     breakTie: (a, b) => {
 
     },
   },
   {
     name: 'PAIR',
-    evaluate: cards => {},
+    evaluate: (cards) => {},
     breakTie: (a, b) => {
 
     },
@@ -73,7 +73,7 @@ const tieBreakers = TYPES.reduce(
 
 function typeRank(name) {
   const index = TYPES.findIndex(
-    type => type.name === name,
+    (type) => type.name === name,
   );
 
   if (index < 0) {
@@ -106,7 +106,7 @@ function sort(a, b) {
 
   if (aRank === bRank) {
     return tieBreakers[a.type](a, b);
-  } 
+  }
 
   // If a is better, value will be negative,
   // if b i better, value will be positive.
@@ -132,7 +132,7 @@ function solve({
         }),
       )
       .sort(
-        (a, b) => sort(a.hand, b.hand)
+        (a, b) => sort(a.hand, b.hand),
       )
   );
 
@@ -159,7 +159,7 @@ function solve({
           ],
         };
       }
-      
+
       // The current hand is worse than the last hand, so complete chunk
       return {
         ...acc,
@@ -169,17 +169,17 @@ function solve({
             acc.chunk.length > 1
               ? acc.chunk
               : acc.chunk[0]
-          )
+          ),
         ],
         last: val,
         chunk: [val.userId],
-      }
+      };
     },
     {
       result: [],
       last: null,
       chunk: [],
-    }
+    },
   );
 
   const chunked = [

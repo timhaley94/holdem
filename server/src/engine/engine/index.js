@@ -25,7 +25,7 @@ function die(err) {
 
 function init() {
   let readyResolve;
-  const ready = new Promise(resolve => {
+  const ready = new Promise((resolve) => {
     readyResolve = resolve;
   });
 
@@ -40,12 +40,12 @@ function init() {
 
   Game.init({
     get: wrap(
-      id => get(
+      (id) => get(
         getKey(id),
       ),
     ),
     set: wrap(
-      game => set(
+      (game) => set(
         getKey(game.id),
         game,
       ),

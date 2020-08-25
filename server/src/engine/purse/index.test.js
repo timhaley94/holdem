@@ -6,19 +6,19 @@ describe('Engine.purse', () => {
       const bankroll = Purse.DEFAULT_BANKROLL * 2;
 
       expect(
-        Purse.create(bankroll).bankroll
+        Purse.create(bankroll).bankroll,
       ).toEqual(bankroll);
     });
 
     it('can use default bankroll', () => {
       expect(
-        Purse.create().bankroll
+        Purse.create().bankroll,
       ).toEqual(
-        Purse.DEFAULT_BANKROLL
+        Purse.DEFAULT_BANKROLL,
       );
     });
   });
-  
+
   describe('.bet()', () => {
     it('errors on negative value', () => {
       expect(
@@ -33,7 +33,7 @@ describe('Engine.purse', () => {
 
     it('ignores zero bet', () => {
       expect(
-        Purse.bet(Purse.create(), 0).wagered
+        Purse.bet(Purse.create(), 0).wagered,
       ).toEqual(0);
     });
 
@@ -57,7 +57,7 @@ describe('Engine.purse', () => {
         ).wagered,
       ).toEqual(1);
     });
-    
+
     it('handles all in bet', () => {
       expect(
         Purse.bet(
@@ -67,12 +67,12 @@ describe('Engine.purse', () => {
       ).toEqual(Purse.DEFAULT_BANKROLL);
     });
   });
-  
+
   describe('.allIn()', () => {
     it('handles all in call', () => {
       expect(
         Purse.allIn(
-          Purse.create()
+          Purse.create(),
         ).wagered,
       ).toEqual(Purse.DEFAULT_BANKROLL);
     });
@@ -81,8 +81,8 @@ describe('Engine.purse', () => {
       expect(
         Purse.allIn(
           Purse.allIn(
-            Purse.create()
-          )
+            Purse.create(),
+          ),
         ).wagered,
       ).toEqual(Purse.DEFAULT_BANKROLL);
     });
@@ -92,8 +92,8 @@ describe('Engine.purse', () => {
         Purse.allIn(
           Purse.bet(
             Purse.create(),
-            1
-          )
+            1,
+          ),
         ).wagered,
       ).toEqual(Purse.DEFAULT_BANKROLL);
     });
@@ -105,7 +105,7 @@ describe('Engine.purse', () => {
         Purse.resolve(
           Purse.create(),
           0,
-        ).bankroll
+        ).bankroll,
       ).toEqual(Purse.DEFAULT_BANKROLL);
     });
 
@@ -114,10 +114,10 @@ describe('Engine.purse', () => {
         Purse.resolve(
           Purse.bet(
             Purse.create(),
-            1
+            1,
           ),
           0,
-        ).bankroll
+        ).bankroll,
       ).toEqual(Purse.DEFAULT_BANKROLL - 1);
     });
 
@@ -126,10 +126,10 @@ describe('Engine.purse', () => {
         Purse.resolve(
           Purse.bet(
             Purse.create(),
-            1
+            1,
           ),
           2,
-        ).bankroll
+        ).bankroll,
       ).toEqual(Purse.DEFAULT_BANKROLL + 1);
     });
 
@@ -140,7 +140,7 @@ describe('Engine.purse', () => {
             Purse.create(),
           ),
           0,
-        ).bankroll
+        ).bankroll,
       ).toEqual(0);
     });
   });
@@ -148,11 +148,11 @@ describe('Engine.purse', () => {
   describe('.isAllIn()', () => {
     it('returns true if all in', () => {
       const p = Purse.allIn(
-        Purse.create()
+        Purse.create(),
       );
 
       expect(
-        Purse.isAllIn(p)
+        Purse.isAllIn(p),
       ).toEqual(true);
     });
 
@@ -163,7 +163,7 @@ describe('Engine.purse', () => {
       );
 
       expect(
-        Purse.isAllIn(p)
+        Purse.isAllIn(p),
       ).toEqual(false);
     });
 
@@ -172,7 +172,7 @@ describe('Engine.purse', () => {
       p.bankroll = 0;
 
       expect(
-        Purse.isAllIn(p)
+        Purse.isAllIn(p),
       ).toEqual(false);
     });
   });
@@ -183,13 +183,13 @@ describe('Engine.purse', () => {
       p.bankroll = 0;
 
       expect(
-        Purse.isBankrupt(p)
+        Purse.isBankrupt(p),
       ).toEqual(true);
     });
 
     it('returns false if bankroll is nonzero', () => {
       expect(
-        Purse.isBankrupt(Purse.create())
+        Purse.isBankrupt(Purse.create()),
       ).toEqual(false);
     });
   });

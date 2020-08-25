@@ -47,7 +47,7 @@ describe('Engine.card', () => {
 
   it('randomly assigns id', () => {
     expectRandomAttribute('id');
-  })
+  });
 
   it('randomly selects suit', () => {
     expectRandomAttribute('suit');

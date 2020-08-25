@@ -7,7 +7,7 @@ function create(bankroll = DEFAULT_BANKROLL) {
   return {
     bankroll,
     wagered: 0,
-  }
+  };
 }
 
 function bet(purse, value) {
@@ -39,6 +39,10 @@ function resolve(purse, winnings) {
   };
 }
 
+function isBankrupt({ bankroll }) {
+  return bankroll <= 0;
+}
+
 function isAllIn({ wagered, bankroll }) {
   if (isBankrupt({ bankroll })) {
     return false;
@@ -47,16 +51,12 @@ function isAllIn({ wagered, bankroll }) {
   return wagered >= bankroll;
 }
 
-function isBankrupt({ bankroll }) {
-  return bankroll <= 0;
-}
-
 module.exports = {
   DEFAULT_BANKROLL,
   create,
   bet,
   allIn,
   resolve,
-  isAllIn,
   isBankrupt,
+  isAllIn,
 };

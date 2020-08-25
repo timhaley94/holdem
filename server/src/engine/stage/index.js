@@ -17,7 +17,7 @@ function first() {
 }
 
 function next(stage) {
-  const index = stages.findIndex(s => s === stage);
+  const index = stages.findIndex((s) => s === stage);
 
   if (index < 0) {
     throw new Error('Invalid stage');
