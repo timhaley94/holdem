@@ -2,10 +2,12 @@ const Purse = require('./index');
 
 describe('Engine.purse', () => {
   describe('.create()', () => {
-    it('can handle bankroll', () => {
+    it('can handle bankroll arg', () => {
+      const bankroll = Purse.DEFAULT_BANKROLL * 2;
+
       expect(
-        Purse.create(500).bankroll
-      ).toEqual(500);
+        Purse.create(bankroll).bankroll
+      ).toEqual(bankroll);
     });
 
     it('can use default bankroll', () => {
@@ -19,31 +21,131 @@ describe('Engine.purse', () => {
   
   describe('.bet()', () => {
     it('errors on negative value', () => {
-
+      expect(
+        () => {
+          Purse.bet(
+            Purse.create(),
+            -1,
+          );
+        },
+      ).toThrow();
     });
 
     it('ignores zero bet', () => {
-
+      expect(
+        Purse.bet(Purse.create(), 0).wagered
+      ).toEqual(0);
     });
 
     it('handles normal bet', () => {
+      expect(
+        Purse.bet(
+          Purse.create(),
+          1,
+        ).wagered,
+      ).toEqual(1);
+    });
 
+    it('ignores zero bet after normal bet', () => {
+      expect(
+        Purse.bet(
+          Purse.bet(
+            Purse.create(),
+            1,
+          ),
+          0,
+        ).wagered,
+      ).toEqual(1);
     });
     
     it('handles all in bet', () => {
-
+      expect(
+        Purse.bet(
+          Purse.create(),
+          Purse.DEFAULT_BANKROLL + 1,
+        ).wagered,
+      ).toEqual(Purse.DEFAULT_BANKROLL);
     });
   });
   
   describe('.allIn()', () => {
-    
+    it('handles all in call', () => {
+      expect(
+        Purse.allIn(
+          Purse.create()
+        ).wagered,
+      ).toEqual(Purse.DEFAULT_BANKROLL);
+    });
+
+    it('handles second call', () => {
+      expect(
+        Purse.allIn(
+          Purse.allIn(
+            Purse.create()
+          )
+        ).wagered,
+      ).toEqual(Purse.DEFAULT_BANKROLL);
+    });
+
+    it('handles all in call after normal bet', () => {
+      expect(
+        Purse.allIn(
+          Purse.bet(
+            Purse.create(),
+            1
+          )
+        ).wagered,
+      ).toEqual(Purse.DEFAULT_BANKROLL);
+    });
   });
 
   describe('.resolve()', () => {
+    it('handles 0 wager', () => {
+      expect(
+        Purse.resolve(
+          Purse.create(),
+          0,
+        ).bankroll
+      ).toEqual(Purse.DEFAULT_BANKROLL);
+    });
 
+    it('handles lost wager', () => {
+      expect(
+        Purse.resolve(
+          Purse.bet(
+            Purse.create(),
+            1
+          ),
+          0,
+        ).bankroll
+      ).toEqual(Purse.DEFAULT_BANKROLL - 1);
+    });
+
+    it('handles winnings', () => {
+      expect(
+        Purse.resolve(
+          Purse.bet(
+            Purse.create(),
+            1
+          ),
+          2,
+        ).bankroll
+      ).toEqual(Purse.DEFAULT_BANKROLL + 1);
+    });
+
+    it('handles all in', () => {
+      expect(
+        Purse.resolve(
+          Purse.allIn(
+            Purse.create(),
+          ),
+          0,
+        ).bankroll
+      ).toEqual(0);
+    });
   });
 
-  describe('.isAllIn', () => {
+  describe('.isAllIn()', () => {
     it('returns true if all in', () => {
       const p = Purse.allIn(
         Purse.create()
@@ -57,7 +159,7 @@ describe('Engine.purse', () => {
     it('returns false if not all in', () => {
       const p = Purse.bet(
         Purse.create(),
-        50,
+        1,
       );
 
       expect(

@@ -1,5 +1,3 @@
-const Bank = require("../bank");
-
 let get;
 let set;
 
@@ -28,7 +26,7 @@ function create(userIds) {
 function endGame(game, round) {
   return {
     ...game,
-    winner: Bank.getWinner(round.bank),
+    winner: Round.remainingUsers(round)[0],
     round: null,
     previousRounds: [
       ...game.previousRounds,
@@ -69,6 +67,10 @@ async function move({ id, ...rest }) {
 
   await set(game);
   return game;
+}
+
+function quit() {
+  
 }
 
 module.exports = {
