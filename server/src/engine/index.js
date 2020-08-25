@@ -1,3 +1,3 @@
-const Game = require('./game');
+const Engine = require('./engine');
 
-module.exports = { Game };
+module.exports = Engine;

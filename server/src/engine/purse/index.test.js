@@ -1,4 +1,4 @@
-const Purse = require('./purse');
+const Purse = require('./index');
 
 describe('Engine.purse', () => {
   describe('.create()', () => {

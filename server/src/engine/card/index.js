@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { v4: uuid } = require('uuid');
 
 const suits = ['H', 'C', 'D', 'S'];
 const ranks = _.range(2, 15);
