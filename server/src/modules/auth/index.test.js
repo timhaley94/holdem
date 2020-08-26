@@ -1,7 +1,7 @@
 const Errors = require('../errors');
 const Auth = require('./index');
 
-describe('Models.Auth', () => {
+describe('Modules.Auth', () => {
   const data = {
     foo: 1,
     bar: [{ baz: 2 }],

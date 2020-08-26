@@ -1,7 +1,0 @@
-function set() {
-
-}
-
-function clear() {
-  
-}

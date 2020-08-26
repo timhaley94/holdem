@@ -1,5 +1,5 @@
 const config = require('../../config');
-const Errors = require('../errors');
+const Errors = require('../../modules/errors');
 
 const DEFAULT_BANKROLL = config.Domain.defaultBankroll;
 

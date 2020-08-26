@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const config = require('../../config');
-const Errors = require('../../domain/errors');
+const Errors = require('../errors');
 
 function sign(data) {
   return jwt.sign(

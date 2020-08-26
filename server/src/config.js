@@ -3,6 +3,13 @@ module.exports = {
   auth: {
     privateKey: 'developmentkey',
   },
+  sentry: {
+    url: (
+      process.env.NODE_ENV === 'development'
+        ? null
+        : 'https://409a1cd26da541f78ba2d829362b574f@o439099.ingest.sentry.io/5405304'
+    ),
+  },
   redis: {
     host: (
       process.env.NODE_ENV === 'development'

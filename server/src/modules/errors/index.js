@@ -6,7 +6,7 @@ const types = {
   Fatal: 500,
 };
 
-class DomainError extends Error {
+class BaseError extends Error {
   constructor(message) {
     super();
     this.message = message;
@@ -32,5 +32,5 @@ const errors = Object.entries(types).reduce(
 
 module.exports = {
   ...errors,
-  DomainError,
+  BaseError,
 };

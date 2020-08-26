@@ -1,4 +1,25 @@
+const Errors = require('../../modules/errors');
+
+function groupAttr(cards, attr) {
+  return (
+    Object
+      .values(_.groupBy(cards, (card) => card[attr]))
+      .sort((a, b) => b.length - a.length)
+  );
+}
+
 const TYPES = [
+  {
+    name: 'FIVE_OF_A_KIND',
+    evaluate: ({ groupedRanks }) => {
+      if (groupedRanks[0].length > 0) {
+        return groupedRanks[0];
+      }
+
+      return null;
+    },
+    breakTie: () => 0,
+  },
   {
     name: 'ROYAL_FLUSH',
     evaluate: (cards) => {},
@@ -77,16 +98,23 @@ function typeRank(name) {
   );
 
   if (index < 0) {
-    throw new Error('Hand type is invalid');
+    throw new Errors.Fatal(
+      'Hand type is invalid. Likely programming error.'
+    );
   }
 
   return index;
 }
 
 function create(cards) {
+  const cardData = {
+    groupedRanks: groupAttr(cards, 'rank'),
+    groupedSuits: groupAttr(cards, 'suit'),
+  };
+
   return TYPES.find(
     ({ name, evaluate }) => {
-      const match = evaluate(cards);
+      const match = evaluate(cardData);
 
       if (!match) {
         return null;

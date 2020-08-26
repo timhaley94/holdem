@@ -1,8 +1,8 @@
 const _ = require('lodash');
 const { v4: uuid } = require('uuid');
 
-const suits = ['H', 'C', 'D', 'S'];
-const ranks = _.range(2, 15);
+const SUITS = ['H', 'C', 'D', 'S'];
+const RANKS = _.range(2, 15);
 
 function create() {
   return {
@@ -12,8 +12,13 @@ function create() {
   };
 }
 
+function sort(a, b) {
+  return a.rank - b.rank;
+}
+
 module.exports = {
   create,
-  suits,
-  ranks,
+  sort,
+  SUITS,
+  RANKS,
 };

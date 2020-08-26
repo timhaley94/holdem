@@ -17,13 +17,16 @@ function setter() {
   return set;
 }
 
-function create(userIds) {
-  return {
+async function create(userIds) {
+  const game = {
     id: uuid(),
     lastUpdated: new Date(),
     round: Round.create(userIds),
     previousRounds: [],
   };
+
+  await set(game);
+  return game;
 }
 
 function endGame(game, round) {

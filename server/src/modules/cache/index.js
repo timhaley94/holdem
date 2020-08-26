@@ -4,7 +4,7 @@ const Errors = require('../errors');
 
 function die(err) {
   // We've encountered an unrecoverable error
-  throw new Errors.Fatal(err);
+  throw new Errors.Fatal(`Redis error: ${err}`);
 }
 
 let client;
@@ -35,7 +35,27 @@ function wrap(method, ) {
 }
 
 function getClient(namespace) {
+  if (!client) {
+    throw new Errors.Fatal('Redis not ready');
+  }
 
+  if (!namespace) {
+    throw new Errors.Fatal('namespace is required');
+  }
+
+  const getKey = (id) => `${namespace}-${id}`;
+
+  return {
+    get: wrap(
+      (id) => client.get(getKey(id))
+    ),
+    set: wrap(
+      (obj) => client.set(
+        obj.id,
+        obj,
+      ),
+    ),
+  };
 }
 
 module.exports = {

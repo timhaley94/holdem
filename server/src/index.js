@@ -1,10 +1,11 @@
-const Domain = require('../domain');
-const config = require('./config');
-const api = require('./api');
+const API = require('./api');
+const Domain = require('./domain');
+const Modules = require('./modules');
 
-Domain.init().then(
-  () => {
-    api.listen(config.port);
-  },
-);
+async function main() {
+  await Modules.init();
+  Domain.init();
+  API.listen();
+}
 
+main();

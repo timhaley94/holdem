@@ -1,6 +1,6 @@
 const Errors = require('./index');
 
-describe('Domain.Errors', () => {
+describe('Modules.Errors', () => {
   const tests = {
     BadRequest: 400,
     Unauthorized: 401,
@@ -11,9 +11,9 @@ describe('Domain.Errors', () => {
       const e = (...args) => new Errors[name](...args);
 
       describe(name, () => {
-        it('extends DomainError', () => {
+        it('extends BaseError', () => {
           const error = e('foo');
-          expect(error).toBeInstanceOf(Errors.DomainError);
+          expect(error).toBeInstanceOf(Errors.BaseError);
         });
 
         it('preserves message', () => {
