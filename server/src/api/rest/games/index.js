@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { Games } = require('../models');
-const Route = require('./route');
+const Route = require('../route');
 
 const router = Router();
 

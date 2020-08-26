@@ -12,10 +12,7 @@ function init() {
 
 module.exports = {
   init,
-  middleware: {
-    requestHandler: Sentry.Handlers.requestHandler,
-    errorHandler: Sentry.Handlers.errorHandler,
-  },
+  handlers: Sentry.Handlers,
   info: console.info,
   warn: console.warn,
   error: console.error,
