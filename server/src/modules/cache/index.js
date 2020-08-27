@@ -1,32 +1,42 @@
 const redis = require('redis');
 const pify = require('pify');
 const Errors = require('../errors');
+const config = require('../../config');
 
 function die(err) {
   // We've encountered an unrecoverable error
   throw new Errors.Fatal(`Redis error: ${err}`);
 }
 
+let readyResolve;
+const ready = new Promise((resolve) => {
+  readyResolve = resolve;
+});
+
 let client;
 
+if (config.redis.url) {
+  client = redis.createClient(config.redis.url);
+} else {
+  client = redis.createClient(
+    config.redis.port,
+    config.redis.host,
+  );
+}
+
+client.on('ready', readyResolve);
+client.on('error', die);
+client.on('end', die);
+
 function init() {
-  let readyResolve;
-  const ready = new Promise((resolve) => {
-    readyResolve = resolve;
-  });
-
-  client = redis.createClient();
-  client.on('ready', readyResolve);
-  client.on('error', die);
-  client.on('end', die);
-
   return ready;
 }
 
-function wrap(method, ) {
-  return async () => {
+function wrap(fn) {
+  const promisified = pify(fn);
+  return async (...args) => {
     try {
-      const result = await fn();
+      const result = await promisified(...args);
       return result;
     } catch (err) {
       throw new Errors.Fatal(err);
@@ -44,17 +54,12 @@ function getClient(namespace) {
   }
 
   const getKey = (id) => `${namespace}-${id}`;
+  const get = wrap(client.get);
+  const set = wrap(client.set);
 
   return {
-    get: wrap(
-      (id) => client.get(getKey(id))
-    ),
-    set: wrap(
-      (obj) => client.set(
-        obj.id,
-        obj,
-      ),
-    ),
+    get: (id) => get(getKey(id)),
+    set: (obj) => set(getKey(obj.id), obj),
   };
 }
 

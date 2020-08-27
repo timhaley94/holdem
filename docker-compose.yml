@@ -1,5 +1,9 @@
 version: "3.8"
 services:
+  dynamo:
+    image: amazon/dynamodb-local:1.13.3
+    expose:
+      - 8000
   redis:
     image: redis:6.0.6
     expose:
@@ -13,6 +17,7 @@ services:
       - NODE_ENV=development
     depends_on:
       - redis
+      - dynamo
   haproxy:
     image: eeacms/haproxy:1.8-1.5
     depends_on:

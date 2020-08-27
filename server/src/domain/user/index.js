@@ -1,9 +1,11 @@
 const Joi = require('@hapi/joi');
 const { v4: uuid } = require('uuid');
-const Auth = require('../../modules/auth');
-const Errors = require('../../modules/errors');
 const Listener = require('../listener');
-const Handler = require('../../modules/validator');
+const {
+  Auth,
+  Errors,
+  Validator,
+} = require('../../modules');
 
 const users = {};
 const listener = Listener.create();
@@ -32,7 +34,7 @@ const assertId = (id) => {
   }
 };
 
-const retrieve = Handler.wrap({
+const retrieve = Validator.wrap({
   schemas,
   required: ['id'],
   fn: async ({ id }) => {
@@ -42,7 +44,7 @@ const retrieve = Handler.wrap({
   },
 });
 
-const create = Handler.wrap({
+const create = Validator.wrap({
   schemas,
   required: ['secret'],
   optional: ['metadata'],
@@ -59,7 +61,7 @@ const create = Handler.wrap({
   },
 });
 
-const auth = Handler.wrap({
+const auth = Validator.wrap({
   schemas,
   required: ['id', 'secret'],
   fn: async ({ id, secret }) => {
@@ -77,7 +79,7 @@ const auth = Handler.wrap({
   },
 });
 
-const update = Handler.wrap({
+const update = Validator.wrap({
   schemas,
   required: ['id', 'metadata'],
   fn: async ({ id, metadata }) => {

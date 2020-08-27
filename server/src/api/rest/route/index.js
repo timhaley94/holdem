@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken');
+const makeMiddleware = require('express-jwt');
 const config = require('../../../config');
 
 const handler = (fn) => (
@@ -9,12 +9,10 @@ const handler = (fn) => (
   }
 );
 
-const private = makeMiddleware({
-  secret: config.auth.privateKey,
-  algorithms: ['HS256'],
-});
-
 module.exports = {
   handler,
-  private,
+  private: makeMiddleware({
+    secret: config.auth.privateKey,
+    algorithms: ['HS256'],
+  }),
 };

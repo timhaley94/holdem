@@ -1,5 +1,5 @@
-const Sentry = require("@sentry/node");
-const config = require('../config');
+const Sentry = require('@sentry/node');
+const config = require('../../config');
 
 function init() {
   if (config.sentry.url) {

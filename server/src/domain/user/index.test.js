@@ -1,5 +1,4 @@
-const Auth = require('../auth');
-const Errors = require('../errors');
+const { Auth, Errors } = require('../../modules');
 const Users = require('./index');
 
 describe('Models.Users', () => {

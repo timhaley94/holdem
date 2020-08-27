@@ -14,7 +14,7 @@ class BaseError extends Error {
 }
 
 const error = (status) => (
-  class extends DomainError {
+  class extends BaseError {
     constructor(...args) {
       super(...args);
       this.status = status;

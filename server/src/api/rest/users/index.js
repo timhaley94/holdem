@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { Errors, Users } = require('../models');
+const { Errors, Users } = require('../../../domain');
 const Route = require('../route');
 
 const router = Router();

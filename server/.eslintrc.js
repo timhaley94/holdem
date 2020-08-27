@@ -17,6 +17,7 @@ module.exports = {
   },
   rules: {
     "no-underscore-dangle": [0, {}],
-    "max-classes-per-file": [0, null]
+    "max-classes-per-file": [0, null],
+    "no-console": [0, {}],
   },
 };

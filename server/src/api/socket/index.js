@@ -1,6 +1,6 @@
 const IO = require('socket.io');
 const redisAdapter = require('socket.io-redis');
-const config = require('../config');
+const config = require('../../config');
 const Auth = require('./auth');
 const Game = require('./game');
 const Games = require('./games');

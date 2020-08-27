@@ -98,9 +98,7 @@ function typeRank(name) {
   );
 
   if (index < 0) {
-    throw new Errors.Fatal(
-      'Hand type is invalid. Likely programming error.'
-    );
+    throw new Errors.Fatal('Hand type is invalid');
   }
 
   return index;
@@ -143,9 +141,7 @@ function sort(a, b) {
 
 function solve({
   pocketCards,
-  communityCards: {
-    cards: communityCards,
-  },
+  communityCards,
 }) {
   const sorted = (
     Object

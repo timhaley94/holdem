@@ -1,7 +1,7 @@
 const config = require('../../config');
-const Errors = require('../../modules/errors');
+const { Errors } = require('../../modules');
 
-const DEFAULT_BANKROLL = config.Domain.defaultBankroll;
+const DEFAULT_BANKROLL = config.game.defaultBankroll;
 
 function create(bankroll = DEFAULT_BANKROLL) {
   return {

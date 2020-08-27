@@ -1,4 +1,4 @@
-const { Games } = require('../models');
+const { Games } = require('../../domain');
 const events = require('./events');
 
 function onStart(sockets) {

@@ -1,23 +1,38 @@
 const _ = require('lodash');
-const { v4: uuid } = require('uuid');
-
 const SUITS = ['H', 'C', 'D', 'S'];
 const RANKS = _.range(2, 15);
 
-function create() {
-  return {
-    id: uuid(),
-    suit: _.sample(suits),
-    rank: _.sample(ranks),
-  };
+const ALL = SUITS.map(
+  (suit) => RANKS.map(
+    (rank) => `${suit}${rank}`,
+  ),
+).reduce(
+  (acc, val) => [
+    ...acc,
+    ...val,
+  ],
+);
+
+function all() {
+  return ALL;
+}
+
+function suit(card) {
+  return card[0];
+}
+
+function rank(card) {
+  return parseInt(card.slice(1), 10)
 }
 
 function sort(a, b) {
-  return a.rank - b.rank;
+  return rank(b) - rank(a);
 }
 
 module.exports = {
-  create,
+  all,
+  suit,
+  rank,
   sort,
   SUITS,
   RANKS,

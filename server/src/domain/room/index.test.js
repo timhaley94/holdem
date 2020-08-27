@@ -5,7 +5,7 @@
 
 // const password = 'testpassword1234';
 
-describe('Models.Games', () => {
+describe('Domain.Room', () => {
   //   beforeEach(() => {
   //     Games.reset();
   //   });
