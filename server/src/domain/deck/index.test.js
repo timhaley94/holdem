@@ -15,6 +15,14 @@ describe('Domain.Deck', () => {
   });
   
   describe('.deal()', () => {
+    it('defaults to dealing one card', () => {
+
+    });
+
+    it('deals multiple cards', () => {
+
+    });
+
     it('deals unique cards', () => {
       let deck = Deck.create();
       let { card: card1, deck: deck1 } = Deck.deal(deck);

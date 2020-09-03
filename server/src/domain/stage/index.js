@@ -3,6 +3,7 @@ const PRE_FLOP = 'PRE_FLOP';
 const FLOP = 'FLOP';
 const TURN = 'TURN';
 const RIVER = 'RIVER';
+const POST_RIVER = 'POST_RIVER';
 
 const stages = [
   ANTE,
@@ -10,6 +11,7 @@ const stages = [
   FLOP,
   TURN,
   RIVER,
+  POST_RIVER,
 ];
 
 function first() {
@@ -36,6 +38,7 @@ module.exports = {
   FLOP,
   TURN,
   RIVER,
+  POST_RIVER,
   stages,
   first,
   next,

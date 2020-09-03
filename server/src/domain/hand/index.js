@@ -1,4 +1,5 @@
 const Errors = require('../../modules/errors');
+const Utils = require('../../utils');
 
 function groupAttr(cards, attr) {
   return (
@@ -9,17 +10,6 @@ function groupAttr(cards, attr) {
 }
 
 const TYPES = [
-  {
-    name: 'FIVE_OF_A_KIND',
-    evaluate: ({ groupedRanks }) => {
-      if (groupedRanks[0].length > 0) {
-        return groupedRanks[0];
-      }
-
-      return null;
-    },
-    breakTie: () => 0,
-  },
   {
     name: 'ROYAL_FLUSH',
     evaluate: (cards) => {},
@@ -110,7 +100,8 @@ function create(cards) {
     groupedSuits: groupAttr(cards, 'suit'),
   };
 
-  return TYPES.find(
+  return Utils.mapFind(
+    TYPES,
     ({ name, evaluate }) => {
       const match = evaluate(cardData);
 
@@ -160,66 +151,18 @@ function solve({
       )
   );
 
-  // The hands are sorted but we need to group ties
-  const chunkReduce = sorted.reduce(
-    (acc, val) => {
-      if (!acc.last) {
-        // It's the first iteration
-        return {
-          ...acc,
-          last: val,
-          chunk: [val.userId],
-        };
-      }
-
-      if (sort(acc.last, val) === 0) {
-        // The current hand ties the last hand, so extend chunk
-        return {
-          ...acc,
-          last: val,
-          chunk: [
-            ...acc.chunk,
-            val.userId,
-          ],
-        };
-      }
-
-      // The current hand is worse than the last hand, so complete chunk
-      return {
-        ...acc,
-        result: [
-          ...acc.result,
-          (
-            acc.chunk.length > 1
-              ? acc.chunk
-              : acc.chunk[0]
-          ),
-        ],
-        last: val,
-        chunk: [val.userId],
-      };
-    },
-    {
-      result: [],
-      last: null,
-      chunk: [],
-    },
+  const chunked = Utils.chunkIf(
+    sorted,
+    (a, b) => sort(a.hand, b.hand) === 0,
   );
 
-  const chunked = [
-    ...chunkReduce.result,
-    (
-      chunkReduce.chunk.length > 1
-        ? chunkReduce.chunk
-        : chunkReduce.chunk[0]
-    ),
-  ];
-
-  return chunked;
+  return Utils.deepMap(
+    chunked,
+    ({ userId }) => userId,
+  );
 }
 
 module.exports = {
   TYPES,
-  create,
-  sort,
+  solve,
 };

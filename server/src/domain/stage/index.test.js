@@ -19,7 +19,7 @@ describe('Domain.Stage', () => {
     });
 
     it('returns null on final stage', () => {
-      expect(Stage.next(Stage.RIVER)).toBe(null);
+      expect(Stage.next(Stage.POST_RIVER)).toBe(null);
     });
   });
 });
