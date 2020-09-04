@@ -29,11 +29,16 @@ function sort(a, b) {
   return rank(b) - rank(a);
 }
 
+function isAce(card) {
+  return rank(card) === 14;
+}
+
 module.exports = {
   all,
   suit,
   rank,
   sort,
+  isAce,
   SUITS,
   RANKS,
 };

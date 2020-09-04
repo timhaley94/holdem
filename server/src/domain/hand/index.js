@@ -1,86 +1,155 @@
+const _ = require('lodash');
 const Errors = require('../../modules/errors');
 const Utils = require('../../utils');
+const Card = require('../card');
 
+// Group cards according to an attribute (e.g. rank, suit)
 function groupAttr(cards, attr) {
   return (
     Object
-      .values(_.groupBy(cards, (card) => card[attr]))
+      .values(
+        _.groupBy(cards, (card) => Card[attr](card))
+      )
       .sort((a, b) => b.length - a.length)
   );
+}
+
+// Compare two sets of cards, elementwise, until you find
+// a pair of elements that aren't equivalent.
+function compareCards(a, b, indexes = _.range(0, 5)) {
+  if (indexes.length === 0) {
+    return 0;
+  }
+
+  const [i, ...rest] = indexes;
+  return Card.sort(a[i], b[i]) || sortCards(a, b, Rest);
+}
+
+function bestCards(cards, count = 5) {
+  return (
+    _.flatten(cards)
+      .sort(Card.sort)
+      .slice(0, count)
+  );
+}
+
+function pairType(...shape) {
+  return {
+    pairShape: [4],
+    tieIndexes: [0, 4],
+    evaluate: ({ groupedRanks }) => {
+      if (!Utils.hasShape(groupedRanks, shape)) {
+        return null;
+      }
+
+      const pairedCards = _.flatten(
+        groupedRanks.slice(0, shape.length)
+      );
+
+      const kickers = bestCards(
+        groupedRanks.slice(shape.length),
+        5 - pairedCards.length
+      );
+
+      return [...pairedCards, ...kickers];
+    },
+  };
+}
+
+function evaluateStraight(cards) {
+  const chunked = Utils.chunkIf(
+    cards.sort(Card.sort),
+    (a, b) => {
+      const diff = Card.rank(a) - Card.rank(b);
+      return diff === 1;
+    },
+  );
+
+  const match = chunked.find(chunk => chunk.length >= 5);
+
+  if (!match) {
+    return null;
+  }
+  
+  return match.slice(0, 5);
+}
+
+function evaluateStraightFlush(groupedSuits) {
+  if (!Utils.hasShape(groupedSuits, [5])) {
+    return null;
+  }
+
+  const match = evaluateStraight(groupedSuits[0]);
+
+  if (!match) {
+    return null;
+  }
+
+  return bestCards(match, 5);
 }
 
 const TYPES = [
   {
     name: 'ROYAL_FLUSH',
-    evaluate: (cards) => {},
-    breakTie: () => 0,
+    evaluate: ({ groupedSuits }) => {
+      const match = evaluateStraightFlush(groupedSuits);
+
+      if (!match || !Card.isAce(match[0])) {
+        return null;
+      }
+
+      return match;
+    },
   },
   {
     name: 'STRAIGHT_FLUSH',
-    evaluate: (cards) => {},
-    breakTie: (a, b) => {
-
-    },
+    tieIndexes: [0],
+    evaluate: ({ groupedSuits }) => (
+      evaluateStraightFlush(groupedSuits)
+    ),
   },
   {
     name: 'FOUR_OF_A_KIND',
-    evaluate: (cards) => {},
-    breakTie: (a, b) => {
-
-    },
+    ...pairType(4),
   },
   {
     name: 'FULL_HOUSE',
-    evaluate: (cards) => {},
-    breakTie: (a, b) => {
-
-    },
+    ...pairType(3, 2),
   },
   {
     name: 'FLUSH',
-    evaluate: (cards) => {},
-    breakTie: (a, b) => {
-
+    tieIndexes: _.range(0, 5),
+    evaluate: ({ groupedSuits }) => {
+      if (!Utils.hasShape(groupedSuits, [5])) {
+        return null;
+      }
+  
+      return bestCards(groupedSuits[0]);
     },
   },
   {
     name: 'STRAIGHT',
-    evaluate: (cards) => {},
-    breakTie: (a, b) => {
-
-    },
+    tieIndexes: [0],
+    evaluate: ({ cards }) => evaluateStraight(cards),
   },
   {
     name: 'THREE_OF_A_KIND',
-    evaluate: (cards) => {},
-    breakTie: (a, b) => {
-
-    },
+    ...pairType(3),
   },
   {
     name: 'TWO_PAIR',
-    evaluate: (cards) => {},
-    breakTie: (a, b) => {
-
-    },
+    ...pairType(2, 2),
   },
   {
     name: 'PAIR',
-    evaluate: (cards) => {},
-    breakTie: (a, b) => {
-
-    },
+    ...pairType(2),
+  },
+  {
+    name: 'HIGH_CARD',
+    tieIndexes: _.range(0, 5),
+    evaluate: ({ cards }) => bestCards(cards),
   },
 ];
-
-const typeNames = TYPES.map(({ name }) => name);
-const tieBreakers = TYPES.reduce(
-  (acc, { name, ...rest }) => ({
-    ...acc,
-    [name]: rest[attr],
-  }),
-  {},
-);
 
 function typeRank(name) {
   const index = TYPES.findIndex(
@@ -96,6 +165,7 @@ function typeRank(name) {
 
 function create(cards) {
   const cardData = {
+    cards,
     groupedRanks: groupAttr(cards, 'rank'),
     groupedSuits: groupAttr(cards, 'suit'),
   };
@@ -111,7 +181,7 @@ function create(cards) {
 
       return {
         type: name,
-        ...match,
+        match,
       };
     },
   );
@@ -121,13 +191,25 @@ function sort(a, b) {
   const aRank = typeRank(a.type);
   const bRank = typeRank(b.type);
 
-  if (aRank === bRank) {
-    return tieBreakers[a.type](a, b);
+  if (aRank !== bRank) {
+    // If a is better, value will be negative,
+    // if b i better, value will be positive.
+    return aRank - bRank;
   }
 
-  // If a is better, value will be negative,
-  // if b i better, value will be positive.
-  return aRank - bRank;
+  const { tieIndexes } = TYPES.findIndex(
+    (type) => type.name === a.type,
+  );
+
+  if (!tieIndexes) {
+    return 0;
+  }
+
+  return compareCards(
+    a.match,
+    b.match,
+    tieIndexes,
+  );
 }
 
 function solve({
@@ -156,6 +238,8 @@ function solve({
     (a, b) => sort(a.hand, b.hand) === 0,
   );
 
+  return chunked;
+
   return Utils.deepMap(
     chunked,
     ({ userId }) => userId,
@@ -164,5 +248,6 @@ function solve({
 
 module.exports = {
   TYPES,
+  create,
   solve,
 };

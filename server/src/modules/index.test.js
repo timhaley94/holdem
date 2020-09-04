@@ -16,7 +16,7 @@ describe('Modules', () => {
       'Validator',
     ].forEach(
       method => {
-        expect(Modules).toContain(method);
+        expect(Modules).toHaveProperty(method);
       }
     );
   });

@@ -9,6 +9,9 @@ function expectEventuallyWorks(fn) {
 const { suits, ranks } = Card;
 
 describe('Domain.Card', () => {
+  const ace = 'H14';
+  const two = 'H2';
+
   describe('.all()', () => {
     it('provides 52 unique cards', () => {
       const cards = Card.all();
@@ -35,9 +38,6 @@ describe('Domain.Card', () => {
   });
 
   describe('.sort()', () => {
-    const ace = 'H14';
-    const two = 'H2';
-
     it('returns 0 if a and be have same rank', () => {
       expect(
         Card.sort(two, two),
@@ -60,6 +60,20 @@ describe('Domain.Card', () => {
       expect(
         Card.sort(two, 'D2'),
       ).toEqual(0);
+    });
+  });
+
+  describe('isAce()', () => {
+    it('returns true for ace', () => {
+      expect(
+        Card.isAce(ace)
+      ).toBe(true);
+    });
+
+    it('returns false for two', () => {
+      expect(
+        Card.isAce(two)
+      ).toBe(false);
     });
   });
 });
