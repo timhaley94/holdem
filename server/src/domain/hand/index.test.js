@@ -1,3 +1,4 @@
+const Utils = require('../../utils');
 const Hand = require('./index');
 
 describe('Domain.Hand', () => {
@@ -45,6 +46,10 @@ describe('Domain.Hand', () => {
       cards: ['H14', 'C10', 'H4', 'D5', 'S9'],
     },
   ];
+
+  function getCards(type) {
+    return hands.find(hand => hand.type === type).cards;
+  }
 
   describe('.create()', () => {
     function expectHand(expectedType, pocketCards) {
@@ -104,7 +109,25 @@ describe('Domain.Hand', () => {
     });
 
     it('handles true ties', () => {
+      const fullHouseCards = getCards('FULL_HOUSE');
+      const pairCards = getCards('PAIR');
 
+      expect(
+        Utils.deepMap(
+          Hand.solve({
+            pocketCards: {
+              user1: fullHouseCards,
+              user2: fullHouseCards,
+              user3: pairCards,
+            },
+            communityCards,
+          }),
+          ({ userId }) => userId,
+        ),
+      ).toEqual([
+        ['user1', 'user2'],
+        'user3',
+      ]);
     });
 
     describe('kickers', () => {

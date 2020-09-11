@@ -10,4 +10,7 @@ function listen() {
   api.listen(config.port);
 }
 
-module.exports = { listen };
+module.exports = {
+  api,
+  listen,
+};

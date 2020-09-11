@@ -12,7 +12,7 @@ function deal(deck, count = 1, cards = []) {
     return {
       cards,
       deck,
-    }
+    };
   }
 
   const [card, ...nextDeck] = deck;

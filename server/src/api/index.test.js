@@ -1,5 +1,5 @@
 const request = require('supertest');
-const api = require('./index');
+const { api } = require('./index');
 
 describe('API', () => {
   it('pings successfully', () => (

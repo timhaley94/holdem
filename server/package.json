@@ -8,7 +8,8 @@
     "dev": "nodemon --watch src src/index.js",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
-    "test": "jest src --coverage"
+    "test": "jest src --coverage",
+    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand src"
   },
   "author": "",
   "license": "ISC",
@@ -24,6 +25,7 @@
     "pify": "^5.0.0",
     "pm2": "^4.4.0",
     "redis": "^3.0.2",
+    "redis-mock": "^0.51.0",
     "socket.io": "^2.3.0",
     "socket.io-redis": "^5.3.0",
     "socketio-jwt": "^4.5.0",
@@ -38,6 +40,6 @@
     "supertest": "^4.0.2"
   },
   "engines": {
-    "node": "12.16.2"
+    "node": "14.9.0"
   }
 }

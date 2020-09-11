@@ -16,24 +16,40 @@ describe('Domain.Deck', () => {
   
   describe('.deal()', () => {
     it('defaults to dealing one card', () => {
+      const deck = Deck.create();
+      const { cards } = Deck.deal(deck);
 
+      expect(cards.length).toBe(1);
     });
 
     it('deals multiple cards', () => {
+      const deck = Deck.create();
+      const { cards } = Deck.deal(deck, 4);
 
+      expect(cards.length).toBe(4);
     });
 
     it('deals unique cards', () => {
       let deck = Deck.create();
-      let { card: card1, deck: deck1 } = Deck.deal(deck);
-      let { card: card2 } = Deck.deal(deck1);
+
+      let {
+        cards: [card1, ...r1],
+        deck: deck1,
+      } = Deck.deal(deck);
+
+      let {
+        cards: [card2, ...r2],
+      } = Deck.deal(deck1);
 
       expect(card1).not.toEqual(card2);
     });
 
     it('errors on empty deck', () => {
+      const deck1 = Deck.create();
+      const { deck: deck2 } = Deck.deal(deck1, 52);
+
       expect(
-        () => Deck.deal([]),
+        () => Deck.deal(deck2),
       ).toThrow();
     });
   });

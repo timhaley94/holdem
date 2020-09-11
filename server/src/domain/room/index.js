@@ -1,10 +1,27 @@
 const Joi = require('@hapi/joi');
 const { v4: uuid } = require('uuid');
+const dynamoose = require('dynamoose');
 const config = require('../../config');
-const { Errors, Handler } = require('../../modules');
-const Game = require('../game');
+const {
+  Cache,
+  Errors,
+  Validator,
+} = require('../../modules');
+const SubGame = require('../game');
 const Listener = require('../listener');
 const User = require('../user');
+const validator = require('../../modules/validator');
+
+// Model
+const Schema = new dynamoose.Schema({
+  id: String,
+  name: String,
+  isPrivate: Boolean,
+  users: Object,
+  gameId: String,
+});
+
+const Room = dynamoose.model('Room', Schema);
 
 // View and Controller logic
 const schemas = {
@@ -33,43 +50,9 @@ const schemas = {
   isReady: Joi.boolean(),
 };
 
-// State
-let games = {};
-const listener = Listener.create();
-
-function reset() {
-  games = {};
-}
-
-function Game({ name, isPrivate }) {
-  return {
-    id: uuid(),
-    name,
-    isPrivate,
-    users: {},
-    tableId: null,
-    cleanupTimer: null,
-  };
-}
-
 // Helpers
 function has(id) {
   return !!games[id];
-}
-
-function get(id) {
-  if (!games[id]) {
-    throw new Errors.NotFound('User does not exist');
-  }
-
-  return games[id];
-}
-
-function set(id, update) {
-  games[id] = {
-    ...games[id],
-    ...update,
-  };
 }
 
 function remove(id) {
@@ -214,54 +197,43 @@ function addPlayer(id, userId) {
 }
 
 // Handlers
-const list = Handler.wrap({
+const list = Validator.wrap({
   schemas,
-  fn: async () => Promise.all(
-    Object
-      .values(games)
-      .filter((game) => !game.isPrivate)
-      .map((game) => render(game, true)),
-  ),
+  fn: async () => {
+    return await (
+      Room
+        .scan('isPrivate')
+        .eq(false)
+        .exec()
+    );
+  },
 });
 
-const exists = Handler.wrap({
-  schemas,
-  required: ['id'],
-  fn: async ({ id }) => has(id),
-});
-
-const abridged = Handler.wrap({
+const retrieve = Validator.wrap({
   schemas,
   required: ['id'],
-  fn: async ({ id }) => render(get(id), true),
+  fn: async ({ id }) => {
+    return await Room.get(id);
+  },
 });
 
-const retrieve = Handler.wrap({
-  schemas,
-  required: ['id'],
-  fn: async ({ id }) => render(get(id)),
-});
-
-const create = Handler.wrap({
+const create = Validator.wrap({
   schemas,
   required: ['name'],
   optional: ['isPrivate'],
   fn: async ({ name, isPrivate }) => {
-    const game = Game({
+    return await Room.create({
+      id: uuid(),
       name,
       isPrivate: isPrivate || false,
     });
-
-    games[game.id] = game;
-    attemptCleanup(game.id);
-    return render(game);
   },
 });
 
-const addUser = Handler.wrap({
+const addUser = Validator.wrap({
   schemas,
   required: ['id', 'userId', 'socketId'],
-  fn: async ({ id, userId, socketId }) => {
+  fn: async ({ id, userId }) => {
     await Users.retrieve({ id: userId });
     addConnection(id, userId, socketId);
 
@@ -275,7 +247,7 @@ const addUser = Handler.wrap({
   },
 });
 
-const removeUser = Handler.wrap({
+const removeUser = Validator.wrap({
   schemas,
   required: ['id', 'userId', 'socketId'],
   fn: async ({ id, userId, socketId }) => {
@@ -287,7 +259,7 @@ const removeUser = Handler.wrap({
   },
 });
 
-const setPlayerReady = Handler.wrap({
+const setPlayerReady = Validator.wrap({
   schemas,
   required: ['id', 'userId', 'isReady'],
   fn: async ({ id, userId, isReady }) => {
@@ -312,16 +284,19 @@ const setPlayerReady = Handler.wrap({
   },
 });
 
+const setUnready = validator.wrap({
+
+});
+
 module.exports = {
   // Handlers
   list,
-  exists,
-  abridged,
   retrieve,
   create,
   addUser,
   removeUser,
   setPlayerReady,
+  setUnready,
   // For tests
   reset,
   // For real time udpates

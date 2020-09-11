@@ -113,7 +113,6 @@ function bet(round, userId, amount) {
 
   const next = {
     ...round,
-    pot: 
   };
 }
 

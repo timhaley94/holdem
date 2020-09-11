@@ -3,7 +3,7 @@ const Modules = require('./index');
 describe('Modules', () => {
   describe('.init()', () => {
     it('resolves', () => {
-      return expect().resolves;
+      return expect(Modules.init()).resolves.toBe(undefined);
     });
   });
   

@@ -2,6 +2,9 @@ const _ = require('lodash');
 const SUITS = ['H', 'C', 'D', 'S'];
 const RANKS = _.range(2, 15);
 
+debugger;
+console.log(RANKS);
+
 const ALL = SUITS.map(
   (suit) => RANKS.map(
     (rank) => `${suit}${rank}`,
