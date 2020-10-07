@@ -7,7 +7,7 @@ orbs:
 executors:
   node:
     docker:
-      - image: cimg/node:12.18.3
+      - image: docker/compose:1.27.4
   terraform:
     docker:
       - image: hashicorp/terraform:0.13.0
@@ -20,14 +20,7 @@ commands:
     steps:
       - checkout:
           path: ~/repo
-      - restore_cache:
-          keys:
-            - npm-deps-{{ checksum "package-lock.json" }}
-      - run: npm ci
-      - save_cache:
-          key: npm-deps-{{ checksum "package-lock.json" }}
-          paths:
-            - node_modules
+      - run: ./scripts.sh up_ci
   terraform-setup:
     steps:
       - checkout:
@@ -41,24 +34,24 @@ jobs:
       directory:
         default: ""
         type: string
-    working_directory: ~/repo/<<parameters.directory>>
+    working_directory: ~/repo
     steps:
       - javascript-setup
-      - run: npm run lint
+      - run: ./scripts.sh lint_<<parameters.directory>>
   test-javascript:
     executor: node
     parameters:
       directory:
         default: ""
         type: string
-    working_directory: ~/repo/<<parameters.directory>>
+    working_directory: ~/repo
     steps:
       - javascript-setup
       - attach_workspace:
           at: .
       - run: |
-          npm run test
-          ./cc/cc-test-reporter format-coverage --add-prefix=<<parameters.directory>> -t lcov -o cc/codeclimate.<<parameters.directory>>.json coverage/lcov.info
+          ./scripts.sh test_<<parameters.directory>>
+          ./cc/cc-test-reporter format-coverage --add-prefix=<<parameters.directory>> -t lcov -o cc/codeclimate.<<parameters.directory>>.json ./<<parameters.directory>>/coverage/lcov.info
       - persist_to_workspace:
           root: .
           paths:
@@ -96,14 +89,10 @@ jobs:
             cc/cc-test-reporter upload-coverage -i cc/codeclimate.total.json
   build-javascript:
     executor: node
-    working_directory: ~/repo/client
+    working_directory: ~/repo
     steps:
       - javascript-setup
-      - run: npm run build
-      - persist_to_workspace:
-          root: ./
-          paths:
-            - build
+      - run: ./scripts.sh build_client
   lint-terraform:
     executor: terraform
     parameters:

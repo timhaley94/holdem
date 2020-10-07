@@ -6,6 +6,10 @@ up_background () {
   docker-compose up -d --scale server=2
 }
 
+up_ci () {
+  docker-compose up -d
+}
+
 down () {
   docker-compose down
 }
@@ -29,6 +33,7 @@ lint () {
 
 test_client () {
   docker-compose exec client npm run test
+  docker cp $(docker-compose ps -q client):/app/coverage ./client/coverage
 }
 
 test_client_watch () {
@@ -37,6 +42,7 @@ test_client_watch () {
 
 test_server () {
   docker-compose exec server npm run test
+  docker cp $(docker-compose ps -q server):/app/coverage ./server/coverage
 }
 
 test_server_watch () {
@@ -48,12 +54,20 @@ test () {
   test_server
 }
 
+build_client () {
+  docker-compose exec client npm run build
+  docker cp $(docker-compose ps -q client):/app/build ./client/build
+}
+
 case "$1" in
   up)
     up
     ;;
   up_background)
     up_background
+    ;;
+  up_ci)
+    up_ci
     ;;
   down)
     down
@@ -84,6 +98,9 @@ case "$1" in
     ;;
   test)
     test
+    ;;
+  build_client)
+    build_client
     ;;
   *)
     echo $"Basic usage: $0 {up|down|status|lint|test}"
