@@ -96,7 +96,7 @@ jobs:
           paths:
             - cc
   upload-coverage:
-    executor: node
+    executor: git
     working_directory: ~/repo
     environment: 
       - CC_TEST_REPORTER_ID: bccf9e20854b07b071ff25debf9d45fb35f99999febc7730a3458d023229386e

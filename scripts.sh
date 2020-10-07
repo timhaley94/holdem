@@ -37,7 +37,7 @@ lint () {
 
 test_client () {
   docker-compose exec client npm run test
-  docker cp $(docker-compose ps -q client):/app/coverage ./client/coverage
+  docker cp $(docker-compose ps -q client | head -n 1):/app/coverage ./client/coverage
 }
 
 test_client_watch () {
@@ -46,7 +46,7 @@ test_client_watch () {
 
 test_server () {
   docker-compose exec server npm run test
-  docker cp $(docker-compose ps -q server):/app/coverage ./server/coverage
+  docker cp $(docker-compose ps -q server | head -n 1):/app/coverage ./server/coverage
 }
 
 test_server_watch () {
