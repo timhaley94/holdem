@@ -7,7 +7,7 @@
     "start": "node src/index.js",
     "dev": "nodemon --watch src src/index.js",
     "lint": "eslint src",
-    "test": "jest src --coverage"
+    "test": "jest src --coverage --detectOpenHandles"
   },
   "author": "",
   "license": "ISC",
