@@ -20,6 +20,7 @@ commands:
     steps:
       - checkout:
           path: ~/repo
+      - setup_remote_docker
       - run: ./scripts.sh up_ci
   terraform-setup:
     steps:
