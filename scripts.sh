@@ -1,9 +1,9 @@
 up () {
-  docker-compose up --scale server=2
+  docker-compose -f ./docker-compose.yml -f ./docker-compose.dev.yml  up --scale server=2
 }
 
 up_background () {
-  docker-compose up -d --scale server=2
+  docker-compose -f ./docker-compose.yml -f ./docker-compose.dev.yml up -d --scale server=2
 }
 
 up_ci () {
@@ -11,6 +11,10 @@ up_ci () {
 }
 
 down () {
+  docker-compose down -f ./docker-compose.yml -f ./docker-compose.dev.yml
+}
+
+down_ci () {
   docker-compose down
 }
 
@@ -71,6 +75,9 @@ case "$1" in
     ;;
   down)
     down
+    ;;
+  down_ci)
+    down_ci
     ;;
   status)
     status

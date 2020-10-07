@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  server:
+    volumes:
+      - ./server/src:/app/src
+      - /app/node_modules
+  client:
+    volumes:
+      - ./client/src:/app/src
+      - ./client/public:/app/public
+      - /app/node_modules
