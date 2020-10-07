@@ -8,6 +8,9 @@ executors:
   curl:
     docker:
       - image: curlimages/curl:7.71.1
+  git:
+    docker:
+      - image: alpine/git:v2.26.2
   node:
     docker:
       - image: docker/compose:1.27.4
@@ -55,7 +58,23 @@ jobs:
           at: .
       - run: |
           ./scripts.sh test_<<parameters.directory>>
-          ./cc/cc-test-reporter format-coverage --add-prefix=<<parameters.directory>> -t lcov -o cc/codeclimate.<<parameters.directory>>.json ./<<parameters.directory>>/coverage/lcov.info
+          cp -R ./<<parameters.directory>>/coverage ./cc/<<parameters.directory>>_coverage
+      - persist_to_workspace:
+          root: .
+          paths:
+            - cc/<<parameters.directory>>_coverage
+  format-coverage:
+    executor: git
+    parameters:
+      directory:
+        default: ""
+        type: string
+    working_directory: ~/repo
+    steps:
+      - attach_workspace:
+          at: .
+      - run: |
+          ./cc/cc-test-reporter format-coverage --add-prefix=<<parameters.directory>> -t lcov -o cc/codeclimate.<<parameters.directory>>.json ./cc/<<parameters.directory>>_coverage
       - persist_to_workspace:
           root: .
           paths:
@@ -177,8 +196,13 @@ workflows:
           name: test-client-js
           directory: client
           context: AWS Prod
+      - format-coverage:
+          name: format-client-coverage
+          directory: client
+          context: AWS Prod
           requires:
             - setup-coverage
+            - test-client-js
       - build-javascript:
           name: build-client-js
           context: AWS Prod
@@ -190,8 +214,13 @@ workflows:
           name: test-server-js
           directory: server
           context: AWS Prod
+      - format-coverage:
+          name: format-server-coverage
+          directory: server
+          context: AWS Prod
           requires:
             - setup-coverage
+            - test-server-js
       - lint-terraform:
           name: lint-repo-terraform
           context: AWS Prod
@@ -214,8 +243,8 @@ workflows:
       - upload-coverage:
           context: AWS Prod
           requires:
-            - test-client-js
-            - test-server-js
+            - format-client-coverage
+            - format-server-coverage
       - apply-terraform:
           name: apply-repo-terraform
           context: AWS Prod
