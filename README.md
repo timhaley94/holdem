@@ -50,22 +50,19 @@ The `docker-compose` configuration supports hot reloading, so once you have it r
 changes to `./client` and `./server` will be respected. However, if you ever need to force a
 rebuild: `docker-compose build`.
 
-### Run as a distributed system
+### Scripts
 
+We have a `scripts.sh` file which takes a includes a number of subcommands. Some options are:
+- `up` stand up the system in the foreground (with logs)
+- `up_background` stand up the system in the background (no logs)
+- `down` bring the system down
+- `lint` run the linter against both the client and server source code
+- `test` run both the client and server test suites
+
+For example, if you wanted to start the app and then run the test suite, you'd run:
 ```sh
-docker-compose up --scale server=2
-```
-
-### Run without logs
-
-```sh
-docker-compose up -d
-```
-
-### Bring system down
-
-```sh
-docker-compose down
+./scripts.sh up_background
+./scripts.sh test
 ```
 
 ### High level docs
