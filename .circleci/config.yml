@@ -5,6 +5,9 @@ orbs:
   awsebcli: sbc-orbs/awsebcli@0.0.3
 
 executors:
+  curl:
+    docker:
+      - image: curlimages/curl:7.71.1
   node:
     docker:
       - image: docker/compose:1.27.4
@@ -58,7 +61,7 @@ jobs:
           paths:
             - cc/codeclimate.<<parameters.directory>>.json
   setup-coverage:
-    executor: node
+    executor: curl
     working_directory: ~/repo
     steps:
       - checkout:
