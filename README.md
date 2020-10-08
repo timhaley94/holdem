@@ -68,6 +68,11 @@ docker-compose up -d
 docker-compose down
 ```
 
+### Testing and linting
+
+In order to lint the source code or run the test suite, you'll need to run `npm install` in the
+directory in question (i.e. `client` or `server`) and then run either `npm run test` or `npm run lint`.
+
 ### High level docs
 
 We have a couple of diagrams to get a high level feel for the implementation:
