@@ -55,9 +55,12 @@ function SocketProvider({ children }) {
   }, [token, push, reset, fatal]);
 
   const value = {
-    socket: _socket,
-    isConnected: !!(isConnected && _socket),
-    onFatal: fatal,
+    socket: (
+      isConnected
+        && _socket
+        ? _socket
+        : null
+    ),
   };
 
   return (

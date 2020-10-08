@@ -1,0 +1,26 @@
+.container {
+  width: 100%;
+  flex-grow: 1;
+}
+
+.room {
+  display: flex;
+  align-items: stretch;
+}
+
+.name {
+  flex-grow: 1;
+}
+
+.players {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.icons {
+  margin-left: 0.5rem;
+}

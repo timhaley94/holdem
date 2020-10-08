@@ -7,7 +7,11 @@ import {
   Switch,
   TextField,
 } from '@material-ui/core';
-import { useSocket, useGame } from '../../state';
+import {
+  useUser,
+  useRoom,
+  usePlayers,
+} from '../../state';
 import Avatar from '../Avatar';
 import Button from '../Button';
 import DataTable from '../DataTable';
@@ -19,8 +23,9 @@ function Lobby() {
   const [isCopied, setIsCopied] = useState(false);
   const copyRef = useRef(null);
 
-  const { userId, setReady } = useSocket();
-  const { game } = useGame();
+  const [{ id: userId }] = useUser();
+  const { setReady } = useRoom();
+  const { players } = usePlayers();
 
   const { href } = window.location;
 
@@ -31,24 +36,10 @@ function Lobby() {
     setIsCopied(true);
   };
 
-  const userName = (id) => (
-    game.users
-      && game.users[id]
-      && game.users[id].metadata
-      ? game.users[id].metadata.name
-      : null
-  );
-
-  const players = (
-    game
-      && game.users
-      ? (
-        Object
-          .values(game.users)
-          .filter(({ player }) => player)
-      )
-      : null
-  );
+  const userName = (id) => {
+    const player = players.find((p) => p.id === id);
+    return player && player.name ? player.name : null;
+  };
 
   return (
     <Card className={styles.container}>
@@ -85,7 +76,7 @@ function Lobby() {
             ]}
           >
             {
-              players
+              players.length > 0
                 ? players.map(
                   ({ id, isReady }) => (
                     <DataRow key={id}>

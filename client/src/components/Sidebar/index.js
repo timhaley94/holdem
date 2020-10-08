@@ -15,7 +15,7 @@ import Button from '../Button';
 import styles from './index.module.css';
 
 function Sidebar() {
-  const requireData = useRouteMatch('/game');
+  const requireData = useRouteMatch('/room');
   const [data, setData] = useUser();
   const [isOpen, setIsOpen] = useState(false);
 

@@ -12,11 +12,12 @@ import {
 import AutorenewIcon from '@material-ui/icons/Autorenew';
 import { useHistory } from 'react-router-dom';
 import getRoomName from '../../utils/getRoomName';
-import { Games } from '../../api';
+import { useRooms } from '../../state';
 import Button from '../Button';
 import styles from './index.module.css';
 
 function Create({ open, onClose }) {
+  const { create } = useRooms();
   const [name, setName] = useState(getRoomName());
   const [isPrivate, setIsPrivate] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -27,8 +28,8 @@ function Create({ open, onClose }) {
 
   const onSubmit = async () => {
     setIsCreating(true);
-    const { data: { id } } = await Games.create({ name, isPrivate });
-    push(`/game/${id}`);
+    const { id } = await create({ name, isPrivate });
+    push(`/room/${id}`);
   };
 
   return (

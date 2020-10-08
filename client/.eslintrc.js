@@ -27,5 +27,7 @@ module.exports = {
     "react/jsx-props-no-spreading": [0, {}],
     "consistent-return": [0, {}],
     "no-case-declarations": [0, {}],
+    "no-underscore-dangle": [0, {}],
+    "no-console": [1, { allow: ["warn", "error"] }],
   },
 };

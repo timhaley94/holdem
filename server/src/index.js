@@ -1,4 +1,8 @@
-const config = require('./config');
-const api = require('./api');
+const API = require('./api');
 
-api.listen(config.port);
+async function main() {
+  await API.init();
+  API.listen();
+}
+
+main();

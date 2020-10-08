@@ -2,17 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Avatar as MUIAvatar } from '@material-ui/core';
 import avatars from '../../data/avatars';
-import { useGame } from '../../state';
+import { usePlayers } from '../../state';
 import styles from './index.module.css';
 
 function Avatar({ userId }) {
-  const { game } = useGame();
-  const user = game.users[userId];
+  const { players } = usePlayers();
+  const user = players.find((p) => p.id === userId);
   const avatarId = (
     user
-      && user.metadata
-      && user.metadata.avatarId
-      ? user.metadata.avatarId
+      && user.avatarId
+      ? user.avatarId
       : null
   );
 

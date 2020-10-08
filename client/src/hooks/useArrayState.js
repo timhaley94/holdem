@@ -2,6 +2,7 @@ import { useCallback, useReducer } from 'react';
 
 const PUSH = 'push';
 const PULL = 'pull';
+const SET = 'set';
 
 const initialState = { value: [] };
 
@@ -12,7 +13,11 @@ function reducer(state, action) {
         ...state,
         value: [
           ...state.value,
-          action.value,
+          ...(
+            Array.isArray(action.value)
+              ? action.value
+              : [action.value]
+          ),
         ],
       };
     case PULL:
@@ -21,6 +26,11 @@ function reducer(state, action) {
         value: state.value.filter(
           (x) => !action.fn(x),
         ),
+      };
+    case SET:
+      return {
+        ...state,
+        value: action.value,
       };
     default:
       return state;
@@ -46,5 +56,13 @@ export default function useArrayState() {
     [dispatch],
   );
 
-  return [state.value, push, pull];
+  const set = useCallback(
+    (value) => dispatch({
+      type: SET,
+      value,
+    }),
+    [dispatch],
+  );
+
+  return [state.value, push, pull, set];
 }
