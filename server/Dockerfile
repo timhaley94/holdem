@@ -1,5 +1,7 @@
 FROM node:12
 
+# USER node
+
 # Create app directory
 WORKDIR /app
 

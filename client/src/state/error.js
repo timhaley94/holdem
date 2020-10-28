@@ -10,7 +10,7 @@ const Context = createContext(null);
 
 function log(...args) {
   // Replace this with some external log.
-  console.log(...args);
+  console.warn(...args);
 }
 
 function ErrorProvider({ children }) {

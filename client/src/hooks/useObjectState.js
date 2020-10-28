@@ -9,19 +9,13 @@ function reducer(state, action) {
     case SET:
       return {
         ...state,
-        value: {
-          ...state.value,
-          ...action.value,
-        },
+        [action.key]: action.value,
       };
     case UNSET:
       const copy = { ...state.value };
       delete copy[action.key];
 
-      return {
-        ...state,
-        value: copy,
-      };
+      return copy;
     default:
       return state;
   }
@@ -31,8 +25,9 @@ export default function useObjectState() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const set = useCallback(
-    (value) => dispatch({
+    (key, value) => dispatch({
       type: SET,
+      key,
       value,
     }),
     [dispatch],

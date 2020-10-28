@@ -1,81 +1,153 @@
 import React, {
   createContext,
+  useCallback,
   useContext,
   useEffect,
-  useState,
+  useReducer,
 } from 'react';
 import PropTypes from 'prop-types';
 import { generate as generateId } from 'shortid';
-import { useArrayState } from '../hooks';
+import { Games } from '../api';
+import { useUser } from './user';
+import { useRoom } from './room';
 import { useSocket } from './socket';
 
 const Context = createContext(null);
 
-function GameProvider({ children }) {
-  const [game, setGame] = useState(null);
-  const {
-    socket,
-    isConnected,
-    onFatal,
-  } = useSocket();
+const SET_GAME = Symbol('set_game');
+const SET_SUBSCRIBED_ID = Symbol('set_subscribed_id');
+const PUSH_ERROR = Symbol('push_error');
+const PULL_ERROR = Symbol('pull_error');
 
-  const [
-    errors,
-    addError,
-    removeError,
-  ] = useArrayState();
+const initialState = {
+  subscribedId: null,
+  games: {},
+  errors: [],
+};
 
-  const [
-    messages,
-    addMessage,
-  ] = useArrayState();
+function reducer(state, { type, value }) {
+  switch (type) {
+    case SET_GAME:
+      return {
+        ...state,
+        games: {
+          [value._id]: {
+            ...value,
+            id: value._id,
+          },
+        },
+      };
+    case SET_SUBSCRIBED_ID:
+      if (value !== state.subscribedId) {
+        return {
+          ...state,
+          subscribedId: value,
+          errors: [],
+        };
+      }
 
-  const wrap = (fn) => {
-    if (!socket || !isConnected) {
-      return null;
-    }
-
-    return (...args) => fn(...args);
-  };
-
-  function dismissError(id) {
-    removeError((e) => e.id === id);
+      return state;
+    case PUSH_ERROR:
+      return {
+        ...state,
+        errors: [
+          ...state.errors,
+          {
+            id: generateId(),
+            ...value,
+          },
+        ],
+      };
+    case PULL_ERROR:
+      return {
+        ...state,
+        errors: state.errors.filter(
+          ({ id }) => id !== value,
+        ),
+      };
+    default:
+      return state;
   }
+}
+
+const defaultMessage = `
+  We're having trouble talking to the server.
+`;
+
+function GameProvider({ children }) {
+  const [{ token }] = useUser();
+  const { room } = useRoom();
+  const { socket } = useSocket();
+  const [
+    {
+      games,
+      subscribedId,
+      errors,
+    },
+    dispatch,
+  ] = useReducer(reducer, initialState);
+
+  const gameId = (
+    room
+      && room.gameId
+      ? room.gameId
+      : null
+  );
 
   useEffect(() => {
-    if (socket && isConnected) {
-      socket.on('room_error', onFatal);
-      socket.on('incoming_message', addMessage);
-      socket.on('game_state_updated', setGame);
-      socket.on('game_error', ({ message }) => {
-        addError({
-          id: generateId(),
-          message,
-        });
+    if (socket) {
+      const set = (value) => dispatch({
+        type: SET_GAME,
+        value,
+      });
+
+      socket.on('game_updated', set);
+
+      return () => {
+        socket.off('game_updated', set);
+      };
+    }
+  }, [socket, dispatch]);
+
+  useEffect(() => {
+    if (socket && gameId !== subscribedId) {
+      socket.emit('game_unsubscribe', subscribedId);
+      socket.emit('game_subscribe', gameId);
+
+      dispatch({
+        type: SET_SUBSCRIBED_ID,
+        value: gameId,
       });
     }
-  }, [
-    socket,
-    isConnected,
-    onFatal,
-    addMessage,
-    setGame,
-    addError,
-  ]);
+  }, [socket, gameId, subscribedId, dispatch]);
+
+  const dismissError = useCallback((id) => {
+    dispatch({
+      type: PULL_ERROR,
+      value: id,
+    });
+  }, [dispatch]);
+
+  const makeMove = useCallback((data) => {
+    try {
+      Games.makeMove({
+        id: gameId,
+        token,
+        ...data,
+      });
+    } catch ({ response }) {
+      dispatch({
+        type: PUSH_ERROR,
+        value: response.message || defaultMessage,
+      });
+    }
+  }, [gameId, token]);
 
   const value = {
-    messages,
-    game,
+    game: games[gameId] || {},
     errors,
+    makeMove,
     dismissError,
-    sendMessage: wrap((message) => socket.emit('send_message', message)),
-    joinGame: wrap((id) => socket.emit('join_game', id)),
-    setReady: wrap((isReady) => socket.emit('set_ready', isReady)),
-    makeMove: wrap((data) => socket.emit('make_move', data)),
-    leaveGame: wrap(() => {
-      setGame(null);
-      socket.emit('leave_game');
-    }),
   };
 
   return (

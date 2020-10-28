@@ -1,8 +1,13 @@
-import { get, post, patch } from 'axios';
+import Axios, {
+  get,
+  post,
+  patch,
+} from 'axios';
 import config from './config';
 
-const userRoute = `${config.serverUrl}/users`;
-const gameRoute = `${config.serverUrl}/games`;
+const usersRoute = `${config.serverUrl}/users`;
+const roomsRoute = `${config.serverUrl}/rooms`;
+const gamesRoute = `${config.serverUrl}/games`;
 
 const opts = (token) => ({
   headers: {
@@ -12,27 +17,60 @@ const opts = (token) => ({
 
 const Users = {
   create: ({ secret }) => post(
-    `${userRoute}`,
+    `${usersRoute}`,
     { secret },
   ),
   auth: ({ id, secret }) => post(
-    `${userRoute}/auth`,
+    `${usersRoute}/auth`,
     { id, secret },
   ),
-  update: ({ id, token, metadata }) => patch(
-    `${userRoute}/${id}`,
-    { metadata },
+  update: ({ id, token, ...data }) => patch(
+    `${usersRoute}/${id}`,
+    { ...data },
+    opts(token),
+  ),
+};
+
+const Rooms = {
+  list: () => get(`${roomsRoute}`),
+  retrieve: ({ id }) => get(`${roomsRoute}/${id}`),
+  create: ({ name, isPrivate }) => post(
+    `${roomsRoute}`,
+    { name, isPrivate },
+  ),
+  setReady: ({
+    id,
+    token,
+    userId,
+    isReady,
+  }) => patch(
+    `${roomsRoute}/${id}/players/${userId}`,
+    { isReady },
+    opts(token),
+  ),
+  join: ({ id, token }) => post(
+    `${roomsRoute}/${id}/players`,
+    {},
+    opts(token),
+  ),
+  leave: ({ id, token, userId }) => Axios.delete(
+    `${roomsRoute}/${id}/players/${userId}`,
+    {},
     opts(token),
   ),
 };
 
 const Games = {
-  list: () => get(`${gameRoute}`),
-  retrieve: ({ id }) => get(`${gameRoute}/${id}`),
-  create: ({ name, isPrivate }) => post(
-    `${gameRoute}`,
-    { name, isPrivate },
+  retrieve: ({ id }) => get(`${gamesRoute}/${id}`),
+  makeMove: ({ id, token, ...data }) => post(
+    `${gamesRoute}/${id}/moves`,
+    data,
+    opts(token),
   ),
 };
 
-export { Users, Games };
+export {
+  Users,
+  Rooms,
+  Games,
+};

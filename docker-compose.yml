@@ -1,5 +1,10 @@
 version: "3.8"
 services:
+  mongo:
+    image: mongo:4.0.20-xenial
+    restart: always
+    ports:
+      - 27017:27017
   redis:
     image: redis:6.0.6
     expose:
@@ -13,6 +18,7 @@ services:
       - NODE_ENV=development
     depends_on:
       - redis
+      - mongo
   haproxy:
     image: eeacms/haproxy:1.8-1.5
     depends_on:

@@ -1,8 +1,30 @@
 const { Server } = require('http');
-const Rest = require('../rest');
-const Socket = require('../socket');
+const config = require('../config');
+const Domain = require('../domain');
+const Rest = require('./rest');
+const Socket = require('./socket');
 
-const api = Server(Rest);
-Socket(api);
+let api;
 
-module.exports = api;
+async function init() {
+  // Initialize business logic layer.
+  await Domain.init();
+
+  api = Server(Rest);
+  Socket(api);
+}
+
+function listen() {
+  console.info(`Listening on port, ${config.port}!`);
+  api.listen(config.port);
+}
+
+function getServer() {
+  return api;
+}
+
+module.exports = {
+  init,
+  listen,
+  getServer,
+};

@@ -40,33 +40,23 @@ holdem/
 
 ## Development
 
-While you you could set up each individual piece of the system locally (i.e. server, client, redis)
-the easiest way to run the project is through `docker-compose`. Make sure you have `docker` and
-`docker-compose` installed and then you can run `docker-compose up` in the root directory.
+While you you could set up each individual piece of the system locally (i.e. server, client, mongo, redis)
+the easiest way to run the project is through `docker-compose`. First make sure you have `docker` and
+`docker-compose` installed. Then you can use the `scripts.sh` file which takes a variety of subcommands:
 
-Viola, [http:localhost:3000](http:localhost:3000).
+We have a `scripts.sh` file which takes a includes a number of subcommands. Some options are:
+- `up` stand up the system in the foreground (with logs)
+- `up_background` stand up the system in the background (no logs)
+- `down` bring the system down
+- `build` force a fresh build of the docker images/containers
+- `rm` remove stopped containers
+
+For example, to get the app up and running, run `./scripts.sh up` and then, viola,
+[http:localhost:3000](http:localhost:3000).
 
 The `docker-compose` configuration supports hot reloading, so once you have it running, your
 changes to `./client` and `./server` will be respected. However, if you ever need to force a
-rebuild: `docker-compose build`.
-
-### Run as a distributed system
-
-```sh
-docker-compose up --scale server=2
-```
-
-### Run without logs
-
-```sh
-docker-compose up -d
-```
-
-### Bring system down
-
-```sh
-docker-compose down
-```
+rebuild: `./scripts build`.
 
 ### Testing and linting
 

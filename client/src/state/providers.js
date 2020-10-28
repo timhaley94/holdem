@@ -1,23 +1,32 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { UserProvider, useUserSync } from './user';
-import { SocketProvider } from './socket';
-import { GamesProvider } from './games';
-import { GameProvider } from './game';
 import { ErrorProvider } from './error';
+import { SocketProvider } from './socket';
+import { RoomsProvider } from './rooms';
+import { RoomProvider } from './room';
+import { PlayersProvider } from './players';
+import { GameProvider } from './game';
+
+function apply(components, children) {
+  return components.reverse().reduce(
+    (acc, C) => <C>{ acc }</C>,
+    children,
+  );
+}
 
 function APIProvider({ children }) {
   useUserSync();
 
-  return (
-    <SocketProvider>
-      <GamesProvider>
-        <GameProvider>
-          { children }
-        </GameProvider>
-      </GamesProvider>
-    </SocketProvider>
-  );
+  const providers = [
+    SocketProvider,
+    RoomsProvider,
+    RoomProvider,
+    PlayersProvider,
+    GameProvider,
+  ];
+
+  return apply(providers, children);
 }
 
 APIProvider.propTypes = {

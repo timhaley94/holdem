@@ -1,18 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { useGame } from '../../state';
+import { usePlayers } from '../../state';
 import Avatar from '../Avatar';
 import styles from './index.module.css';
 
 function MessageGroup({ userId, messages }) {
-  const { game } = useGame();
-  const { name } = (
-    Object
-      .values(game.users)
-      .find(({ id }) => id === userId)
-      .metadata
-  );
+  const { players } = usePlayers();
+  const player = players.find(({ id }) => id === userId);
+  const name = player && player.name ? player.name : null;
 
   const m = moment(messages[0].timestamp);
 

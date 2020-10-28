@@ -92,10 +92,8 @@ function useUserSync() {
         await Users.update({
           id,
           token,
-          metadata: {
-            name,
-            avatarId,
-          },
+          name,
+          avatarId,
         });
       } catch (e) {
         if (isValid()) {

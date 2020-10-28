@@ -11,6 +11,13 @@ module.exports = {
     ),
     port: 6379,
   },
+  mongo: {
+    url: (
+      process.env.NODE_ENV === 'development'
+        ? 'mongodb://mongo/holdem'
+        : process.env.MONGO_URL
+    ),
+  },
   socket: {
     pingInterval: 10000,
     pingTimeout: 5000,

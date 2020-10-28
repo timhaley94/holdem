@@ -3,7 +3,7 @@ import { Card } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '../Button';
 import Create from '../Create';
-import Games from '../Games';
+import Rooms from '../Rooms';
 import Page from '../Page';
 import styles from './index.module.css';
 
@@ -29,7 +29,7 @@ function Home() {
           </Button>
         </div>
         <div className={styles.content}>
-          <Games />
+          <Rooms />
         </div>
       </Card>
     </Page>

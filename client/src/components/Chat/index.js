@@ -9,7 +9,7 @@ import {
   TextareaAutosize,
 } from '@material-ui/core';
 import { useEvent } from '../../hooks';
-import { useGame } from '../../state';
+import { useRoom } from '../../state';
 import { chunkBy } from '../../utils';
 import MessageGroup from '../MessageGroup';
 import styles from './index.module.css';
@@ -18,7 +18,7 @@ const SHIFT_CODE = 16;
 const ENTER_CODE = 13;
 
 function Chat() {
-  const { messages, sendMessage } = useGame();
+  const { messages, sendMessage } = useRoom();
   const [value, setValue] = useState('');
   const [isShiftDown, setIsShiftDown] = useState(false);
   const bottomRef = useRef(null);

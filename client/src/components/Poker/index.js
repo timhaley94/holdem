@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import Errors from '../Errors';
-import Game from '../Game';
+import Room from '../Room';
 import Home from '../Home';
 
 function Poker() {
@@ -12,8 +12,8 @@ function Poker() {
         <Route exact path="/">
           <Home />
         </Route>
-        <Route path="/game/:id">
-          <Game />
+        <Route path="/room/:id">
+          <Room />
         </Route>
         <Route>
           <Redirect to="/" />
