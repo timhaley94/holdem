@@ -14,6 +14,8 @@ const stages = [
   POST_RIVER,
 ];
 
+const schema = String;
+
 function first() {
   return stages[0];
 }
@@ -42,4 +44,5 @@ module.exports = {
   stages,
   first,
   next,
+  schema,
 };

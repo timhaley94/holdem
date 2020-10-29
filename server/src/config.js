@@ -26,5 +26,6 @@ module.exports = {
     maxPlayers: 9,
     minPlayers: 2,
     cleanupTimeout: 100000,
+    defaultBankroll: 300,
   },
 };
