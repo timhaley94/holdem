@@ -2,7 +2,7 @@ const _ = require('lodash');
 const { Errors } = require('../../modules');
 const Card = require('../card');
 
-const schema = [Card.Schema];
+const schema = [Card.schema];
 
 function create() {
   return _.shuffle(Card.all());

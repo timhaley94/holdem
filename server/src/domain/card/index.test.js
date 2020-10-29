@@ -1,10 +1,9 @@
 const _ = require('lodash');
-const { Schema } = require('mongoose');
 const Card = require('./index');
 
 describe('Domain.Card', () => {
-  const ace = { suit: 'H', rank: 14 };
-  const two = { suit: 'H', rank: 2 };
+  const ace = 'H14';
+  const two = 'H2';
 
   describe('.all()', () => {
     it('provides 52 unique cards', () => {
@@ -17,7 +16,7 @@ describe('Domain.Card', () => {
 
   describe('.schema', () => {
     it('is a mongoose schema', () => {
-      expect(Card.schema).toBeInstanceOf(Schema);
+      expect(Card.schema).toEqual(String);
     });
   });
 
@@ -25,7 +24,7 @@ describe('Domain.Card', () => {
     expect(
       Card.SUITS,
     ).toContain(
-      random().suit,
+      Card.suit(random()),
     );
   });
 
@@ -33,7 +32,7 @@ describe('Domain.Card', () => {
     expect(
       Card.RANKS,
     ).toContain(
-      random().rank,
+      Card.rank(random()),
     );
   });
 
@@ -58,7 +57,7 @@ describe('Domain.Card', () => {
 
     it('ignores suit', () => {
       expect(
-        Card.sort(two, { suit: 'D', rank: 2 }),
+        Card.sort(two, 'D2'),
       ).toEqual(0);
     });
   });
