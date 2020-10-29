@@ -1,9 +1,6 @@
 # dependencies
 **/node_modules
 
-# production
-client/build
-
 # mac
 .DS_Store
 */.DS_Store
@@ -23,3 +20,9 @@ client/build
 
 # misc
 **/temp
+
+# client
+client/build
+
+# server
+server/globalConfig.json
