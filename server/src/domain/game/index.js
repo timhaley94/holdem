@@ -135,8 +135,15 @@ const makeMove = Validator.wrap({
 
     const methods = {
       BET: Round.bet,
+      ALL_IN: Round.allIn,
       FOLD: Round.fold,
     };
+
+    if (!methods[type]) {
+      throw new Errors.Fatal(
+        `${type} is not a legal move.`,
+      );
+    }
 
     game.round = methods[type](
       game.round,
