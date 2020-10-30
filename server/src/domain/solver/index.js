@@ -50,17 +50,67 @@ function sort(a, b) {
   );
 }
 
-function run(hands) {
-  const sorted = hands.sort(
-    (a, b) => sort(a.hand, b.hand),
+function orderHands(hands) {
+  const sorted = (
+    Object
+      .entries(hands)
+      .sort(
+        ([, a], [, b]) => sort(a, b),
+      )
   );
 
   const chunked = Utils.chunkIf(
     sorted,
-    (a, b) => sort(a.hand, b.hand) === 0,
+    ([, a], [, b]) => sort(a, b) === 0,
   );
 
-  return chunked;
+  return Utils.deepMap(
+    chunked,
+    ([userId]) => userId,
+  );
+}
+
+function run(hands, wagers) {
+  const results = orderHands(hands);
+  const wagersCopy = { ...wagers };
+
+  const { awarded } = results.reduce(
+    (acc, userId) => {
+      const wagered = wagersCopy[userId];
+
+      if (wagered <= acc.highest) {
+        return acc;
+      }
+
+      const diff = wagered - acc.highest;
+      const losers = (
+        Object
+          .entries(wagersCopy)
+          .filter(
+            ([id, wager]) => (
+              id !== userId
+                && wager > acc.highest
+            ),
+          )
+          .length
+      );
+
+      return {
+        ...acc,
+        highest: wagered,
+        awarded: {
+          ...acc.awarded,
+          [userId]: diff * losers,
+        },
+      };
+    },
+    {
+      highest: 0,
+      awarded: {},
+    },
+  );
+
+  return awarded;
 }
 
 module.exports = { run };
