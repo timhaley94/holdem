@@ -7,9 +7,9 @@ const {
 const {
   Auth,
   Errors,
-  Validator,
   Listener,
 } = require('../../modules');
+const Handler = require('../handler');
 
 const schema = new Schema({
   name: String,
@@ -52,7 +52,7 @@ const validators = {
   token: Joi.object(),
 };
 
-const exists = Validator.wrap({
+const exists = Handler.wrap({
   validators,
   required: ['id'],
   fn: async ({ id }) => {
@@ -66,7 +66,7 @@ const exists = Validator.wrap({
   },
 });
 
-const retrieve = Validator.wrap({
+const retrieve = Handler.wrap({
   validators,
   required: ['id'],
   fn: async ({ id }, projection) => {
@@ -86,22 +86,28 @@ const retrieve = Validator.wrap({
   },
 });
 
-const create = Validator.wrap({
+const create = Handler.wrap({
   validators,
   required: ['secret'],
   optional: ['name', 'avatarId'],
   fn: async (data) => {
     try {
       const user = await User.create(data);
-      listener.emit(user._id.str);
-      return user;
+      const id = user._id.toString();
+
+      listener.emit(id);
+
+      return {
+        ...user.toObject(),
+        token: Auth.sign({ id }),
+      };
     } catch (e) {
       throw new Errors.Fatal('Failed to create user.');
     }
   },
 });
 
-const auth = Validator.wrap({
+const auth = Handler.wrap({
   validators,
   required: ['id', 'secret'],
   fn: async ({ id, secret }) => {
@@ -120,8 +126,9 @@ const auth = Validator.wrap({
   },
 });
 
-const update = Validator.wrap({
+const update = Handler.wrap({
   validators,
+  lockModel: 'user',
   required: ['id'],
   optional: ['name', 'avatarId'],
   fn: async ({ id, ...data }) => {

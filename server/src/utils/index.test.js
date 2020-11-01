@@ -7,6 +7,7 @@ describe('Utils', () => {
       'deepMap',
       'hasShape',
       'mapFind',
+      'sleep',
     ].forEach(
       (method) => {
         expect(Utils).toHaveProperty(method);

@@ -4,13 +4,9 @@ const {
   Types,
   model,
 } = require('mongoose');
-const {
-  DB,
-  Errors,
-  Validator,
-  Listener,
-} = require('../../modules');
+const { Errors, Listener } = require('../../modules');
 const config = require('../../config');
+const Handler = require('../handler');
 const Round = require('../round');
 
 const schema = new Schema({
@@ -46,10 +42,6 @@ schema.method('startRound', async function startRound() {
   await this.save();
 });
 
-async function init() {
-  await DB.init();
-}
-
 let Game;
 
 try {
@@ -68,22 +60,8 @@ const validators = {
       .min(1)
       .max(36)
   ),
-  userIds: (
-    Joi.array().items(
-      Joi
-        .string()
-        .regex(/^[a-z0-9-]+$/)
-        .min(1)
-        .max(36),
-    )
-  ),
-  userId: (
-    Joi
-      .string()
-      .regex(/^[a-z0-9-]+$/)
-      .min(1)
-      .max(36)
-  ),
+  userIds: Joi.array().items(Joi.object()),
+  userId: Joi.object(),
   type: (
     Joi
       .string()
@@ -93,7 +71,7 @@ const validators = {
   data: Joi.object(),
 };
 
-const retrieve = Validator.wrap({
+const retrieve = Handler.wrap({
   validators,
   required: ['id'],
   fn: async ({ id }) => {
@@ -107,7 +85,7 @@ const retrieve = Validator.wrap({
   },
 });
 
-const create = Validator.wrap({
+const create = Handler.wrap({
   validators,
   required: ['userIds'],
   fn: async ({ userIds }) => {
@@ -122,11 +100,15 @@ const create = Validator.wrap({
     });
 
     await game.startRound();
+    listener.emit(game._id.toString());
+
+    return game;
   },
 });
 
-const makeMove = Validator.wrap({
+const makeMove = Handler.wrap({
   validators,
+  lockModel: 'game',
   required: ['id', 'userId', 'type', 'data'],
   fn: async ({
     id, userId, type, data,
@@ -162,7 +144,6 @@ const makeMove = Validator.wrap({
 });
 
 module.exports = {
-  init,
   retrieve,
   create,
   makeMove,

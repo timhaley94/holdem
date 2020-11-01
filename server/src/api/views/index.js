@@ -5,5 +5,6 @@ const User = Renderer.wrap({
 });
 
 const Room = (room) => room;
+const Game = (game) => game;
 
-module.exports = { User, Room };
+module.exports = { User, Room, Game };

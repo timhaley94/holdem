@@ -1,9 +1,10 @@
 const { Types } = require('mongoose');
 const User = require('./index');
-const { Auth, Errors, DB } = require('../../modules');
+const { Auth, Errors } = require('../../modules');
+const { init, DB } = require('../../loaders');
 
 describe('Domain.Users', () => {
-  beforeAll(DB.init);
+  beforeAll(init);
   afterAll(DB.close);
 
   const data = {
@@ -42,16 +43,20 @@ describe('Domain.Users', () => {
         secret: data.secret,
       });
 
-      expect(user.id).toBeTruthy();
-      expect(typeof user.id).toEqual('string');
+      const id = user._id.toString();
+
+      expect(id).toBeTruthy();
+      expect(typeof id).toEqual('string');
       expect(user.secret).toEqual(data.secret);
     });
 
     it('can create with optional fields', async () => {
       const user = await User.create(data);
 
-      expect(user.id).toBeTruthy();
-      expect(typeof user.id).toEqual('string');
+      const id = user._id.toString();
+
+      expect(id).toBeTruthy();
+      expect(typeof id).toEqual('string');
       expect(user.name).toEqual(data.name);
       expect(user.avatarId).toEqual(data.avatarId);
     });
@@ -71,10 +76,12 @@ describe('Domain.Users', () => {
     });
 
     it('persists to database', async () => {
-      const { id } = await User.create(data);
+      const { _id } = await User.create(data);
+      const id = _id.toString();
+
       const user = await User.retrieve({ id });
 
-      expect(user.id).toEqual(id);
+      expect(id).toEqual(id);
 
       Object.entries(data).forEach(
         ([key, value]) => {
@@ -92,7 +99,7 @@ describe('Domain.Users', () => {
 
       try {
         await User.auth({
-          id: user.id,
+          id: user._id.toString(),
           secret: 'wrongsecret123',
         });
       } catch (e) {
@@ -105,12 +112,12 @@ describe('Domain.Users', () => {
 
       const user = await User.create(data);
       const token = await User.auth({
-        id: user.id,
+        id: user._id.toString(),
         secret: data.secret,
       });
 
       const { id } = Auth.verify(token);
-      expect(id).toEqual(user.id);
+      expect(id).toEqual(user._id.toString());
     });
   });
 
@@ -127,7 +134,7 @@ describe('Domain.Users', () => {
 
       try {
         await User.update({
-          id: user.id,
+          id: user._id.toString(),
           name: [1, 2, 3],
           avatarId: false,
         });
@@ -138,13 +145,14 @@ describe('Domain.Users', () => {
 
     it('hanldes and persist valid data', async () => {
       let user = await User.create(data);
+      const id = user._id.toString();
 
       await User.update({
-        id: user.id,
+        id,
         ...updateData,
       });
 
-      user = await User.retrieve({ id: user.id });
+      user = await User.retrieve({ id });
 
       Object.entries(updateData).forEach(
         ([key, value]) => {
@@ -154,7 +162,8 @@ describe('Domain.Users', () => {
     });
 
     it('fires listener on update', async () => {
-      const { id } = await User.create(data);
+      const user = await User.create(data);
+      const id = user._id.toString();
 
       const cb = jest.fn();
       User.listener.subscribe(id, cb);

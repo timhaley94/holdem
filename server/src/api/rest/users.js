@@ -7,10 +7,7 @@ const Route = require('./route');
 const router = Router();
 
 router.post('/', Route.handler(
-  async (req) => {
-    const user = await User.create(req.body);
-    return Views.User(user);
-  },
+  (req) => User.create(req.body),
 ));
 
 router.post('/auth', Route.handler(
@@ -20,7 +17,7 @@ router.post('/auth', Route.handler(
 router.patch('/:id', Route.private, Route.handler(
   async (req) => {
     if (req.params.id !== req.user.data.id) {
-      throw new Errors.Unathorized('Cannot update another user.');
+      throw new Errors.Unauthorized('Cannot update another user.');
     }
 
     const { id } = req.user.data;
