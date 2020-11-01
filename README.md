@@ -34,8 +34,20 @@ Hold'em Hounds should be...
 holdem/
   .circleci/        --> CI/CD configuration
   client/           --> Client (React) code
+    src/
+      components/   --> UI Elements
+      data/         --> Constants
+      hooks/        --> Generic React hooks
+      state/        --> Application state (i.e. the "data layer")
+      utils/        --> Generic reusable code
   infrastructure/   --> Infrastructure (Terraform) code
   server/           --> Server (Node.js) code
+    src/
+      api/          --> View/Controller logic
+      domain/       --> Business logic (i.e. the "service layer")
+      loaders/      --> Side effects (i.e. mongo and redis connections)
+      modules/      --> Specific reusable code
+      utils/        --> Generic reusable code
 ```
 
 ## Development
@@ -46,10 +58,7 @@ the easiest way to run the project is through `docker-compose`. First make sure 
 
 We have a `scripts.sh` file which takes a includes a number of subcommands. Some options are:
 - `up` stand up the system in the foreground (with logs)
-- `up_background` stand up the system in the background (no logs)
-- `down` bring the system down
-- `build` force a fresh build of the docker images/containers
-- `rm` remove stopped containers
+- `rebuild` force a fresh build of the docker images/containers
 
 For example, to get the app up and running, run `./scripts.sh up` and then, viola,
 [http:localhost:3000](http:localhost:3000).

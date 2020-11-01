@@ -36,6 +36,7 @@ function SocketProvider({ children }) {
     if (token) {
       const socket = io(config.serverUrl, {
         query: { token },
+        transports: ['websocket'],
       });
 
       socket.on('connect', () => setIsConnected(true));

@@ -6,21 +6,15 @@ const {
   model,
 } = require('mongoose');
 const config = require('../../config');
-const {
-  Errors,
-  Listener,
-  Validator,
-} = require('../../modules');
+const { Errors, Listener } = require('../../modules');
+const Handler = require('../handler');
 const Game = require('../game');
 const User = require('../user');
 
-const playerSchema = new Schema(
-  {
-    userId: Schema.ObjectId,
-    isReady: Boolean,
-  },
-  { timestamps: true },
-);
+const playerSchema = new Schema({
+  userId: Schema.ObjectId,
+  isReady: Boolean,
+});
 
 const schema = new Schema(
   {
@@ -70,7 +64,12 @@ schema.virtual('shouldStart').get(function shouldStart() {
 
 schema.method('attemptStart', async function attemptStart() {
   if (this.shouldStart) {
-    const game = await Game.create();
+    const game = await Game.create({
+      userIds: this.players.map(
+        (p) => p.userId,
+      ),
+    });
+
     this.gameId = game.id;
     await this.save();
   }
@@ -119,7 +118,7 @@ const validators = {
 };
 
 // Handlers
-const exists = Validator.wrap({
+const exists = Handler.wrap({
   validators,
   required: ['id'],
   fn: async ({ id }) => {
@@ -135,7 +134,7 @@ const exists = Validator.wrap({
   },
 });
 
-const list = Validator.wrap({
+const list = Handler.wrap({
   validators,
   optional: ['isPrivate'],
   fn: ({ isPrivate }) => {
@@ -149,7 +148,7 @@ const list = Validator.wrap({
   },
 });
 
-const retrieve = Validator.wrap({
+const retrieve = Handler.wrap({
   validators,
   required: ['id'],
   fn: async ({ id }, projection) => {
@@ -169,7 +168,7 @@ const retrieve = Validator.wrap({
   },
 });
 
-const create = Validator.wrap({
+const create = Handler.wrap({
   validators,
   required: ['name'],
   optional: ['isPrivate'],
@@ -181,13 +180,14 @@ const create = Validator.wrap({
       players: [],
     });
 
-    listener.emit(room._id.str);
+    listener.emit(room._id.toString());
     return room;
   },
 });
 
-const addPlayer = Validator.wrap({
+const addPlayer = Handler.wrap({
   validators,
+  lockModel: 'room',
   required: ['id', 'userId'],
   fn: async ({ id, userId }) => {
     const room = await retrieve({ id });
@@ -205,16 +205,20 @@ const addPlayer = Validator.wrap({
         isReady: false,
       });
 
+      // Emit here so that UI sees that the player is ready
+      // while the game is being constructed.
       await room.save();
-      room.attemptStart();
+      listener.emit(id);
 
+      await room.attemptStart();
       listener.emit(id);
     }
   },
 });
 
-const removePlayer = Validator.wrap({
+const removePlayer = Handler.wrap({
   validators,
+  lockModel: 'room',
   required: ['id', 'userId'],
   fn: async ({ id, userId }) => {
     const room = await retrieve({ id });
@@ -230,27 +234,30 @@ const removePlayer = Validator.wrap({
   },
 });
 
-const setPlayerReady = Validator.wrap({
+const setPlayerReady = Handler.wrap({
   validators,
+  lockModel: 'room',
   required: ['id', 'userId', 'isReady'],
   fn: async ({ id, userId, isReady }) => {
     await exists({ id });
     await User.exists({ id: userId });
+
     await Room.updateOne(
       { _id: Types.ObjectId(id) },
       {
         $set: {
-          'players.$[player].isReady': isReady,
+          'players.$[p].isReady': isReady,
         },
       },
       {
-        arrayFilters: [
-          {
-            'player.userId': userId,
-          },
-        ],
+        arrayFilters: [{
+          'p.userId': Types.ObjectId(userId),
+        }],
       },
-    ).exec();
+    );
+
+    const round = await retrieve({ id });
+    await round.attemptStart();
 
     listener.emit(id);
   },

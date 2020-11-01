@@ -1,10 +1,8 @@
 const Joi = require('@hapi/joi');
 const { Schema } = require('mongoose');
-const {
-  Errors,
-  Validator,
-} = require('../../modules');
+const { Errors } = require('../../modules');
 const Utils = require('../../utils');
+const Handler = require('../handler');
 const Card = require('../card');
 const Deck = require('../deck');
 const Hand = require('../hand');
@@ -49,9 +47,18 @@ function nextTurnOrder(ids, lastIds) {
 }
 
 function create({ players, lastRound }) {
-  const turnOrder = nextTurnOrder(
-    players.map((p) => p.userId),
-    lastRound.players.map((p) => p.userId),
+  const userIds = players.map((p) => p.userId);
+  const lastUserIds = (
+    lastRound
+      && lastRound.players
+      ? lastRound.players.map((p) => p.userId)
+      : null
+  );
+
+  const turnOrder = (
+    lastUserIds
+      ? nextTurnOrder(userIds, lastUserIds)
+      : userIds
   );
 
   return {
@@ -275,7 +282,7 @@ function highestBet({ players }) {
   return Math.max(...bets);
 }
 
-const bet = Validator.wrap({
+const bet = Handler.wrap({
   validators,
   required: ['round', 'userId', 'amount'],
   fn: ({ round, userId, amount }) => {
@@ -322,7 +329,7 @@ const bet = Validator.wrap({
   },
 });
 
-const allIn = Validator.wrap({
+const allIn = Handler.wrap({
   validators,
   required: ['round', 'userId'],
   fn: ({ round, userId }) => bet({
@@ -342,7 +349,7 @@ function remainingPlayers({ players }) {
   );
 }
 
-const fold = Validator.wrap({
+const fold = Handler.wrap({
   validators,
   required: ['round', 'userId', 'amount'],
   fn: ({ round, userId }) => {

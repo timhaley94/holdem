@@ -2,46 +2,19 @@ up () {
   docker-compose up --scale server=2
 }
 
-up_background () {
-  docker-compose up -d --scale server=2
-}
-
-build() {
+rebuild() {
+  docker-compose rm -f
   docker-compose build
-}
-
-down () {
-  docker-compose down
-}
-
-status () {
-  docker-compose ps
-}
-
-rm () {
-  docker-compose rm
 }
 
 case "$1" in
   up)
     up
     ;;
-  up_background)
-    up_background
-    ;;
-  build)
-    build
-    ;;
-  down)
-    down
-    ;;
-  status)
-    status
-    ;;
-  rm)
-    rm
+  rebuild)
+    rebuild
     ;;
   *)
-    echo $"Basic usage: $0 {up|down|status}"
+    echo $"Basic usage: $0 {up|rebuild}"
     exit 1
 esac

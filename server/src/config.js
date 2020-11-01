@@ -4,12 +4,16 @@ module.exports = {
     privateKey: 'developmentkey',
   },
   redis: {
-    host: (
+    ttl: 1000,
+    driftFactor: 0.01,
+    retryCount: 2,
+    retryDelay: 100,
+    retryJitter: 100,
+    url: (
       process.env.NODE_ENV === 'development'
-        ? 'redis'
-        : 'poker-app-cache-replication-group.fojvth.ng.0001.use2.cache.amazonaws.com'
+        ? 'redis://redis:6379'
+        : ''
     ),
-    port: 6379,
   },
   mongo: {
     url: (

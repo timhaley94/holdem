@@ -14,6 +14,7 @@ async function Socket(server) {
     serveClient: false,
     pingInterval: config.socket.pingInterval,
     pingTimeout: config.socket.pingTimeout,
+    transports: ['websocket'],
   });
 
   if (process.env.NODE_ENV !== 'test') {

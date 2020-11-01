@@ -1,10 +1,10 @@
-const Modules = require('../modules');
+const Loaders = require('../loaders');
 const Game = require('./game');
 const Room = require('./room');
 const User = require('./user');
 
 async function init() {
-  await Modules.init();
+  await Loaders.init();
 }
 
 module.exports = {

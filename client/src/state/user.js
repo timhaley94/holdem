@@ -74,7 +74,7 @@ function useUserSync() {
         const result = await Users.create({ secret: s });
 
         nextData = {
-          id: result.data.id,
+          id: result.data._id,
           token: result.data.token,
           secret: s,
         };

@@ -26,7 +26,7 @@ function Room() {
             <>
               <Chat />
               {
-                room && room.isStarted
+                room && room.gameId
                   ? <Game />
                   : <Lobby />
               }
