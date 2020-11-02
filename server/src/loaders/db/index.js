@@ -1,27 +1,28 @@
-const { connect } = require('mongoose');
+const { connect, disconnect } = require('mongoose');
 const config = require('../../config');
 
-let db;
+let isConnected = false;
 
 async function init() {
-  if (!db) {
-    db = await connect(config.mongo.url, {
+  if (!isConnected) {
+    await connect(config.mongo.url, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-  }
 
-  return db;
+    isConnected = true;
+  }
 }
 
 function close() {
-  if (db) {
-    db.close();
-    db = null;
+  if (isConnected) {
+    disconnect();
+    isConnected = false;
   }
 }
 
 module.exports = {
   init,
   close,
+  isConnected: () => isConnected,
 };

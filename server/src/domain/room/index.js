@@ -197,9 +197,13 @@ const addPlayer = Handler.wrap({
       throw new Errors.Conflict('Room is already full.');
     }
 
+    const alreadyAdded = room.players.some(
+      (p) => p.userId.toString() === userId,
+    );
+
     // If two requests get fired at the same time,
     // they may still both get pushed onto the players array.
-    if (!room.players.some((p) => p.userId === userId)) {
+    if (!alreadyAdded) {
       room.players.push({
         userId,
         isReady: false,

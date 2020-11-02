@@ -7,6 +7,7 @@ function create() {
   const emitter = new EventEmitter();
 
   const listen = (fn) => emitter.addListener(globalName, fn);
+  const unlisten = (fn) => emitter.removeListener(globalName, fn);
 
   const subscribe = (id, fn) => {
     emitter.addListener(
@@ -37,6 +38,7 @@ function create() {
 
   return {
     listen,
+    unlisten,
     subscribe,
     unsubscribe,
     emit,
