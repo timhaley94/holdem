@@ -13,6 +13,28 @@ describe('Domain.Users', () => {
     avatarId: '1',
   };
 
+  describe('.exists()', () => {
+    it('does not throw if user exists', async () => {
+      const { _id } = await User.create({
+        secret: data.secret,
+      });
+
+      await User.exists({ id: _id.toString() });
+    });
+
+    it('throws if user does not exist', async () => {
+      expect.assertions(1);
+
+      try {
+        await User.exists({
+          id: Types.ObjectId().toHexString(),
+        });
+      } catch (e) {
+        expect(e instanceof Errors.NotFound).toBeTruthy();
+      }
+    });
+  });
+
   describe('.retrieve()', () => {
     it('throws on no result', async () => {
       expect.assertions(1);
@@ -89,9 +111,27 @@ describe('Domain.Users', () => {
         },
       );
     });
+
+    it('throws on db error', async () => {
+      const spy = jest.spyOn(User.model, 'create');
+
+      spy.mockImplementation(() => {
+        throw new Error();
+      });
+
+      expect.assertions(1);
+
+      try {
+        await User.create(data);
+      } catch (e) {
+        expect(e instanceof Errors.Fatal).toBeTruthy();
+      }
+
+      spy.mockRestore();
+    });
   });
 
-  describe('.auth', () => {
+  describe('.auth()', () => {
     it('throws if secret is wrong', async () => {
       expect.assertions(1);
 
@@ -174,6 +214,30 @@ describe('Domain.Users', () => {
       });
 
       expect(cb).toBeCalled();
+    });
+
+    it('throws on db error', async () => {
+      const spy = jest.spyOn(User.model, 'updateOne');
+
+      spy.mockImplementation(() => {
+        throw new Error();
+      });
+
+      expect.assertions(1);
+
+      const user = await User.create(data);
+      const id = user._id.toString();
+
+      try {
+        await User.update({
+          id,
+          ...updateData,
+        });
+      } catch (e) {
+        expect(e instanceof Errors.Fatal).toBeTruthy();
+      }
+
+      spy.mockRestore();
     });
   });
 });

@@ -8,7 +8,7 @@ const wrap = ({ fields, mapping }) => (obj) => {
   fields.forEach((field) => {
     copy[field] = (
       mapping && mapping[field]
-        ? mapping(obj[field])
+        ? mapping[field](obj[field])
         : obj[field]
     );
   });

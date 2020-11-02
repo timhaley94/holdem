@@ -148,6 +148,7 @@ const update = Handler.wrap({
 });
 
 module.exports = {
+  model: User,
   exists,
   retrieve,
   create,
