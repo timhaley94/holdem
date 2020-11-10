@@ -19,6 +19,10 @@ function listen() {
   api.listen(config.port);
 }
 
+function close() {
+  api.close();
+}
+
 function getServer() {
   return api;
 }
@@ -26,5 +30,6 @@ function getServer() {
 module.exports = {
   init,
   listen,
+  close,
   getServer,
 };

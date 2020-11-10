@@ -7,8 +7,13 @@ async function init() {
   await Loaders.init();
 }
 
+async function close() {
+  await Loaders.close();
+}
+
 module.exports = {
   init,
+  close,
   Game,
   Room,
   User,

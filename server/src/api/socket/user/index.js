@@ -4,17 +4,27 @@ const events = require('../events');
 
 const socketRoomName = (id) => `user-${id}`;
 
-function onStart(io) {
-  User.listener.listen(
-    async (id) => {
-      const user = await User.retrieve({ id });
+let handler;
 
-      io.in(socketRoomName(id)).emit(
-        events.user.updated,
-        Views.User(user),
-      );
-    },
-  );
+function onStop() {
+  if (handler) {
+    User.listener.unlisten(handler);
+  }
+}
+
+function onStart(io) {
+  onStop();
+
+  handler = async (id) => {
+    const user = await User.retrieve({ id });
+
+    io.in(socketRoomName(id)).emit(
+      events.user.updated,
+      Views.User(user),
+    );
+  };
+
+  User.listener.listen(handler);
 }
 
 async function subscribe(socket, id) {
@@ -52,4 +62,5 @@ function onConnect(socket) {
 module.exports = {
   onStart,
   onConnect,
+  onStop,
 };

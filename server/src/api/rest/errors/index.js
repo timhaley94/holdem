@@ -1,6 +1,6 @@
-const { Errors } = require('../../modules');
+const { Errors } = require('../../../modules');
 
-function middleware(err, req, res, next) {
+function middleware(err, req, res) {
   let status = 500;
   let message = 'Internal Server Error';
 
@@ -11,8 +11,6 @@ function middleware(err, req, res, next) {
 
   res.status(status);
   res.json({ message });
-
-  next();
 }
 
 module.exports = { middleware };

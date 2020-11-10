@@ -1,8 +1,8 @@
 const { Router } = require('express');
-const { Errors } = require('../../modules');
-const { User } = require('../../domain');
-const Views = require('../views');
-const Route = require('./route');
+const { Errors } = require('../../../modules');
+const { User } = require('../../../domain');
+const Views = require('../../views');
+const Route = require('../route');
 
 const router = Router();
 
@@ -17,7 +17,8 @@ router.post('/auth', Route.handler(
 router.patch('/:id', Route.private, Route.handler(
   async (req) => {
     if (req.params.id !== req.user.data.id) {
-      throw new Errors.Unauthorized('Cannot update another user.');
+      const e = new Errors.Unauthorized('Cannot update another user.');
+      throw e;
     }
 
     const { id } = req.user.data;
