@@ -2,9 +2,8 @@ const request = require('supertest');
 const API = require('./index');
 
 describe('API', () => {
-  beforeAll(async () => {
-    await API.init();
-  });
+  beforeAll(API.init);
+  afterAll(API.close);
 
   it('pings successfully', () => (
     request(API.getServer())

@@ -1,11 +1,11 @@
 const { Types } = require('mongoose');
 const User = require('./index');
 const { Auth, Errors } = require('../../modules');
-const { init, DB } = require('../../loaders');
+const { init, close } = require('../../loaders');
 
 describe('Domain.Users', () => {
   beforeAll(init);
-  afterAll(DB.close);
+  afterAll(close);
 
   const data = {
     secret: 'foobarbazbuq1000',

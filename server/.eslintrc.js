@@ -19,5 +19,6 @@ module.exports = {
     "no-underscore-dangle": [0, {}],
     "max-classes-per-file": [0, null],
     "no-console": [1, { allow: ["info", "warn", "error"] }],
+    "import/no-extraneous-dependencies": [1, { devDependencies: true }],
   },
 };

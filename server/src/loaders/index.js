@@ -9,8 +9,16 @@ async function init() {
   ]);
 }
 
+async function close() {
+  await Promise.all([
+    DB.close(),
+    Cache.close(),
+  ]);
+}
+
 module.exports = {
   init,
+  close,
   Cache,
   DB,
   Locks,

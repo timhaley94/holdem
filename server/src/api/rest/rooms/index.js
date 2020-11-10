@@ -1,7 +1,7 @@
 const { Router } = require('express');
-const { Room } = require('../../domain');
-const { router: PlayersRouter } = require('./players');
-const Route = require('./route');
+const { Room } = require('../../../domain');
+const { router: PlayersRouter } = require('../players');
+const Route = require('../route');
 
 const router = Router();
 

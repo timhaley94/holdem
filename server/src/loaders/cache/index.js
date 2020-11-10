@@ -36,4 +36,10 @@ async function init() {
   await ready;
 }
 
-module.exports = { init, client };
+function close() {
+  return new Promise((resolve) => {
+    client.quit(resolve);
+  });
+}
+
+module.exports = { init, close, client };
