@@ -18,7 +18,7 @@ describe('API.Rest', () => {
 
   describe('error middleware', () => {
     const secret = 'pwd123456789';
-  
+
     const create = async () => {
       const { _id } = await Domain.User.create({ secret });
       const id = _id.toString();

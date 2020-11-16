@@ -1,7 +1,7 @@
 function hasEqualIds(a, b) {
   const toString = (x) => {
     const id = x._id || x.id || x;
-    return typeof id == 'string' ? id : id.toString();
+    return typeof id === 'string' ? id : id.toString();
   };
 
   return toString(a) === toString(b);
@@ -19,7 +19,7 @@ async function expectThrows(fn, err) {
 
 function expectEqualIds(a, b) {
   expect(
-    hasEqualIds(a, b)
+    hasEqualIds(a, b),
   ).toEqual(true);
 }
 

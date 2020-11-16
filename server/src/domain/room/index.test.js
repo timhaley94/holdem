@@ -11,12 +11,11 @@ const {
   list,
   retrieve,
   create,
-  addPlayer,
-  removePlayer,
-  setPlayerReady,
-  listener,
+  // addPlayer,
+  // removePlayer,
+  // setPlayerReady,
+  // listener,
 } = require('./index');
-const e = require('express');
 
 describe('Domain.Room', () => {
   const name = 'test room';
@@ -52,13 +51,13 @@ describe('Domain.Room', () => {
       const result = await list(args);
 
       expect(
-        result.some((r) => hasEqualIds(publicRoom, r))
+        result.some((r) => hasEqualIds(publicRoom, r)),
       ).toEqual(expectations.public);
 
       expect(
-        result.some((r) => hasEqualIds(privateRoom, r))
+        result.some((r) => hasEqualIds(privateRoom, r)),
       ).toEqual(expectations.private);
-    }
+    };
 
     it('return all rooms by default', async () => {
       await test(
@@ -111,7 +110,7 @@ describe('Domain.Room', () => {
   });
 
   describe('.retrieve()', () => {
-    it('returns room if it exists', () => {
+    it('returns room if it exists', async () => {
       const room = await create({ name });
       const result = await retrieve({ id: room._id.toString() });
       expectEqualIds(result, room);
