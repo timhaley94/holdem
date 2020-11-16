@@ -5,6 +5,7 @@ const {
   Types,
   model,
 } = require('mongoose');
+const _ = require('lodash');
 const config = require('../../config');
 const { Errors, Listener } = require('../../modules');
 const Handler = require('../handler');
@@ -131,17 +132,19 @@ const exists = Handler.wrap({
         `No room exists with id, ${id}.`,
       );
     }
+
+    return true;
   },
 });
 
 const list = Handler.wrap({
   validators,
   optional: ['isPrivate'],
-  fn: ({ isPrivate }) => {
+  fn: (args) => {
     const filter = {};
 
-    if (isPrivate) {
-      filter.isPrivate = isPrivate;
+    if (_.has(args, 'isPrivate')) {
+      filter.isPrivate = args.isPrivate;
     }
 
     return Room.find(filter).exec();

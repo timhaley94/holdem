@@ -1,8 +1,11 @@
 const { Errors } = require('../../../modules');
 
+const defaultStatus = 500;
+const defaultMessage = 'Internal Server Error';
+
 function middleware(err, req, res) {
-  let status = 500;
-  let message = 'Internal Server Error';
+  let status = defaultStatus;
+  let message = defaultMessage;
 
   if (err instanceof Errors.BaseError) {
     status = err.status;
@@ -13,4 +16,8 @@ function middleware(err, req, res) {
   res.json({ message });
 }
 
-module.exports = { middleware };
+module.exports = {
+  middleware,
+  defaultStatus,
+  defaultMessage,
+};
