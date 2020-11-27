@@ -14,6 +14,9 @@ executors:
   aws:
     docker:
       - image: circleci/python:3.7.1
+  bash:
+    docker:
+      - image: bash:5.0.18
 
 commands:
   javascript-setup:
@@ -115,6 +118,21 @@ jobs:
       - terraform-setup
       - run: terraform fmt
       - run: terraform validate
+  build-terraform-vars:
+    executor: bash
+    parameters:
+      directory:
+        default: ""
+        type: string
+    working_directory: ~/repo/infrastructure/<<parameters.directory>>
+    steps:
+      - checkout:
+          path: ~/repo
+      - run: ./vars.sh > <<parameters.directory>>.tfvars
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - <<parameters.directory>>.tfvars
   plan-terraform:
     executor: terraform
     parameters:
@@ -124,20 +142,16 @@ jobs:
       plan_name:
         default: ""
         type: string
-      with_vars:
-        default: false
-        type: boolean
     working_directory: ~/repo/infrastructure/<<parameters.directory>>
     steps:
       - terraform-setup
-      - when:
-          condition: <<parameters.with_vars>>
-          steps:
-            - run: terraform plan -out=./<<parameters.plan_name>>.plan -var="repo_url=$AWS_ECR_ACCOUNT_URL/poker_app"
-      - unless:
-          condition: <<parameters.with_vars>>
-          steps:
-            - run: terraform plan -out=./<<parameters.plan_name>>.plan
+      - attach_workspace:
+          at: .
+      - run: |
+          if [ -f <<parameters.directory>>.tfvars ]; then
+            cp ./<<parameters.directory>>.tfvars ./terraform.tfvars
+          fi
+      - run: terraform plan -out=./<<parameters.plan_name>>.plan
       - persist_to_workspace:
           root: ./
           paths:
@@ -212,12 +226,17 @@ workflows:
           name: lint-app-terraform
           context: AWS Prod
           directory: app
+      - build-terraform-vars:
+          name: build-app-terraform-vars
+          context: AWS Prod
+          directory: app
       - plan-terraform:
           name: plan-app-terraform
           context: AWS Prod
           directory: app
           plan_name: app
-          with_vars: true
+          requires:
+            - build-app-terraform-vars
       - upload-coverage:
           context: AWS Prod
           requires:

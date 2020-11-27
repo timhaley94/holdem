@@ -1,3 +1,12 @@
+locals {
+  tags = {
+    app = "Holdem"
+    IaC = "Terraform"
+  }
+
+  aws_region = "us-east-2"
+}
+
 terraform {
   backend "s3" {
     bucket = "poker-app-tf-state"
@@ -19,6 +28,11 @@ terraform {
       source  = "hashicorp/local"
       version = "~> 1.4.0"
     }
+
+    mongodbatlas = {
+      source  = "mongodb/mongodbatlas"
+      version = "0.7.0"
+    }
   }
 
   required_version = ">= 0.13"
@@ -29,9 +43,4 @@ provider "aws" {
   region  = "us-east-2"
 }
 
-locals {
-  tags = {
-    app = "Poker"
-    IaC = "Terraform"
-  }
-}
+provider "mongodbatlas" {}

@@ -27,7 +27,7 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "2.44.0"
 
-  name = "poker-app-vpc"
+  name = "holdem-vpc"
   cidr = local.cidr_blocks.vpc
 
   azs                 = ["us-east-2a", "us-east-2b"]

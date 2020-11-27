@@ -11,7 +11,7 @@ resource "aws_acm_certificate" "ebs_lb_cert" {
 
 # Service role
 resource "aws_iam_role" "ebs_service_role" {
-  name               = "poker-app-ebs-service-role"
+  name               = "holdem-ebs-service-role"
   assume_role_policy = file("${path.module}/policies/ebs_service_assume.json")
   tags               = local.tags
 }
@@ -28,7 +28,7 @@ resource "aws_iam_role_policy_attachment" "ebs_service_attach" {
 
 # Instance role/profile
 resource "aws_iam_role" "ebs_instance_role" {
-  name               = "poker-app-ebs-instance-role"
+  name               = "holdem-ebs-instance-role"
   assume_role_policy = file("${path.module}/policies/ebs_instance_assume.json")
   tags               = local.tags
 }
@@ -44,14 +44,14 @@ resource "aws_iam_role_policy_attachment" "ebs_tier_attach" {
 }
 
 resource "aws_iam_instance_profile" "ebs_instance_profile" {
-  name = "poker-app-ebs-instance-profile"
+  name = "holdem-ebs-instance-profile"
   role = aws_iam_role.ebs_instance_role.name
 }
 
 # Application
 resource "aws_elastic_beanstalk_application" "server_app" {
-  name        = "poker-app-ebs-application"
-  description = "EBS Application for Poker App"
+  name        = "holdem-ebs-application"
+  description = "EBS Application for Holdem"
   tags        = local.tags
 }
 
@@ -60,8 +60,8 @@ locals {
 }
 
 resource "aws_elastic_beanstalk_environment" "prod_env" {
-  name                = "poker-app-ebs-prod"
-  description         = "Prod Env for Poker App"
+  name                = "holdem-ebs-prod"
+  description         = "Prod Env for Holdem"
   application         = aws_elastic_beanstalk_application.server_app.name
   solution_stack_name = "64bit Amazon Linux 2 v3.1.0 running Docker"
   tags                = local.tags
@@ -151,7 +151,7 @@ resource "aws_elastic_beanstalk_environment" "prod_env" {
 
 # Latest App Version
 resource "aws_s3_bucket" "app_version_bucket" {
-  bucket = "poker-app-version-bucket"
+  bucket = "holdem-version-bucket"
   acl    = "private"
   tags   = local.tags
 }
@@ -166,7 +166,7 @@ resource "aws_s3_bucket_object" "app_version_bundle" {
 }
 
 resource "aws_elastic_beanstalk_application_version" "latest" {
-  name        = "poker-app-latest-version"
+  name        = "holdem-latest-version"
   application = aws_elastic_beanstalk_application.server_app.name
   description = "Version latest of Poker App"
   bucket      = aws_s3_bucket.app_version_bucket.id
