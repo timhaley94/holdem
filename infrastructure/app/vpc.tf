@@ -30,7 +30,7 @@ module "vpc" {
   name = "holdem-vpc"
   cidr = local.cidr_blocks.vpc
 
-  azs                 = ["us-east-2a", "us-east-2b"]
+  azs                 = ["us-east-1a", "us-east-1b"]
   public_subnets      = local.cidr_blocks.public
   elasticache_subnets = local.cidr_blocks.elasticache
 

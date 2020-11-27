@@ -16,15 +16,15 @@ terraform {
 
 provider "aws" {
   profile = "default"
-  region  = "us-east-2"
+  region  = "us-east-1"
 }
 
 resource "aws_ecr_repository" "image_repo" {
-  name                 = "poker_app"
+  name                 = "holdem_app"
   image_tag_mutability = "MUTABLE"
 
   tags = {
-    app = "Poker"
+    app = "Holdem"
     IaC = "Terraform"
   }
 }
