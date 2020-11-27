@@ -4,7 +4,7 @@ locals {
     IaC = "Terraform"
   }
 
-  aws_region = "us-east-2"
+  aws_region = "us-east-1"
 }
 
 terraform {
@@ -40,7 +40,7 @@ terraform {
 
 provider "aws" {
   profile = "default"
-  region  = "us-east-2"
+  region  = "us-east-1"
 }
 
 provider "mongodbatlas" {}

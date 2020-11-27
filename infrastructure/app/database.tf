@@ -16,7 +16,7 @@ resource "mongodbatlas_project" "atlas_project" {
 
 resource "mongodbatlas_project_ip_whitelist" "atlas_ip_list" {
   project_id = mongodbatlas_project.atlas_project.id
-  ip_address = "2.3.4.5"
+  cidr_block = "0.0.0.0/0"
   comment    = "IP address for App Server"
 }
 
