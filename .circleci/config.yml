@@ -181,9 +181,9 @@ jobs:
       - awsebcli/configure
       - run: >
           aws elasticbeanstalk update-environment \
-            --application-name poker-app-ebs-application \
-            --version-label poker-app-latest-version \
-            --environment-name poker-app-ebs-prod
+            --application-name holdem-ebs-application \
+            --version-label holdem-latest-version \
+            --environment-name holdem-ebs-prod
 
 workflows:
   deploy:
