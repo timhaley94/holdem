@@ -1,6 +1,6 @@
 #!/bin/sh
 echo "
-repo_url=\"216520227053.dkr.ecr.us-east-1.amazonaws.com/poker_app\"
+repo_url=\"216520227053.dkr.ecr.us-east-1.amazonaws.com/holdem_app\"
 atlas_org_id=\"5f7f6cf52ce04e57e20631ce\"
 atlas_user_email=\"tim.d.haley@gmail.com\"
 db_admin_username=\"tim\"
