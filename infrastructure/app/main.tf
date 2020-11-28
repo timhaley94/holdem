@@ -4,14 +4,14 @@ locals {
     IaC = "Terraform"
   }
 
-  aws_region = "us-east-2"
+  aws_region = "us-east-1"
 }
 
 terraform {
   backend "s3" {
-    bucket = "poker-app-tf-state"
-    key    = "tf-state"
-    region = "us-east-2"
+    bucket = "holdem-tf-state"
+    key    = "repo-tf-state"
+    region = "us-east-1"
   }
 
   required_providers {
@@ -40,7 +40,7 @@ terraform {
 
 provider "aws" {
   profile = "default"
-  region  = "us-east-2"
+  region  = "us-east-1"
 }
 
 provider "mongodbatlas" {}
