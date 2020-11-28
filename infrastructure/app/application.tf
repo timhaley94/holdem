@@ -63,7 +63,7 @@ resource "aws_elastic_beanstalk_environment" "prod_env" {
   name                = "holdem-ebs-prod"
   description         = "Prod Env for Holdem"
   application         = aws_elastic_beanstalk_application.server_app.name
-  solution_stack_name = "64bit Amazon Linux 2 v3.2.1 running Docker"
+  solution_stack_name = "64bit Amazon Linux 2018.03 v2.16.1 running Docker 19.03.6-ce"
   tags                = local.tags
 
   # Environment-wide settings
