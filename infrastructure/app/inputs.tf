@@ -6,7 +6,11 @@ variable "atlas_org_id" {
   type = string
 }
 
-variable "db_admin_email" {
+variable "atlas_user_email" {
+  type = string
+}
+
+variable "db_admin_username" {
   type = string
 }
 
