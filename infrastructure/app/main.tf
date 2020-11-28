@@ -10,7 +10,7 @@ locals {
 terraform {
   backend "s3" {
     bucket = "holdem-tf-state"
-    key    = "repo-tf-state"
+    key    = "app-tf-state"
     region = "us-east-1"
   }
 
