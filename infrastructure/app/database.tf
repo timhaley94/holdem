@@ -24,7 +24,7 @@ resource "mongodbatlas_cluster" "db_cluster" {
   backing_provider_name       = "AWS"
   disk_size_gb                = "2"
   provider_instance_size_name = "M2"
-  provider_region_name        = upper(local.aws_region)
+  provider_region_name        = "US_EAST_1"
 }
 
 resource "mongodbatlas_database_user" "admin_db_user" {
@@ -34,7 +34,7 @@ resource "mongodbatlas_database_user" "admin_db_user" {
   auth_database_name = "admin"
 
   roles {
-    role_name     = "root"
+    role_name     = "atlasAdmin"
     database_name = "admin"
   }
 

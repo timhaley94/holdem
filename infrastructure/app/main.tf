@@ -10,7 +10,7 @@ locals {
 terraform {
   backend "s3" {
     bucket = "holdem-tf-state"
-    key    = "repo-tf-state"
+    key    = "app-tf-state"
     region = "us-east-1"
   }
 
@@ -43,4 +43,7 @@ provider "aws" {
   region  = "us-east-1"
 }
 
-provider "mongodbatlas" {}
+provider "mongodbatlas" {
+  public_key  = var.atlas_public_key
+  private_key = var.atlas_private_key
+}

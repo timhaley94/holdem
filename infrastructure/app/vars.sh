@@ -1,10 +1,13 @@
 #!/bin/sh
 echo "
 repo_url=\"216520227053.dkr.ecr.us-east-1.amazonaws.com/holdem_app\"
+atlas_public_key=\"$MONGODB_ATLAS_PUBLIC_KEY\"
+atlas_private_key=\"$MONGODB_ATLAS_PRIVATE_KEY\"
 atlas_org_id=\"5f7f6cf52ce04e57e20631ce\"
 atlas_user_email=\"tim.d.haley@gmail.com\"
 db_admin_username=\"tim\"
 db_admin_password=\"$DB_ADMIN_PASSWORD\"
 db_app_username=\"holdem_server\"
 db_app_password=\"$DB_APP_PASSWORD\"
+ssh_key_name=\"Tim Personal Laptop Key\"
 "

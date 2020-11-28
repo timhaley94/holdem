@@ -8,7 +8,7 @@ locals {
 
 locals {
   nacls = {
-    # Let the private subnets talk to the elasticache subnets
+    # Let the public subnets talk to the elasticache subnets
     elasticache = [
       for block in local.cidr_blocks.public :
       {

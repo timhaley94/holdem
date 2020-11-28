@@ -12,7 +12,7 @@ module.exports = {
     url: (
       process.env.NODE_ENV === 'development'
         ? 'redis://redis:6379'
-        : ''
+        : `redis://${process.env.REDIS_URL}`
     ),
   },
   mongo: {
@@ -21,6 +21,9 @@ module.exports = {
         ? 'mongodb://mongo/holdem'
         : process.env.MONGO_URL
     ),
+    username: process.env.MONGO_USERNAME || null,
+    password: process.env.MONGO_PASSWORD || null,
+    dbName: 'holdem',
   },
   socket: {
     pingInterval: 10000,
