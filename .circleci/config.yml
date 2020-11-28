@@ -263,7 +263,7 @@ workflows:
           name: build-server-image
           context: AWS Prod
           path: ./server
-          repo: poker_app
+          repo: holdem_app
           tag: latest,$CIRCLE_SHA1
           filters:
             branches:
