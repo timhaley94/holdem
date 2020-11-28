@@ -199,7 +199,7 @@ resource "aws_s3_bucket_object" "app_version_bundle" {
 resource "aws_elastic_beanstalk_application_version" "latest" {
   name        = "holdem-latest-version"
   application = aws_elastic_beanstalk_application.server_app.name
-  description = "Version latest of Poker App"
+  description = "Version latest of Holdem"
   bucket      = aws_s3_bucket.app_version_bucket.id
   key         = aws_s3_bucket_object.app_version_bundle.id
   tags        = local.tags
