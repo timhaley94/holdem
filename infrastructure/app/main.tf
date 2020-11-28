@@ -9,9 +9,9 @@ locals {
 
 terraform {
   backend "s3" {
-    bucket = "poker-app-tf-state"
-    key    = "tf-state"
-    region = "us-east-2"
+    bucket = "holdem-tf-state"
+    key    = "repo-tf-state"
+    region = "us-east-1"
   }
 
   required_providers {
