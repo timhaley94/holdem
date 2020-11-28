@@ -79,10 +79,35 @@ resource "aws_elastic_beanstalk_environment" "prod_env" {
     value     = "application"
   }
 
+  # Application settings
   setting {
     namespace = "aws:elasticbeanstalk:application"
     name      = "Application Healthcheck URL"
     value     = "HTTPS:443/ping"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "MONGO_USERNAME"
+    value     = var.db_app_username
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "MONGO_PASSWORD"
+    value     = var.db_app_password
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "MONGO_URL"
+    value     = mongodbatlas_cluster.db_cluster.srv_address
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "REDIS_URL"
+    value     = aws_elasticache_replication_group.redis_group.primary_endpoint_address
   }
 
   # Instance settings
@@ -133,6 +158,12 @@ resource "aws_elastic_beanstalk_environment" "prod_env" {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "IamInstanceProfile"
     value     = aws_iam_instance_profile.ebs_instance_profile.name
+  }
+
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "EC2KeyName"
+    value     = var.ssh_key_name
   }
 
   # Load balancer settings

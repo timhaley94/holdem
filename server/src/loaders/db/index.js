@@ -8,6 +8,10 @@ async function init() {
     await connect(config.mongo.url, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      user: config.mongo.username,
+      pass: config.mongo.password,
+      autoIndex: true,
+      dbName: config.mongo.dbName,
     });
 
     isConnected = true;

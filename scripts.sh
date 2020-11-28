@@ -7,6 +7,14 @@ rebuild() {
   docker-compose build
 }
 
+shell() {
+  docker-compose exec server sh
+}
+
+# prod_ssh() {
+
+# }
+
 case "$1" in
   up)
     up
@@ -14,7 +22,13 @@ case "$1" in
   rebuild)
     rebuild
     ;;
+  shell)
+    shell
+    ;;
+  prod_ssh)
+    prod_ssh
+    ;;
   *)
-    echo $"Basic usage: $0 {up|rebuild}"
+    echo $"Basic usage: $0 {up|rebuild|shell|prod_ssh}"
     exit 1
 esac
