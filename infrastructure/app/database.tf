@@ -1,7 +1,7 @@
 resource "mongodbatlas_teams" "atlas_owners" {
   org_id    = var.atlas_org_id
   name      = "holdem-owners"
-  usernames = [var.db_admin_email]
+  usernames = [var.atlas_user_email]
 }
 
 resource "mongodbatlas_project" "atlas_project" {
@@ -39,7 +39,7 @@ resource "mongodbatlas_cluster" "db_cluster" {
 }
 
 resource "mongodbatlas_database_user" "admin_db_user" {
-  username           = var.db_admin_email
+  username           = var.db_admin_username
   password           = var.db_admin_password
   project_id         = mongodbatlas_project.atlas_project.id
   auth_database_name = "admin"
