@@ -1,207 +1,67 @@
-# HTTPS cert
-resource "aws_acm_certificate" "ebs_lb_cert" {
-  domain_name       = "api.holdemhounds.com"
-  validation_method = "DNS"
-  tags              = local.tags
-
-  lifecycle {
-    create_before_destroy = true
-  }
+resource "aws_ecs_cluster" "server_cluster" {
+  name = "holdem_cluster"
 }
 
-# Service role
-resource "aws_iam_role" "ebs_service_role" {
-  name               = "holdem-ebs-service-role"
-  assume_role_policy = file("${path.module}/policies/ebs_service_assume.json")
-  tags               = local.tags
-}
-
-resource "aws_iam_role_policy_attachment" "ebs_health_attach" {
-  role       = aws_iam_role.ebs_service_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkEnhancedHealth"
-}
-
-resource "aws_iam_role_policy_attachment" "ebs_service_attach" {
-  role       = aws_iam_role.ebs_service_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkService"
-}
-
-# Instance role/profile
-resource "aws_iam_role" "ebs_instance_role" {
-  name               = "holdem-ebs-instance-role"
-  assume_role_policy = file("${path.module}/policies/ebs_instance_assume.json")
-  tags               = local.tags
-}
-
-resource "aws_iam_role_policy_attachment" "ecr_read_attach" {
-  role       = aws_iam_role.ebs_instance_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-}
-
-resource "aws_iam_role_policy_attachment" "ebs_tier_attach" {
-  role       = aws_iam_role.ebs_instance_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier"
-}
-
-resource "aws_iam_instance_profile" "ebs_instance_profile" {
-  name = "holdem-ebs-instance-profile"
-  role = aws_iam_role.ebs_instance_role.name
-}
-
-# Application
-resource "aws_elastic_beanstalk_application" "server_app" {
-  name        = "holdem-ebs-application"
-  description = "EBS Application for Holdem"
-  tags        = local.tags
-}
-
-locals {
-  https_port_namespace = "aws:elbv2:listener:443"
-}
-
-resource "aws_elastic_beanstalk_environment" "prod_env" {
-  name                = "holdem-ebs-prod"
-  description         = "Prod Env for Holdem"
-  application         = aws_elastic_beanstalk_application.server_app.name
-  solution_stack_name = "64bit Amazon Linux 2018.03 v2.16.1 running Docker 19.03.6-ce"
-  tags                = local.tags
-
-  # Environment-wide settings
-  setting {
-    namespace = "aws:elasticbeanstalk:environment"
-    name      = "ServiceRole"
-    value     = aws_iam_role.ebs_service_role.name
-  }
-
-  setting {
-    namespace = "aws:elasticbeanstalk:environment"
-    name      = "LoadBalancerType"
-    value     = "application"
-  }
-
-  # Application settings
-  setting {
-    namespace = "aws:elasticbeanstalk:application"
-    name      = "Application Healthcheck URL"
-    value     = "HTTPS:443/ping"
-  }
-
-  setting {
-    namespace = "aws:elasticbeanstalk:application:environment"
-    name      = "MONGO_USERNAME"
-    value     = var.db_app_username
-  }
-
-  setting {
-    namespace = "aws:elasticbeanstalk:application:environment"
-    name      = "MONGO_PASSWORD"
-    value     = var.db_app_password
-  }
-
-  setting {
-    namespace = "aws:elasticbeanstalk:application:environment"
-    name      = "MONGO_URL"
-    value     = mongodbatlas_cluster.db_cluster.srv_address
-  }
-
-  setting {
-    namespace = "aws:elasticbeanstalk:application:environment"
-    name      = "REDIS_URL"
-    value     = aws_elasticache_replication_group.redis_group.primary_endpoint_address
-  }
-
-  # Instance settings
-  setting {
-    namespace = "aws:ec2:vpc"
-    name      = "VPCId"
-    value     = module.vpc.vpc_id
-  }
-
-  setting {
-    namespace = "aws:ec2:vpc"
-    name      = "Subnets"
-    value     = join(",", module.vpc.public_subnets)
-  }
-
-  setting {
-    namespace = "aws:ec2:vpc"
-    name      = "ELBSubnets"
-    value     = join(",", module.vpc.public_subnets)
-  }
-
-  setting {
-    namespace = "aws:ec2:vpc"
-    name      = "AssociatePublicIpAddress"
-    value     = true
-  }
-
-  setting {
-    namespace = "aws:ec2:instances"
-    name      = "InstanceTypes"
-    value     = "t2.micro"
-  }
-
-  # Autoscaling settings
-  setting {
-    namespace = "aws:autoscaling:asg"
-    name      = "MinSize"
-    value     = 1
-  }
-
-  setting {
-    namespace = "aws:autoscaling:asg"
-    name      = "MaxSize"
-    value     = 2
-  }
-
-  setting {
-    namespace = "aws:autoscaling:launchconfiguration"
-    name      = "IamInstanceProfile"
-    value     = aws_iam_instance_profile.ebs_instance_profile.name
-  }
-
-  setting {
-    namespace = "aws:autoscaling:launchconfiguration"
-    name      = "EC2KeyName"
-    value     = var.ssh_key_name
-  }
-
-  # Load balancer settings
-  setting {
-    namespace = local.https_port_namespace
-    name      = "Protocol"
-    value     = "HTTPS"
-  }
-
-  setting {
-    namespace = local.https_port_namespace
-    name      = "SSLCertificateArns"
-    value     = aws_acm_certificate.ebs_lb_cert.id
-  }
-}
-
-# Latest App Version
-resource "aws_s3_bucket" "app_version_bucket" {
-  bucket = "holdem-version-bucket"
-  acl    = "private"
-  tags   = local.tags
-}
-
-resource "aws_s3_bucket_object" "app_version_bundle" {
-  bucket = aws_s3_bucket.app_version_bucket.id
-  key    = "Dockerrun.aws.json"
-  tags   = local.tags
-  content = templatefile("${path.module}/templates/Dockerrun.aws.json.tmpl", {
-    repo_url = var.repo_url
+# IAM role assumed by running tasks. Allows holdem server to talk to other AWS services
+# like elasticache, SQS, etc.
+resource "aws_iam_role" "task_role" {
+  name = "holdem_ecs_task_role"
+  tags = local.tags
+  assume_role_policy = templatefile("${path.module}/templates/assume_policy.json.tmpl", {
+    service_name = "ecs-tasks.amazonaws.com"
   })
 }
 
-resource "aws_elastic_beanstalk_application_version" "latest" {
-  name        = "holdem-latest-version"
-  application = aws_elastic_beanstalk_application.server_app.name
-  description = "Version latest of Holdem"
-  bucket      = aws_s3_bucket.app_version_bucket.id
-  key         = aws_s3_bucket_object.app_version_bundle.id
-  tags        = local.tags
-  depends_on  = [aws_s3_bucket_object.app_version_bundle]
+# IAM role allowing ECS to pull container images from ECR. This is just a simple role
+# that attaches the built in AWS role.
+resource "aws_iam_role" "execution_role" {
+  name = "holdem_ecs_execution_role"
+  tags = local.tags
+  assume_role_policy = templatefile("${path.module}/templates/assume_policy.json.tmpl", {
+    service_name = "ecs-tasks.amazonaws.com"
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "execution_role_attach" {
+  role       = aws_iam_role.execution_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+# Task definition
+resource "aws_ecs_task_definition" "server_task_definition" {
+  family                   = "holdem_servers"
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
+  cpu                      = "256"
+  memory                   = "512"
+  task_role_arn            = aws_iam_role.task_role.arn
+  execution_role_arn       = aws_iam_role.execution_role.arn
+  tags                     = local.tags
+
+  container_definitions = templatefile("${path.module}/templates/container_definitions.json.tmpl", {
+    repo_url  = var.repo_url
+    image_tag = var.image_tag
+  })
+}
+
+# Service definition
+resource "aws_ecs_service" "server_service" {
+  name            = "holdem_server_service"
+  cluster         = aws_ecs_cluster.server_cluster.id
+  task_definition = aws_ecs_task_definition.server_task_definition.arn
+  desired_count   = 2
+  launch_type     = "FARGATE"
+  propagate_tags  = "SERVICE"
+  tags            = local.tags
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.server_lb_target_group.arn
+    container_name   = "holdem_server_container"
+    container_port   = 8080
+  }
+
+  network_configuration {
+    subnets          = module.vpc.public_subnets
+    assign_public_ip = true
+  }
 }
