@@ -2,7 +2,6 @@ version: 2.1
 
 orbs:
   aws-ecr: circleci/aws-ecr@6.12.2
-  awsebcli: sbc-orbs/awsebcli@0.0.3
 
 executors:
   node:
@@ -173,17 +172,6 @@ jobs:
       - attach_workspace:
           at: .
       - run: terraform apply ./<<parameters.plan_name>>.plan
-  deploy-server:
-    executor: aws
-    working_directory: ~/repo
-    steps:
-      - awsebcli/install
-      - awsebcli/configure
-      - run: >
-          aws elasticbeanstalk update-environment \
-            --application-name holdem-ebs-application \
-            --version-label holdem-latest-version \
-            --environment-name holdem-ebs-prod
 
 workflows:
   deploy:
@@ -280,10 +268,3 @@ workflows:
               only: main
           requires:
             - build-server-image
-      - deploy-server:
-          context: AWS Prod
-          filters:
-            branches:
-              only: main
-          requires:
-            - apply-app-terraform

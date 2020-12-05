@@ -2,6 +2,16 @@ resource "aws_ecs_cluster" "server_cluster" {
   name = "holdem_cluster"
 }
 
+# Logs
+locals {
+  log_group_name = "holdem_server_logs"
+}
+
+resource "aws_cloudwatch_log_group" "server_task_log_group" {
+  name = local.log_group_name
+  tags = local.tags
+}
+
 # IAM role assumed by running tasks. Allows holdem server to talk to other AWS services
 # like elasticache, SQS, etc.
 resource "aws_iam_role" "task_role" {
@@ -39,8 +49,10 @@ resource "aws_ecs_task_definition" "server_task_definition" {
   tags                     = local.tags
 
   container_definitions = templatefile("${path.module}/templates/container_definitions.json.tmpl", {
-    repo_url  = var.repo_url
-    image_tag = var.image_tag
+    repo_url       = var.repo_url
+    image_tag      = var.image_tag
+    log_group_name = local.log_group_name
+    aws_region     = local.aws_region
   })
 }
 

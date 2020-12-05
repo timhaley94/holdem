@@ -7,7 +7,7 @@ resource "aws_lb" "server_lb" {
 }
 
 resource "aws_lb_target_group" "server_lb_target_group" {
-  name        = "holdem-server-target-group-${substr(uuid(),0, 3)}"
+  name        = "holdem-server-target-group-${substr(uuid(), 0, 3)}"
   port        = 8080
   protocol    = "HTTP"
   vpc_id      = module.vpc.vpc_id
@@ -25,7 +25,7 @@ resource "aws_lb_target_group" "server_lb_target_group" {
   # https://stackoverflow.com/questions/57183814/error-deleting-target-group-resourceinuse-when-changing-target-ports-in-aws-thr
   lifecycle {
     create_before_destroy = true
-    ignore_changes = [name]
+    ignore_changes        = [name]
   }
 }
 

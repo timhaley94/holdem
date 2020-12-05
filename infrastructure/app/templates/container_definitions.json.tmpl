@@ -1,14 +1,22 @@
 [ 
-  { 
-     "essential": true,
-     "image": "${repo_url}:${image_tag}",
-     "name": "holdem_server_container",
-     "portMappings": [ 
-        { 
-           "containerPort": 8080,
-           "hostPort": 8080,
-           "protocol": "tcp"
-        }
-     ]
-  }
+   { 
+      "essential": true,
+      "image": "${repo_url}:${image_tag}",
+      "name": "holdem_server_container",
+      "portMappings": [ 
+         { 
+            "containerPort": 8080,
+            "hostPort": 8080,
+            "protocol": "tcp"
+         }
+      ],
+      "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+               "awslogs-group": "${log_group_name}",
+               "awslogs-region": "${aws_region}",
+               "awslogs-stream-prefix": "holdem_server_task"
+            }
+      }
+   }
 ]
