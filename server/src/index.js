@@ -20,4 +20,6 @@ app.get('/ping', (req, res) => {
   res.sendStatus(200);
 });
 
-app.listen(config.port, () => {});
+app.listen(config.port, () => {
+  console.log(`Listening on port: ${config.port}.`);
+});
