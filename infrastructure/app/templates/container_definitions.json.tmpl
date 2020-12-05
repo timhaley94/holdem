@@ -1,0 +1,14 @@
+[ 
+  { 
+     "essential": true,
+     "image": "${repo_url}:${image_tag}",
+     "name": "holdem_server_container",
+     "portMappings": [ 
+        { 
+           "containerPort": 8080,
+           "hostPort": 8080,
+           "protocol": "tcp"
+        }
+     ]
+  }
+]

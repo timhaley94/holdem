@@ -2,6 +2,10 @@ variable "repo_url" {
   type = string
 }
 
+variable "image_tag" {
+  type = string
+}
+
 variable "atlas_public_key" {
   type = string
 }

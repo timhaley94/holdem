@@ -1,6 +1,7 @@
 #!/bin/sh
 echo "
 repo_url=\"216520227053.dkr.ecr.us-east-1.amazonaws.com/holdem_app\"
+image_tag=\"$CIRCLE_SHA1\"
 atlas_public_key=\"$MONGODB_ATLAS_PUBLIC_KEY\"
 atlas_private_key=\"$MONGODB_ATLAS_PRIVATE_KEY\"
 atlas_org_id=\"5f7f6cf52ce04e57e20631ce\"
