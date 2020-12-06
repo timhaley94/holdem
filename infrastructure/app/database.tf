@@ -3,12 +3,21 @@ resource "mongodbatlas_project" "atlas_project" {
   name   = "holdem"
 }
 
-resource "mongodbatlas_project_ip_whitelist" "atlas_ip_list" {
+# IP Whitelist
+resource "mongodbatlas_project_ip_whitelist" "bastion_ip" {
   project_id = mongodbatlas_project.atlas_project.id
-  cidr_block = "0.0.0.0/0"
-  comment    = "IP address for App Server"
+  ip_address = aws_instance.bastion_host.public_ip
+  comment    = "IP address for holdem bastion host"
 }
 
+resource "mongodbatlas_project_ip_whitelist" "server_task_ip" {
+  for_each   = zipmap(local.task_ip_addresses, local.task_ip_addresses)
+  project_id = mongodbatlas_project.atlas_project.id
+  ip_address = each.value
+  comment    = "IP address for holdem server"
+}
+
+# Cluster
 resource "mongodbatlas_cluster" "db_cluster" {
   project_id = mongodbatlas_project.atlas_project.id
   name       = "holdem-cluster"
@@ -27,6 +36,7 @@ resource "mongodbatlas_cluster" "db_cluster" {
   provider_region_name        = "US_EAST_1"
 }
 
+# Users
 resource "mongodbatlas_database_user" "admin_db_user" {
   username           = var.db_admin_username
   password           = var.db_admin_password

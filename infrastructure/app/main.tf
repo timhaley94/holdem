@@ -19,23 +19,13 @@ terraform {
       source = "hashicorp/aws"
     }
 
-    archive = {
-      source  = "hashicorp/archive"
-      version = "~> 1.3.0"
-    }
-
-    local = {
-      source  = "hashicorp/local"
-      version = "~> 1.4.0"
-    }
-
     mongodbatlas = {
       source  = "mongodb/mongodbatlas"
       version = "0.7.0"
     }
   }
 
-  required_version = ">= 0.13"
+  required_version = ">= 0.14"
 }
 
 provider "aws" {

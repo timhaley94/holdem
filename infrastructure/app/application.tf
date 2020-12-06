@@ -54,6 +54,9 @@ resource "aws_ecs_task_definition" "server_task_definition" {
     image_tag      = var.image_tag
     log_group_name = local.log_group_name
     aws_region     = local.aws_region
+    redis_url      = aws_elasticache_replication_group.redis_group.primary_endpoint_address
+    mongo_username = var.db_app_username
+    mongo_password = var.db_app_password
   })
 }
 
@@ -67,15 +70,60 @@ resource "aws_ecs_service" "server_service" {
   propagate_tags  = "SERVICE"
   tags            = local.tags
 
-  # load_balancer {
-  #   target_group_arn = aws_lb_target_group.server_lb_target_group.arn
-  #   container_name   = "holdem_server_container"
-  #   container_port   = 8080
-  # }
+  load_balancer {
+    target_group_arn = aws_lb_target_group.server_lb_target_group.arn
+    container_name   = "holdem_server_container"
+    container_port   = 80
+  }
 
   network_configuration {
     subnets          = [for s in aws_subnet.public_subnet : s.id]
     assign_public_ip = true
     security_groups  = [aws_security_group.public_http.id]
   }
+}
+
+# ENIs
+
+# Hack!
+#
+# The code below is a hack to get the public ip addresses for ecs tasks.
+# This is because that attribute is not available. So, we have to pull
+# the ip addresses by looking up all the eni's associated with the
+# security group. This only works if the tasks have already been created.
+#
+# I hope by a combination the depends_on clause and
+# wait_for_steady_state = true in the service resource that tasks will
+# be guaranteed to be created before this data is pulled.
+#
+# https://github.com/hashicorp/terraform-provider-aws/issues/3444
+
+data "aws_network_interfaces" "server_task_network_interfaces" {
+  depends_on = [aws_ecs_service.server_service]
+
+  filter {
+    name   = "group-id"
+    values = [aws_security_group.public_http.id]
+  }
+}
+
+locals {
+  task_eni_ids = tolist(data.aws_network_interfaces.server_task_network_interfaces.ids)
+}
+
+data "aws_network_interface" "server_task_network_interface" {
+  for_each = zipmap(local.task_eni_ids, local.task_eni_ids)
+  id       = each.value
+}
+
+locals {
+  task_eni_associations = [
+    for eni in values(data.aws_network_interface.server_task_network_interface):
+    lookup(eni, "association", [])
+  ]
+
+  task_ip_addresses = [
+    for assoc in flatten(local.task_eni_associations):
+    assoc.public_ip
+  ]
 }

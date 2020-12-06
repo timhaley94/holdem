@@ -9,7 +9,7 @@ executors:
       - image: cimg/node:12.18.3
   terraform:
     docker:
-      - image: hashicorp/terraform:0.13.0
+      - image: hashicorp/terraform:0.14.0
   aws:
     docker:
       - image: circleci/python:3.7.1
