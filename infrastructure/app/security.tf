@@ -18,7 +18,7 @@ resource "aws_security_group" "public_ssh" {
 }
 
 resource "aws_security_group" "public_http" {
-  name   = "holdem-allow-public-ssh"
+  name   = "holdem-allow-public-http"
   vpc_id = aws_vpc.main.id
 
   ingress {
