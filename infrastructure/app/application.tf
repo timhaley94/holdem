@@ -8,8 +8,9 @@ locals {
 }
 
 resource "aws_cloudwatch_log_group" "server_task_log_group" {
-  name = local.log_group_name
-  tags = local.tags
+  name              = local.log_group_name
+  retention_in_days = 3
+  tags              = local.tags
 }
 
 # IAM role assumed by running tasks. Allows holdem server to talk to other AWS services
@@ -66,14 +67,15 @@ resource "aws_ecs_service" "server_service" {
   propagate_tags  = "SERVICE"
   tags            = local.tags
 
-  load_balancer {
-    target_group_arn = aws_lb_target_group.server_lb_target_group.arn
-    container_name   = "holdem_server_container"
-    container_port   = 8080
-  }
+  # load_balancer {
+  #   target_group_arn = aws_lb_target_group.server_lb_target_group.arn
+  #   container_name   = "holdem_server_container"
+  #   container_port   = 8080
+  # }
 
   network_configuration {
-    subnets          = module.vpc.public_subnets
+    subnets          = [for s in aws_subnet.public_subnet : s.id]
     assign_public_ip = true
+    security_groups  = [aws_security_group.public_http.id]
   }
 }
