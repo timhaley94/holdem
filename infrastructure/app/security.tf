@@ -34,6 +34,7 @@ resource "aws_security_group" "public_http" {
     to_port     = 0
     protocol    = "-1"
   }
+}
 
 resource "aws_security_group" "private_redis" {
   name   = "holdem-allow-private-redis"
