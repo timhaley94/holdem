@@ -10,7 +10,7 @@ locals {
 terraform {
   backend "s3" {
     bucket = "holdem-tf-state"
-    key    = "app-tf-state"
+    key    = "ip-whitelist-tf-state"
     region = "us-east-1"
   }
 

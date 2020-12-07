@@ -9,7 +9,7 @@ executors:
       - image: cimg/node:12.18.3
   terraform:
     docker:
-      - image: hashicorp/terraform:0.13.0
+      - image: hashicorp/terraform:0.14.0
   aws:
     docker:
       - image: circleci/python:3.7.1
@@ -166,12 +166,28 @@ jobs:
       plan_name:
         default: ""
         type: string
+      output_file:
+        default: ""
+        type: string
     working_directory: ~/repo/infrastructure/<<parameters.directory>>
     steps:
       - terraform-setup
       - attach_workspace:
           at: .
       - run: terraform apply ./<<parameters.plan_name>>.plan
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - <<parameters.output_file>>
+  apply-ip-terraform:
+    executor: terraform
+    working_directory: ~/repo/infrastructure/ip_whitelist
+    steps:
+      - terraform-setup
+      - attach_workspace:
+          at: .
+      - run: cat ./output.txt >> ./terraform.tfvars
+      - run: terraform apply -auto-approve
 
 workflows:
   deploy:
@@ -225,6 +241,10 @@ workflows:
           plan_name: app
           requires:
             - build-app-terraform-vars
+      - lint-terraform:
+          name: lint-ip-terraform
+          context: AWS Prod
+          directory: ip_whitelist
       - upload-coverage:
           context: AWS Prod
           requires:
@@ -246,6 +266,7 @@ workflows:
             - plan-repo-terraform
             - lint-app-terraform
             - plan-app-terraform
+            - lint-ip-terraform
             - upload-coverage
       - aws-ecr/build-and-push-image:
           name: build-server-image
@@ -263,8 +284,17 @@ workflows:
           context: AWS Prod
           directory: app
           plan_name: app
+          output_file: output.txt
           filters:
             branches:
               only: main
           requires:
             - build-server-image
+      - apply-ip-terraform:
+          name: apply-ip-terraform
+          context: AWS Prod
+          filters:
+            branches:
+              only: main
+          requires:
+            - apply-app-terraform

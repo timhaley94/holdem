@@ -16,6 +16,20 @@
                "awslogs-region": "${aws_region}",
                "awslogs-stream-prefix": "holdem_server_task"
             }
-      }
+      },
+      "environment": [
+         {
+            "name": "REDIS_URL",
+            "value": "${redis_url}"
+         },
+         {
+            "name": "MONGO_USERNAME",
+            "value": "${mongo_username}"
+         },
+         {
+            "name": "MONGO_PASSWORD",
+            "value": "${mongo_password}"
+         }
+      ]
    }
 ]

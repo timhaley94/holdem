@@ -54,6 +54,9 @@ resource "aws_ecs_task_definition" "server_task_definition" {
     image_tag      = var.image_tag
     log_group_name = local.log_group_name
     aws_region     = local.aws_region
+    redis_url      = aws_elasticache_replication_group.redis_group.primary_endpoint_address
+    mongo_username = var.db_app_username
+    mongo_password = var.db_app_password
   })
 }
 
@@ -67,11 +70,11 @@ resource "aws_ecs_service" "server_service" {
   propagate_tags  = "SERVICE"
   tags            = local.tags
 
-  # load_balancer {
-  #   target_group_arn = aws_lb_target_group.server_lb_target_group.arn
-  #   container_name   = "holdem_server_container"
-  #   container_port   = 8080
-  # }
+  load_balancer {
+    target_group_arn = aws_lb_target_group.server_lb_target_group.arn
+    container_name   = "holdem_server_container"
+    container_port   = 80
+  }
 
   network_configuration {
     subnets          = [for s in aws_subnet.public_subnet : s.id]
