@@ -10,13 +10,6 @@ resource "mongodbatlas_project_ip_whitelist" "bastion_ip" {
   comment    = "IP address for holdem bastion host"
 }
 
-resource "mongodbatlas_project_ip_whitelist" "server_task_ip" {
-  for_each   = zipmap(local.task_ip_addresses, local.task_ip_addresses)
-  project_id = mongodbatlas_project.atlas_project.id
-  ip_address = each.value
-  comment    = "IP address for holdem server"
-}
-
 # Cluster
 resource "mongodbatlas_cluster" "db_cluster" {
   project_id = mongodbatlas_project.atlas_project.id
