@@ -115,7 +115,11 @@ jobs:
     working_directory: ~/repo/infrastructure/<<parameters.directory>>
     steps:
       - terraform-setup
-      - run: terraform fmt
+      - run: |
+          if [[ $(terraform fmt) ]]; then
+            echo "Terraform not formatted"
+            exit 1
+          fi
       - run: terraform validate
   build-terraform-vars:
     executor: bash
