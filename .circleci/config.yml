@@ -193,6 +193,7 @@ jobs:
       - terraform-setup
       - attach_workspace:
           at: .
+      - run: ./vars.sh > ./terraform.tfvars
       - run: cat ./output.txt >> ./terraform.tfvars
       - run: terraform apply -auto-approve
 
