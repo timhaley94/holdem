@@ -16,12 +16,12 @@ data "aws_network_interface" "server_task_network_interface" {
 
 locals {
   task_eni_associations = [
-    for eni in values(data.aws_network_interface.server_task_network_interface):
+    for eni in values(data.aws_network_interface.server_task_network_interface) :
     lookup(eni, "association", [])
   ]
 
   task_ip_addresses = [
-    for assoc in flatten(local.task_eni_associations):
+    for assoc in flatten(local.task_eni_associations) :
     assoc.public_ip
   ]
 }
