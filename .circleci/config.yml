@@ -175,10 +175,13 @@ jobs:
       - attach_workspace:
           at: .
       - run: terraform apply ./<<parameters.plan_name>>.plan
-      - persist_to_workspace:
-          root: ./
-          paths:
-            - <<parameters.output_file>>
+      - when:
+          condition: <<parameters.output_file>>
+          steps:
+            - persist_to_workspace:
+                root: ./
+                paths:
+                  - <<parameters.output_file>>
   apply-ip-terraform:
     executor: terraform
     working_directory: ~/repo/infrastructure/ip_whitelist
