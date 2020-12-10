@@ -18,4 +18,9 @@ async function main() {
   API.listen();
 }
 
-main();
+try {
+  main();
+} catch (error) {
+  Logger.error('Failed to start app', { error });
+  throw error;
+}

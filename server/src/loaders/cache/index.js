@@ -1,6 +1,10 @@
 const { createClient } = require('redis');
-const { Errors } = require('../../modules');
+const { Errors, Logger } = require('../../modules');
 const config = require('../../config');
+
+Logger.info('Connecting to redis', {
+  url: config.redis.url,
+});
 
 const client = createClient(config.redis.url);
 
@@ -13,7 +17,7 @@ const ready = new Promise((resolve) => {
 
 client.on('ready', () => {
   if (!isReady) {
-    console.info('Redis connection established.');
+    Logger.info('Redis connection established');
 
     isReady = true;
     readyResolve();
@@ -21,10 +25,11 @@ client.on('ready', () => {
 });
 
 client.on('error', (error) => {
-  console.error(error);
+  Logger.error('Redis error encountered', { error });
 });
 
 client.on('end', () => {
+  Logger.error('Lost connection to redis');
   throw new Errors.Fatal('Lost connection to redis!');
 });
 
