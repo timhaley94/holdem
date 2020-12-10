@@ -1,10 +1,31 @@
-const winston = require('winston');
+const {
+  createLogger,
+  format,
+  transports,
+} = require('winston');
 
-const logger = winston.createLogger({
+// Make sure JSON.stringify picks ups these properties
+const errorFormat = format(value => {
+  if (value.error && value.error instanceof Error) {
+    value.error = {
+      ...value.error,
+      message: value.error.message,
+      stack: value.error.stack,
+    };
+  }
+
+  return value;
+});
+
+const logger = createLogger({
   level: 'info',
   transports: [
-    new winston.transports.Console({
-      format: winston.format.simple(),
+    new transports.Console({
+      format: format.combine(
+        format.colorize(),
+        errorFormat(),
+        format.simple(),
+      ),
     }),
   ],
 });
