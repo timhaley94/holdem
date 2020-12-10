@@ -17,5 +17,5 @@ resource "aws_elasticache_replication_group" "redis_group" {
   replication_group_id          = "holdem-cache-replication-group"
   replication_group_description = "Redis cluster for holdem"
   node_type                     = "cache.t2.micro"
-  number_cache_clusters         = 2
+  number_cache_clusters         = 1
 }

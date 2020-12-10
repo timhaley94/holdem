@@ -179,23 +179,6 @@ jobs:
       - attach_workspace:
           at: .
       - run: terraform apply ./<<parameters.plan_name>>.plan
-      - when:
-          condition: <<parameters.output_file>>
-          steps:
-            - persist_to_workspace:
-                root: ./
-                paths:
-                  - <<parameters.output_file>>
-  apply-ip-terraform:
-    executor: terraform
-    working_directory: ~/repo/infrastructure/ip_whitelist
-    steps:
-      - terraform-setup
-      - attach_workspace:
-          at: .
-      - run: ./vars.sh > ./terraform.tfvars
-      - run: cat ./output.txt >> ./terraform.tfvars
-      - run: terraform apply -auto-approve
 
 workflows:
   deploy:
@@ -249,10 +232,6 @@ workflows:
           plan_name: app
           requires:
             - build-app-terraform-vars
-      - lint-terraform:
-          name: lint-ip-terraform
-          context: AWS Prod
-          directory: ip_whitelist
       - upload-coverage:
           context: AWS Prod
           requires:
@@ -274,7 +253,6 @@ workflows:
             - plan-repo-terraform
             - lint-app-terraform
             - plan-app-terraform
-            - lint-ip-terraform
             - upload-coverage
       - aws-ecr/build-and-push-image:
           name: build-server-image
@@ -292,17 +270,8 @@ workflows:
           context: AWS Prod
           directory: app
           plan_name: app
-          output_file: output.txt
           filters:
             branches:
               only: main
           requires:
             - build-server-image
-      - apply-ip-terraform:
-          name: apply-ip-terraform
-          context: AWS Prod
-          filters:
-            branches:
-              only: main
-          requires:
-            - apply-app-terraform

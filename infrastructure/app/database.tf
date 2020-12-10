@@ -68,3 +68,10 @@ resource "mongodbatlas_database_user" "app_db_user" {
     type = "CLUSTER"
   }
 }
+
+# IP Whitelist
+resource "mongodbatlas_project_ip_whitelist" "full_internet" {
+  project_id = mongodbatlas_project.atlas_project.id
+  cidr_block = local.cidr_blocks.internet
+  comment    = "Whitelist whole internet to avoid paying for a NAT gateway"
+}
