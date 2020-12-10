@@ -4,11 +4,11 @@ const { Logger } = require('./modules');
 process
   .on('unhandledRejection', (reason, promise) => {
     Logger.error('Unhandled Rejection at Promise', {
-      reason, 
+      reason,
       promise,
     });
   })
-  .on('uncaughtException', error => {
+  .on('uncaughtException', (error) => {
     Logger.error('Uncaught Exception thrown', { error });
     process.exit(1);
   });
