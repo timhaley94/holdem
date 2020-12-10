@@ -79,6 +79,6 @@ resource "aws_ecs_service" "server_service" {
   network_configuration {
     subnets          = [for s in aws_subnet.public_subnet : s.id]
     assign_public_ip = true
-    security_groups  = [aws_security_group.public_http.id]
+    security_groups  = [aws_security_group.server_task.id]
   }
 }

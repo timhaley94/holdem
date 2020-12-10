@@ -11,7 +11,7 @@ output "bastion_ip" {
 }
 
 output "security_group_id" {
-  value = aws_security_group.public_http.id
+  value = aws_security_group.server_task.id
 }
 
 output "atlas_project_id" {

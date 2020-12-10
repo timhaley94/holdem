@@ -1,12 +1,26 @@
+# Cert. DNS validated in go daddy.
+# Maybe we'll manage that eventually with terraform.
+resource "aws_acm_certificate" "lb_cert" {
+  domain_name       = "api.holdemhounds.com"
+  validation_method = "DNS"
+  tags              = local.tags
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# LB
 resource "aws_lb" "server_lb" {
   name               = "holdem-server-lb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.public_http.id]
+  security_groups    = [aws_security_group.alb.id]
   subnets            = [for s in aws_subnet.public_subnet : s.id]
   tags               = local.tags
 }
 
+# Target
 resource "aws_lb_target_group" "server_lb_target_group" {
   name        = "holdem-server-target-group"
   port        = 80
@@ -23,10 +37,12 @@ resource "aws_lb_target_group" "server_lb_target_group" {
   }
 }
 
+# Listener
 resource "aws_lb_listener" "server_lb_listener" {
   load_balancer_arn = aws_lb.server_lb.arn
-  port              = 80
-  protocol          = "HTTP"
+  port              = 443
+  protocol          = "HTTPS"
+  certificate_arn   = aws_acm_certificate.lb_cert.arn
 
   default_action {
     type             = "forward"
