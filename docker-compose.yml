@@ -29,7 +29,7 @@ services:
     environment:
       FRONTEND_PORT: 8080
       BACKENDS: server
-      BACKENDS_PORT: 8080
+      BACKENDS_PORT: 80
       DNS_ENABLED: "True"
       HTTPCHK: GET /ping
       LOG_LEVEL: info

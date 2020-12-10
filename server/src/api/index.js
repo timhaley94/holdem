@@ -1,6 +1,7 @@
 const { Server } = require('http');
 const config = require('../config');
 const Domain = require('../domain');
+const { Logger } = require('../modules');
 const Rest = require('./rest');
 const Socket = require('./socket');
 
@@ -15,7 +16,10 @@ async function init() {
 }
 
 function listen() {
-  console.info(`Listening on port, ${config.port}!`);
+  Logger.info('Listening on port', {
+    port: config.port,
+  });
+
   api.listen(config.port);
 }
 
