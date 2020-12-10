@@ -55,6 +55,7 @@ resource "aws_ecs_task_definition" "server_task_definition" {
     log_group_name = local.log_group_name
     aws_region     = local.aws_region
     redis_url      = aws_elasticache_replication_group.redis_group.primary_endpoint_address
+    mongo_url      = mongodbatlas_cluster.db_cluster.mongo_uri
     mongo_username = var.db_app_username
     mongo_password = var.db_app_password
   })
