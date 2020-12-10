@@ -6,7 +6,7 @@ resource "aws_elasticache_subnet_group" "redis_subnet_group" {
 resource "aws_elasticache_replication_group" "redis_group" {
   availability_zones = keys(local.subnets.cache)
   subnet_group_name  = aws_elasticache_subnet_group.redis_subnet_group.name
-  security_group_ids = [aws_security_group.private_redis.id]
+  security_group_ids = [aws_security_group.redis.id]
 
   engine                     = "redis"
   engine_version             = "5.0.3"
