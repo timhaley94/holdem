@@ -1,12 +1,20 @@
+const { Logger } = require('../modules');
 const Cache = require('./cache');
 const DB = require('./db');
 const Locks = require('./locks');
 
 async function init() {
-  await Promise.all([
-    DB.init(),
-    Cache.init(),
-  ]);
+  Logger.info('Initializing loaders');
+
+  try {
+    await Promise.all([
+      DB.init(),
+      Cache.init(),
+    ]);
+  } catch (error) {
+    Logger.error('Fail to initialize loaders', { error });
+    throw error;
+  }
 }
 
 async function close() {
