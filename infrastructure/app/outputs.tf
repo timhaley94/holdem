@@ -3,7 +3,7 @@ output "redis_endpoint" {
 }
 
 output "mongo_url" {
-  value = mongodbatlas_cluster.db_cluster.mongo_uri
+  value = mongodbatlas_cluster.db_cluster.srv_address
 }
 
 output "bastion_ip" {
