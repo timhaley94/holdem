@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const Errors = require('../../modules/errors');
+const morgan = require('morgan');
+const { Logger, Errors } = require('../../modules');
 const Route = require('./route');
 const { middleware: errorMiddleware } = require('./errors');
 const Users = require('./users');
@@ -9,6 +10,7 @@ const Rooms = require('./rooms');
 const api = express();
 
 // Middleware
+api.use(morgan('tiny', { stream: Logger.stream }));
 api.use(cors());
 api.use(express.json());
 
