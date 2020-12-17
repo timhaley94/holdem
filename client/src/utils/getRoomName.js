@@ -56,7 +56,7 @@ function getRandomElement(list) {
   return list[Math.floor(Math.random() * list.length)];
 }
 
-export default function () {
+export default function getRoomName() {
   return (
     words
       .map(getRandomElement)

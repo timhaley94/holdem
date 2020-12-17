@@ -9,12 +9,12 @@ function Opponents() {
   const players = round?.players || [];
 
   return (
-    <div className={ styles.container }>
+    <div className={styles.container}>
       {
         players
           .filter((player) => player.userId !== userId)
           .map((player) => (
-            <Opponent { ...player } />
+            <Opponent {...player} />
           ))
       }
     </div>

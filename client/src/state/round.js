@@ -12,7 +12,7 @@ function RoundProvider({ children }) {
   const { players } = usePlayers();
   const { game, makeMove } = useGame();
 
-  const round = game?.round
+  const round = game?.round;
   const value = {
     makeMove,
     round: {
@@ -24,8 +24,8 @@ function RoundProvider({ children }) {
           ),
           ...player,
         }),
-      )
-    }
+      ),
+    },
   };
 
   return (
