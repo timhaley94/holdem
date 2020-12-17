@@ -3,9 +3,10 @@ const {
   format,
   transports,
 } = require('winston');
+const { Logger } = require('..');
 
 // Make sure JSON.stringify picks ups these properties
-const errorFormat = format((value) => {
+const errorFormat = (value) => {
   if (value.error && value.error instanceof Error) {
     return {
       ...value,
@@ -18,7 +19,7 @@ const errorFormat = format((value) => {
   }
 
   return value;
-});
+}
 
 const logger = createLogger({
   level: 'info',
@@ -26,17 +27,25 @@ const logger = createLogger({
     new transports.Console({
       format: format.combine(
         format.colorize(),
-        errorFormat(),
+        format(errorFormat)(),
         format.simple(),
       ),
     }),
   ],
 });
 
-logger.stream = {
+const stream = {
   write(message) {
     logger.info(message);
   },
 };
 
-module.exports = logger;
+module.exports = {
+  logger,
+  debug: (...args) => logger.debug(...args),
+  info: (...args) => logger.info(...args),
+  warn: (...args) => logger.warn(...args),
+  error: (...args) => logger.error(...args),
+  errorFormat,
+  stream,
+};

@@ -20,7 +20,7 @@ describe('API.Rest.Users', () => {
 
   describe('POST /', () => {
     it('can create a user', async () => {
-      const { body: { _id } } = await (
+      const { body: { id } } = await (
         request
           .post('/')
           .send({ secret })
@@ -28,7 +28,7 @@ describe('API.Rest.Users', () => {
       );
 
       await Domain.User.exists({
-        id: _id.toString(),
+        id: id.toString(),
       });
     });
   });

@@ -110,6 +110,13 @@ function createHands(round) {
           return player;
         }
 
+        console.log(
+          Hand.create([
+            ...player.pocketCards,
+            ...round.communityCards,
+          ])
+        );
+
         return {
           ...player,
           hand: Hand.create([
@@ -129,7 +136,10 @@ function distributeWinnings(round) {
       .reduce(
         (acc, player) => ({
           ...acc,
-          [player.userId]: player,
+          [player.userId]: Hand.create([
+            ...player.pocketCards,
+            ...round.communityCards,
+          ]),
         }),
         {},
       )
@@ -270,6 +280,7 @@ const validators = {
     Joi
       .number()
       .integer()
+      .allow(Infinity)
       .min(0)
   ),
 };
@@ -290,19 +301,19 @@ const bet = Handler.wrap({
       throw new Errors.BadRequest('Can\'t bet on complete round');
     }
 
-    if (round.currentPlayer !== userId) {
+    if (round.currentPlayer.toString() !== userId) {
       throw new Errors.BadRequest(`${userId} is not the current player`);
     }
 
     // check if bet is valid, throw otherwise
     const player = round.players.find(
-      (p) => p.userId === userId,
+      (p) => p.userId.toString() === userId,
     );
 
     const nextBet = player.purse.wagered + amount;
     const isValid = nextBet >= highestBet(round);
 
-    if (isValid) {
+    if (!isValid) {
       throw new Errors.BadRequest(`${amount} is not a valid bet at this time.`);
     }
 
@@ -332,13 +343,15 @@ const bet = Handler.wrap({
 const allIn = Handler.wrap({
   validators,
   required: ['round', 'userId'],
-  fn: ({ round, userId }) => bet({
-    round,
-    userId,
-    // This looks goofy put Purse makes sure you
-    // can only bet what you have.
-    amount: Infinity,
-  }),
+  fn: ({ round, userId }) => {
+    return bet({
+      round,
+      userId,
+      // This looks goofy put Purse makes sure you
+      // can only bet what you have.
+      amount: Infinity,
+    });
+  },
 });
 
 function remainingPlayers({ players }) {
@@ -351,7 +364,7 @@ function remainingPlayers({ players }) {
 
 const fold = Handler.wrap({
   validators,
-  required: ['round', 'userId', 'amount'],
+  required: ['round', 'userId'],
   fn: ({ round, userId }) => {
     if (round.isComplete) {
       throw new Errors.BadRequest('Can\'t fold on complete round');
@@ -361,7 +374,7 @@ const fold = Handler.wrap({
       ...round,
       players: round.players.map(
         (player) => {
-          if (player.userId !== userId) {
+          if (player.userId.toString() !== userId) {
             return player;
           }
 

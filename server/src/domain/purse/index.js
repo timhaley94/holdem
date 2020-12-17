@@ -6,7 +6,7 @@ const DEFAULT_BANKROLL = config.game.defaultBankroll;
 
 const schema = new Schema({
   bankroll: Number,
-  wagered: String,
+  wagered: Number,
   winnings: Number,
 });
 

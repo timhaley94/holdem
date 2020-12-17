@@ -1,4 +1,8 @@
-module.exports = {
+const isProduction = () => process.env.NODE_ENV === 'production';
+const isDevelopment = () => process.env.NODE_ENV === 'development';
+const isTest = () => process.env.NODE_ENV === 'test';
+
+const config = {
   port: 80,
   auth: {
     privateKey: 'developmentkey',
@@ -10,14 +14,14 @@ module.exports = {
     retryDelay: 100,
     retryJitter: 100,
     url: (
-      process.env.NODE_ENV === 'development'
+      isDevelopment()
         ? 'redis://redis:6379'
         : `redis://${process.env.REDIS_URL}`
     ),
   },
   mongo: {
     url: (
-      process.env.NODE_ENV === 'development'
+      isDevelopment()
         ? 'mongodb://mongo/holdem'
         : process.env.MONGO_URL
     ),
@@ -36,3 +40,9 @@ module.exports = {
     defaultBankroll: 300,
   },
 };
+
+config.isProduction = isProduction;
+config.isDevelopment = isDevelopment;
+config.isTest = isTest;
+
+module.exports = config;

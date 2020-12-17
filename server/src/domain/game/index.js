@@ -22,21 +22,23 @@ schema.virtual('shouldStartRound').get(function shouldStartRound() {
   return Round.isFinished(this.round);
 });
 
-schema.method('applyWinnings', function applyWinnings() {
+schema.method('applyWinnings', async function applyWinnings() {
   const winnings = Round.winnings(this.round);
 
   this.players = this.players.map(
     (p) => ({
-      ...p,
+      ...p.toObject(),
       bankroll: p.bankroll + winnings[p.userId],
     }),
   );
+
+  await this.save();
 });
 
 schema.method('startRound', async function startRound() {
   this.round = Round.create({
     players: this.players,
-    lastRound: this.round || null,
+    lastRound: this.round?.toObject(),
   });
 
   await this.save();
@@ -74,8 +76,14 @@ const validators = {
 const retrieve = Handler.wrap({
   validators,
   required: ['id'],
-  fn: async ({ id }) => {
-    const game = await Game.findById(Types.ObjectId(id)).exec();
+  fn: async ({ id }, projection) => {
+    const args = [Types.ObjectId(id)];
+
+    if (projection) {
+      args.push(projection);
+    }
+
+    const game = await Game.findById(...args).exec();
 
     if (game) {
       return game;
@@ -127,15 +135,16 @@ const makeMove = Handler.wrap({
       );
     }
 
-    game.round = methods[type](
-      game.round,
-      {
-        ...data,
-        userId,
-      },
-    );
+    game.round = await methods[type]({
+      ...data,
+      userId: userId.toHexString(),
+      round: game.round.toObject(),
+    });
+
+    await game.save();
 
     if (game.shouldStartRound) {
+      await game.applyWinnings();
       await game.startRound();
     }
 

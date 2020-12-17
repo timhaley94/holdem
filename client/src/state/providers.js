@@ -7,6 +7,7 @@ import { RoomsProvider } from './rooms';
 import { RoomProvider } from './room';
 import { PlayersProvider } from './players';
 import { GameProvider } from './game';
+import { RoundProvider } from './round';
 
 function apply(components, children) {
   return components.reverse().reduce(
@@ -24,6 +25,7 @@ function APIProvider({ children }) {
     RoomProvider,
     PlayersProvider,
     GameProvider,
+    RoundProvider,
   ];
 
   return apply(providers, children);

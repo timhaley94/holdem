@@ -4,7 +4,7 @@ const config = require('../../config');
 const Room = require('./room');
 const Game = require('./game');
 const User = require('./user');
-const Auth = require('./auth');
+const Middleware = require('./middleware');
 
 const modules = [Room, Game, User];
 
@@ -17,12 +17,16 @@ async function Socket(server) {
     transports: ['websocket'],
   });
 
-  if (process.env.NODE_ENV !== 'test') {
+  if (!config.isTest()) {
     // Figure out a way to mock redis in tests
     io.adapter(redisAdapter(config.redis));
   }
 
-  io.use(Auth.middleware);
+  if (config.isProduction()) {
+    io.use(Middleware.Logging);
+  }
+
+  io.use(Middleware.Auth);
 
   modules.forEach((module) => {
     if (module.onStart) {

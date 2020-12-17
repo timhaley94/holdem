@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const { Logger, Errors } = require('../../modules');
+const config = require('../../config');
 const Route = require('./route');
 const { middleware: errorMiddleware } = require('./errors');
 const Users = require('./users');
@@ -10,7 +11,10 @@ const Rooms = require('./rooms');
 const api = express();
 
 // Middleware
-api.use(morgan('tiny', { stream: Logger.stream }));
+if (config.isProduction()) {
+  api.use(morgan('tiny', { stream: Logger.stream }));
+}
+
 api.use(cors());
 api.use(express.json());
 

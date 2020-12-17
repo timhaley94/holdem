@@ -11,4 +11,8 @@ describe('Utils.chunkIf', () => {
       [1, [2, 2], 1, 3, [4, 4, 4, 4], 2],
     );
   });
+
+  it('handles empty array', () => {
+    expect([]).toEqual([]);
+  });
 });

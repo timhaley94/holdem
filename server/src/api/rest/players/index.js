@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const { Room } = require('../../../domain');
 const { Errors } = require('../../../modules');
+const Views = require('../../views');
 const Route = require('../route');
 
 const router = Router();
@@ -14,6 +15,7 @@ router.post('/', Route.handler(
 
     return Room.addPlayer({ id, userId });
   },
+  Views.NoOp,
 ));
 
 router
@@ -36,6 +38,7 @@ router
         ...req.body,
       });
     },
+    Views.NoOp,
   ))
   .delete(Route.handler(
     (req) => {
@@ -44,6 +47,7 @@ router
 
       return Room.removePlayer({ id, userId });
     },
+    Views.NoOp,
   ));
 
 module.exports = { router };

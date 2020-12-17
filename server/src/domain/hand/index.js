@@ -143,9 +143,19 @@ const TYPES = [
     tieIndexes: _.range(0, 5),
     evaluate: ({ cards }) => bestCards(cards),
   },
+  {
+    name: 'EMPTY',
+  },
 ];
 
 function create(cards) {
+  if (cards.length === 0) {
+    return {
+      type: 'EMPTY',
+      cards: [],
+    };
+  }
+
   const cardData = {
     cards,
     groupedRanks: groupAttr(cards, 'rank'),

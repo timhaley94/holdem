@@ -9,6 +9,7 @@ async function init() {
     Logger.info('Connecting to mongo');
 
     try {
+      console.log('here');
       await connect(config.mongo.url, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -18,6 +19,7 @@ async function init() {
         dbName: config.mongo.dbName,
       });
     } catch (error) {
+      console.log('there');
       Logger.error('Failed to connect to mongo', { error });
       throw error;
     }

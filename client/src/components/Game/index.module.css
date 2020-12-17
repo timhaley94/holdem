@@ -3,4 +3,9 @@
   flex-grow: 1;
   border: 1px solid #e6e6e6;
   overflow: scroll !important;
+  padding: 3rem 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 }

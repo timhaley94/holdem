@@ -1,4 +1,5 @@
 const { Room } = require('../../../domain');
+const Views = require('../../views');
 const events = require('../events');
 
 const ROOM_ID = Symbol('roomId');
@@ -13,7 +14,7 @@ function onStart(io) {
 
         io.emit(
           events.room.updated,
-          room,
+          Views.Room(room),
         );
       } catch (_e) {
         io.emit(

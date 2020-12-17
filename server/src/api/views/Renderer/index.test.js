@@ -1,6 +1,6 @@
 const { wrap } = require('./index');
 
-describe('Modules.renderer', () => {
+describe('Views.Renderer', () => {
   describe('.wrap()', () => {
     it('returns function', () => {
       const fn = wrap({

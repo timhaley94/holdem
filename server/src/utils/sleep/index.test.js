@@ -6,6 +6,6 @@ describe('Utils.sleep', () => {
     await sleep(300);
     const end = new Date();
 
-    expect(end - start).toBeGreaterThanOrEqual(300);
+    expect(end - start).toBeGreaterThanOrEqual(300 - 5);
   });
 });

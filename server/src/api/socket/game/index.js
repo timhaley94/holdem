@@ -11,7 +11,7 @@ function onStart(io) {
 
       io.in(socketRoomName(id)).emit(
         events.game.updated,
-        Views.User(game),
+        Views.Game(game),
       );
     },
   );
@@ -22,7 +22,9 @@ async function subscribe(socket, id) {
 
   socket.emit(
     events.game.updated,
-    Views.Game(game),
+    Views.Game(game, {
+      userId: socket?.decoded_token?.data?.id,
+    }),
   );
 
   await new Promise((resolve) => {

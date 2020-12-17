@@ -57,16 +57,20 @@ function orderHands(hands) {
       .sort(
         ([, a], [, b]) => sort(a, b),
       )
+      .map(([userId, hand]) => ({
+        userId,
+        hand,
+      }))
   );
 
   const chunked = Utils.chunkIf(
     sorted,
-    ([, a], [, b]) => sort(a, b) === 0,
+    ({ hand: a }, { hand: b }) => sort(a, b) === 0,
   );
 
   return Utils.deepMap(
     chunked,
-    ([userId]) => userId,
+    ({ userId }) => userId,
   );
 }
 

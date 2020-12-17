@@ -1,7 +1,7 @@
 const { Types } = require('mongoose');
-const User = require('./index');
 const { Auth, Errors } = require('../../modules');
 const { init, close } = require('../../loaders');
+const User = require('./index');
 
 describe('Domain.Users', () => {
   beforeAll(init);

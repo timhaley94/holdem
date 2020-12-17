@@ -4,5 +4,6 @@ export * from './players';
 export * from './providers';
 export * from './rooms';
 export * from './room';
+export * from './round';
 export * from './socket';
 export * from './user';

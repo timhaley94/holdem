@@ -32,7 +32,9 @@ async function subscribe(socket, id) {
 
   socket.emit(
     events.user.updated,
-    Views.User(user),
+    Views.User(user, {
+      userId: socket?.decoded_token?.data?.id,
+    }),
   );
 
   await new Promise((resolve) => {

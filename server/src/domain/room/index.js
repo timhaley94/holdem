@@ -155,6 +155,7 @@ const retrieve = Handler.wrap({
   validators,
   required: ['id'],
   fn: async ({ id }, projection) => {
+    console.log('retrieve', id);
     const args = [Types.ObjectId(id)];
 
     if (projection) {

@@ -1,10 +1,7 @@
-const { Renderer } = require('../../modules');
+const Game = require('./Game');
+const Room = require('./Room');
+const User = require('./User');
 
-const User = Renderer.wrap({
-  fields: ['name', 'avatarId'],
-});
+const NoOp = () => {};
 
-const Room = (room) => room;
-const Game = (game) => game;
-
-module.exports = { User, Room, Game };
+module.exports = { Game, Room, User, NoOp };
