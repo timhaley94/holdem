@@ -3,7 +3,6 @@ const {
   format,
   transports,
 } = require('winston');
-const { Logger } = require('..');
 
 // Make sure JSON.stringify picks ups these properties
 const errorFormat = (value) => {
@@ -19,7 +18,7 @@ const errorFormat = (value) => {
   }
 
   return value;
-}
+};
 
 const logger = createLogger({
   level: 'info',

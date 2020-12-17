@@ -110,13 +110,6 @@ function createHands(round) {
           return player;
         }
 
-        console.log(
-          Hand.create([
-            ...player.pocketCards,
-            ...round.communityCards,
-          ])
-        );
-
         return {
           ...player,
           hand: Hand.create([
@@ -343,15 +336,13 @@ const bet = Handler.wrap({
 const allIn = Handler.wrap({
   validators,
   required: ['round', 'userId'],
-  fn: ({ round, userId }) => {
-    return bet({
-      round,
-      userId,
-      // This looks goofy put Purse makes sure you
-      // can only bet what you have.
-      amount: Infinity,
-    });
-  },
+  fn: ({ round, userId }) => bet({
+    round,
+    userId,
+    // This looks goofy put Purse makes sure you
+    // can only bet what you have.
+    amount: Infinity,
+  }),
 });
 
 function remainingPlayers({ players }) {

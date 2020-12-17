@@ -4,4 +4,6 @@ const User = require('./User');
 
 const NoOp = () => {};
 
-module.exports = { Game, Room, User, NoOp };
+module.exports = {
+  Game, Room, User, NoOp,
+};

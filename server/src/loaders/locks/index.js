@@ -1,6 +1,6 @@
 const Redlock = require('redlock');
 const { client } = require('../cache');
-const { Errors } = require('../../modules');
+const { Errors, Logger } = require('../../modules');
 const config = require('../../config');
 
 const {
@@ -22,7 +22,7 @@ const redlock = new Redlock(
 );
 
 redlock.on('clientError', (err) => {
-  console.error('A redis error has occurred:', err);
+  Logger.error('A redis error has occurred:', err);
 });
 
 function lockName(model, id) {
