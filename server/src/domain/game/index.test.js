@@ -27,7 +27,7 @@ describe('Domain.Game', () => {
       expect.assertions(1);
 
       try {
-        await Game.retrieve({ id: badId() })
+        await Game.retrieve({ id: badId() });
       } catch (e) {
         expect(e instanceof Errors.NotFound).toBeTruthy();
       }
@@ -49,8 +49,8 @@ describe('Domain.Game', () => {
       );
 
       expect(
-        Object.keys(game.toObject())
-      ).toEqual(['_id', 'players'],);
+        Object.keys(game.toObject()),
+      ).toEqual(['_id', 'players']);
     });
   });
 
@@ -118,7 +118,7 @@ describe('Domain.Game', () => {
     it('type BET calls Round.bet', async () => {
       const { _id: id } = await Game.create({ userIds });
       const spy = jest.spyOn(Round, 'bet');
-  
+
       await Game.makeMove({
         id: id.toHexString(),
         type: 'BET',
@@ -135,7 +135,7 @@ describe('Domain.Game', () => {
     it('type ALL_IN calls Round.allIn', async () => {
       const { _id: id } = await Game.create({ userIds });
       const spy = jest.spyOn(Round, 'allIn');
-  
+
       await Game.makeMove({
         id: id.toHexString(),
         type: 'ALL_IN',
@@ -150,7 +150,7 @@ describe('Domain.Game', () => {
     it('type FOLD calls Round.fold', async () => {
       const { _id: id } = await Game.create({ userIds });
       const spy = jest.spyOn(Round, 'fold');
-  
+
       await Game.makeMove({
         id: id.toHexString(),
         type: 'FOLD',
@@ -167,7 +167,7 @@ describe('Domain.Game', () => {
         _id: id,
         round: { _id: roundId },
       } = await Game.create({ userIds });
-  
+
       await Game.makeMove({
         id: id.toHexString(),
         type: 'FOLD',
@@ -181,7 +181,7 @@ describe('Domain.Game', () => {
 
       game.players.forEach((player) => {
         expect(player.bankroll).not.toEqual(
-          config.game.defaultBankroll
+          config.game.defaultBankroll,
         );
       });
 

@@ -1,21 +1,21 @@
 const { init, close } = require('../../loaders');
-const Stage = require('../stage');
-const Round = require('./index');
+// const Stage = require('../stage');
+// const Round = require('./index');
 
 describe('Domain.round', () => {
   beforeAll(init);
   afterAll(close);
 
-  const players = [
-    {
-      userId: 1,
-      bankroll: 200,
-    },
-    {
-      userId: 2,
-      bankroll: 300,
-    },
-  ];
+  // const players = [
+  //   {
+  //     userId: 1,
+  //     bankroll: 200,
+  //   },
+  //   {
+  //     userId: 2,
+  //     bankroll: 300,
+  //   },
+  // ];
 
   describe('.create()', () => {
     // it('starts at ante stage', () => {
@@ -85,7 +85,7 @@ describe('Domain.round', () => {
       });
 
       it('under the gun can call big blind', () => {
-  
+
       });
 
       it('under the gun can fold', () => {
@@ -114,22 +114,22 @@ describe('Domain.round', () => {
 
       });
     });
-    
+
     describe('.bet()', () => {
-      const currentPlayer = players[0].userId;
-      const nextPlayer = players[1].userId;
-  
+      // const currentPlayer = players[0].userId;
+      // const nextPlayer = players[1].userId;
+
       // it('throws on missing fields', () => {
       //   const round = Round.create({ players });
       //   expect(() => {
       //     Round.bet({ round })
       //   }).toThrow();
       // });
-  
+
       // it('throws if round is complete', () => {
       //   const round = Round.create({ players });
       //   round.isComplete = true;
-  
+
       //   expect(() => {
       //     Round.bet({
       //       round,
@@ -138,10 +138,10 @@ describe('Domain.round', () => {
       //     });
       //   }).toThrow();
       // });
-  
+
       // it('throws if userId is not current player', () => {
       //   const round = Round.create({ players });
-  
+
       //   expect(() => {
       //     Round.bet({
       //       round,
@@ -150,7 +150,7 @@ describe('Domain.round', () => {
       //     });
       //   }).toThrow();
       // });
-  
+
       // it('throws if bet amount is under current bet', () => {
       //   let round = Round.create({ players });
       //   round = Round.bet({
@@ -158,7 +158,7 @@ describe('Domain.round', () => {
       //     userId: currentPlayer,
       //     amount: 10,
       //   });
-  
+
       //   expect(() => {
       //     Round.bet({
       //       round,
@@ -167,7 +167,7 @@ describe('Domain.round', () => {
       //     });
       //   }).toThrow();
       // });
-  
+
       // it('allows for check', () => {
       //   let round = Round.create({ players });
       //   round = Round.bet({
@@ -175,11 +175,11 @@ describe('Domain.round', () => {
       //     userId: currentPlayer,
       //     amount: 0,
       //   });
-  
+
       //   expect(round.currentPlayer).toEqual(nextPlayer);
       //   expect(round.players[0].purse.wagered).toEqual(0);
       // });
-  
+
       // it('allows for raise', () => {
       //   let round = Round.create({ players });
       //   round = Round.bet({
@@ -187,54 +187,54 @@ describe('Domain.round', () => {
       //     userId: currentPlayer,
       //     amount: 10,
       //   });
-  
+
       //   expect(round.currentPlayer).toEqual(nextPlayer);
       //   expect(round.players[0].purse.wagered).toEqual(10);
       // });
-  
+
       // it('allows for call of raise', () => {
       //   let round = Round.create({ players });
-  
+
       //   round = Round.bet({
       //     round,
       //     userId: currentPlayer,
       //     amount: 10,
       //   });
-  
+
       //   round = Round.bet({
       //     round,
       //     userId: nextPlayer,
       //     amount: 10,
       //   });
-  
+
       //   expect(round.players[1].purse.wagered).toEqual(10);
       // });
-  
+
       // it('advances stage', () => {
       //   let round = Round.create({ players });
-  
+
       //   round = Round.bet({
       //     round,
       //     userId: currentPlayer,
       //     amount: 10,
       //   });
-  
+
       //   round = Round.bet({
       //     round,
       //     userId: nextPlayer,
       //     amount: 10,
       //   });
-  
+
       //   expect(round.currentPlayer).toEqual(currentPlayer);
       //   expect(round.stage).toEqual()
       // });
-  
+
       // it('does not advance stage on last player raise', () => {
-  
+
       // });
-  
+
       // it('does not allow a player to raise twice a round', () => {
-  
+
       // });
     });
 
@@ -300,7 +300,7 @@ describe('Domain.round', () => {
   });
 
   describe('.winnings()', () => {
-    
+
   });
 
   describe('.isFinished()', () => {

@@ -6,7 +6,7 @@ orbs:
 executors:
   node:
     docker:
-      - image: cimg/node:12.18.3
+      - image: cimg/node:14.15.0
   terraform:
     docker:
       - image: hashicorp/terraform:0.14.2

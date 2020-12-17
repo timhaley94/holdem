@@ -7,9 +7,9 @@ import Purse from '../Purse';
 function Opponent({ name, userId, purse }) {
   return (
     <Card>
-      <Avatar userId={ userId } />
+      <Avatar userId={userId} />
       <p>{ name }</p>
-      <Purse { ...purse } />
+      <Purse {...purse} />
     </Card>
   );
 }
@@ -17,7 +17,9 @@ function Opponent({ name, userId, purse }) {
 Opponent.propTypes = {
   name: PropTypes.string.isRequired,
   userId: PropTypes.string.isRequired,
-  purse: PropTypes.object.isRequired,
+  purse: PropTypes.shape(
+    Purse.propTypes,
+  ).isRequired,
 };
 
 export default Opponent;

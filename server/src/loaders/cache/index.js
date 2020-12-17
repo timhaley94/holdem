@@ -34,7 +34,7 @@ client.on('end', () => {
 });
 
 client.on('warning', (...args) => {
-  console.warn('Redis warning:', ...args);
+  Logger.warn('Redis warning:', ...args);
 });
 
 async function init() {

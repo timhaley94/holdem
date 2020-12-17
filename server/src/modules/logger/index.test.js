@@ -11,7 +11,7 @@ describe('Modules.Logger', () => {
       expect(Logger[method]).toBeTruthy();
     });
   });
-  
+
   describe('.errorFormat()', () => {
     it('preserves stack and message', async () => {
       const output = Logger.errorFormat({
