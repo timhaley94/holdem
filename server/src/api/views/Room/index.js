@@ -1,4 +1,4 @@
-const Renderer = require('../Renderer');
+const Renderer = require('../renderer');
 
 const Room = Renderer.wrap({
   fields: [

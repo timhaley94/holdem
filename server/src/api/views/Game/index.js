@@ -1,4 +1,4 @@
-const Renderer = require('../Renderer');
+const Renderer = require('../renderer');
 
 const Purse = Renderer.wrap({
   fields: ['bankroll', 'wagered'],

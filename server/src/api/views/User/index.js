@@ -1,4 +1,4 @@
-const Renderer = require('../Renderer');
+const Renderer = require('../renderer');
 
 const Auth = Renderer.wrap({
   fields: ['token'],
