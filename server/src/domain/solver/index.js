@@ -74,47 +74,117 @@ function orderHands(hands) {
   );
 }
 
-function run(hands, wagers) {
-  const results = orderHands(hands);
-  const wagersCopy = { ...wagers };
+function reduce(
+  {
+    wagers,
+    awarded,
+    offset,
+  },
+  userId,
+  i,
+  length,
+) {
+  const wager = wagers[userId];
 
-  const { awarded } = results.reduce(
-    (acc, userId) => {
-      const wagered = wagersCopy[userId];
-
-      if (wagered <= acc.highest) {
-        return acc;
-      }
-
-      const diff = wagered - acc.highest;
-      const losers = (
-        Object
-          .entries(wagersCopy)
-          .filter(
-            ([id, wager]) => (
-              id !== userId
-                && wager > acc.highest
-            ),
-          )
-          .length
-      );
-
-      return {
-        ...acc,
-        highest: wagered,
-        awarded: {
-          ...acc.awarded,
-          [userId]: diff * losers,
+  const {
+    pot,
+    leftovers,
+  } = (
+    Object
+      .entries(wagers)
+      .reduce(
+        (acc, [loserId, loserWager]) => {
+          const contribution = Math.min(wager, loserWager);
+          const leftover = Math.max(loserWager - contribution, 0);
+          return {
+            ...acc,
+            pot: acc.pot + contribution,
+            leftovers: {
+              ...acc.leftovers,
+              [loserId]: leftover,
+            },
+          };
         },
-      };
+        {
+          pot: 0,
+          leftovers: {},
+        },
+      )
+  );
+
+  const winnings = (pot / (length - i)) + offset;
+
+  return {
+    wagers: leftovers,
+    awarded: {
+      ...awarded,
+      [userId]: winnings,
     },
-    {
-      highest: 0,
-      awarded: {},
+    offset: winnings,
+  };
+}
+
+function allocate(hands, wagers, awarded = {}) {
+  const [head, ...losers] = hands;
+  const winners = (
+    Array.isArray(head)
+      ? head
+      : [head]
+  );
+
+  const {
+    wagers: newWagers,
+    awarded: newAwarded,
+  } = (
+    winners
+      .sort((a, b) => wagers[a] - wagers[b])
+      .reduce(
+        (acc, val, i) => reduce(
+          acc,
+          val,
+          i,
+          winners.length,
+        ),
+        {
+          wagers,
+          awarded,
+          offset: 0,
+        },
+      )
+  );
+
+  if (losers.length > 0) {
+    return allocate(
+      losers,
+      newWagers,
+      newAwarded,
+    );
+  }
+
+  return newAwarded;
+}
+
+function clean(awarded, wagered) {
+  // Rounds everyone's winnings down to the
+  // nearest dollar. It's a lot nice on the eyes
+  // to look at whole numbers. :)
+  const copy = {};
+
+  Object.keys(wagered).forEach(
+    (userId) => {
+      copy[userId] = Math.floor(
+        awarded[userId] || 0,
+      );
     },
   );
 
-  return awarded;
+  return copy;
+}
+
+function run(hands, wagers) {
+  const results = orderHands(hands);
+  const awarded = allocate(results, wagers);
+  return clean(awarded, wagers);
 }
 
 module.exports = { run };
