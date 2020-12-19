@@ -143,33 +143,39 @@ describe('Domain.Room', () => {
     });
   });
 
+  async function expectRequiresValidArgs(method, data = {}) {
+    const room = await Room.create({ name });
+    const user = await User.create({ secret });
+
+    await expectThrows(
+      () => Room[method]({
+        id: room._id.toString(),
+        userId: ObjectId().toString(),
+        ...data,
+      }),
+      Errors.NotFound,
+    );
+
+    await expectThrows(
+      () => Room[method]({
+        id: ObjectId().toString(),
+        userId: user._id.toString(),
+        ...data,
+      }),
+      Errors.NotFound,
+    );
+  }
+
+  async function expectPlayerInRoom({ id, userId }) {
+    const room = await Room.retrieve({ id: id.toString() });
+    expect(
+      room.players.find((player) => player.userId.toString() === userId.toString()),
+    ).toBeTruthy();
+  }
+
   describe('.addPlayer()', () => {
-    it('throws if room does not exist', async () => {
-      expect.assertions(1);
-      const user = await User.create({ secret });
-
-      try {
-        await Room.addPlayer({
-          id: ObjectId().toString(),
-          userId: user._id.toString(),
-        });
-      } catch (e) {
-        expect(e instanceof Errors.NotFound).toBe(true);
-      }
-    });
-
-    it('throws if user does not exist', async () => {
-      expect.assertions(1);
-      const room = await Room.create({ name });
-
-      try {
-        await Room.addPlayer({
-          id: room._id.toString(),
-          userId: ObjectId().toString(),
-        });
-      } catch (e) {
-        expect(e instanceof Errors.NotFound).toBe(true);
-      }
+    it('throws if room or user does not exist', async () => {
+      await expectRequiresValidArgs('addPlayer');
     });
 
     it('can add player', async () => {
@@ -181,14 +187,10 @@ describe('Domain.Room', () => {
         userId: user._id.toString(),
       });
 
-      const room = await Room.retrieve({ id: id.toString() });
-      expect(
-        room.players.find((player) => player.userId.toString() === user._id.toString()),
-      ).toBeTruthy();
+      await expectPlayerInRoom({ id, userId: user._id });
     });
 
     it('throws if room is full', async () => {
-      expect.assertions(1);
       const room = await Room.create({ name });
 
       const addPlayer = async (n = 1) => {
@@ -204,12 +206,7 @@ describe('Domain.Room', () => {
       };
 
       await addPlayer(config.game.maxPlayers);
-
-      try {
-        await addPlayer();
-      } catch (e) {
-        expect(e instanceof Errors.Conflict).toBe(true);
-      }
+      await expectThrows(addPlayer, Errors.Conflict);
     });
 
     it('does not emit if player already in the room', async () => {
@@ -230,45 +227,24 @@ describe('Domain.Room', () => {
         userId: user._id.toString(),
       });
 
-      const room = await Room.retrieve({ id: id.toString() });
-      expect(
-        room.players.find((player) => player.userId.toString() === user._id.toString()),
-      ).toBeTruthy();
-
+      await expectPlayerInRoom({ id, userId: user._id });
       expect(fn).not.toBeCalled();
     });
   });
 
   describe('.removePlayer()', () => {
-    it('throws if room does not exist', async () => {
-      expect.assertions(1);
-
-      const user = await User.create({ secret });
-
-      try {
-        await Room.removePlayer({
-          id: ObjectId().toString(),
-          userId: user._id.toString(),
-        });
-      } catch (e) {
-        expect(e instanceof Errors.NotFound).toBe(true);
-      }
+    it('throws if room or user does not exist', async () => {
+      await expectRequiresValidArgs('removePlayer');
     });
 
-    it('throws if user does not exist', async () => {
-      expect.assertions(1);
-
-      const room = await Room.create({ name });
-
-      try {
-        await Room.removePlayer({
-          id: room._id.toString(),
-          userId: ObjectId().toString(),
-        });
-      } catch (e) {
-        expect(e instanceof Errors.NotFound).toBe(true);
-      }
-    });
+    async function expectPlayerNotInRoom({ id, userId }) {
+      const room = await Room.retrieve({ id: id.toString() });
+      expect(
+        room.players.every(
+          (player) => player.userId.toString() !== userId.toString(),
+        ),
+      ).toBeTruthy();
+    }
 
     it('removes player from room', async () => {
       const mac = await User.create({ secret });
@@ -290,13 +266,7 @@ describe('Domain.Room', () => {
         userId: mac._id.toString(),
       });
 
-      const room = await Room.retrieve({ id: id.toString() });
-
-      expect(
-        room.players.every(
-          (player) => player.userId.toString() !== mac._id.toString(),
-        ),
-      ).toBeTruthy();
+      await expectPlayerNotInRoom({ id, userId: mac._id });
     });
 
     it('removes redundant copy of player from room', async () => {
@@ -319,24 +289,20 @@ describe('Domain.Room', () => {
         userId: mac._id.toString(),
       });
 
-      let room = await Room.retrieve({ id: id.toString() });
+      const room = await Room.retrieve({ id: id.toString() });
       room.players.push({
         userId: mac._id,
         isReady: false,
       });
+
+      await room.save();
 
       await Room.removePlayer({
         id: id.toString(),
         userId: mac._id.toString(),
       });
 
-      room = await Room.retrieve({ id: id.toString() });
-
-      expect(
-        room.players.every(
-          (player) => player.userId.toString() !== mac._id.toString(),
-        ),
-      ).toBeTruthy();
+      await expectPlayerNotInRoom({ id, userId: mac._id });
     });
 
     it('starts game if valid', async () => {
@@ -399,47 +365,19 @@ describe('Domain.Room', () => {
         userId: user._id.toString(),
       });
 
-      expect.assertions(1);
-
-      try {
-        await Room.exists({ id: id.toString() });
-      } catch (e) {
-        expect(e instanceof Errors.NotFound).toBe(true);
-      }
+      await expectThrows(
+        () => Room.exists({ id: id.toString() }),
+        Errors.NotFound,
+      );
     });
   });
 
   describe('.setPlayerReady()', () => {
-    it('throws if room does not exist', async () => {
-      expect.assertions(1);
-
-      const user = await User.create({ secret });
-
-      try {
-        await Room.setPlayerReady({
-          id: ObjectId().toString(),
-          userId: user._id.toString(),
-          isReady: true,
-        });
-      } catch (e) {
-        expect(e instanceof Errors.NotFound).toBe(true);
-      }
-    });
-
-    it('throws if user does not exist', async () => {
-      expect.assertions(1);
-
-      const room = await Room.create({ name });
-
-      try {
-        await Room.setPlayerReady({
-          id: room._id.toString(),
-          userId: ObjectId().toString(),
-          isReady: true,
-        });
-      } catch (e) {
-        expect(e instanceof Errors.NotFound).toBe(true);
-      }
+    it('throws if room or user does not exist', async () => {
+      await expectRequiresValidArgs(
+        'setPlayerReady',
+        { isReady: true },
+      );
     });
 
     it('can set player to ready', () => {
