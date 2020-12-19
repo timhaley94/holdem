@@ -191,14 +191,14 @@ describe('Domain.Room', () => {
       expect.assertions(1);
       const room = await Room.create({ name });
 
-      const addPlayer = async (n = 0) => {
+      const addPlayer = async (n = 1) => {
         const user = await User.create({ secret });
         await Room.addPlayer({
           id: room._id.toString(),
           userId: user._id.toString(),
         });
 
-        if (n > 0) {
+        if (n > 1) {
           await addPlayer(n - 1);
         }
       };
