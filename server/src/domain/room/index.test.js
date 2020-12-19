@@ -378,20 +378,83 @@ describe('Domain.Room', () => {
       );
     });
 
-    it('can set player to ready', () => {
+    function createRoom() {
+      return Room.create({ name });
+    }
 
+    async function createUser(room) {
+      const user = await User.create({ secret });
+
+      await Room.addPlayer({
+        id: room._id.toString(),
+        userId: user._id.toString(),
+      });
+
+      return user;
+    }
+
+    async function setReady(room, user, isReady) {
+      await Room.setPlayerReady({
+        id: room._id.toString(),
+        userId: user._id.toString(),
+        isReady,
+      });
+    }
+
+    async function expectPlayerIsReady(r, user, expected) {
+      const room = await Room.retrieve({
+        id: r._id.toString(),
+      });
+
+      expect(
+        room.players.every(
+          (player) => (
+            player.userId.toString() === user._id.toString()
+              ? player.isReady
+              : true
+          ),
+        ),
+      ).toBe(expected);
+    }
+
+    it('can set player to ready', async () => {
+      const room = await createRoom();
+      const user = await createUser(room);
+      await setReady(room, user, true);
+      await expectPlayerIsReady(room, user, true);
     });
 
-    it('can set player to unready', () => {
-
+    it('can set player to unready', async () => {
+      const room = await createRoom();
+      const user = await createUser(room);
+      await setReady(room, user, true);
+      await setReady(room, user, false);
+      await expectPlayerIsReady(room, user, false);
     });
 
-    it('marks redundant copies of player ready', () => {
+    it('marks redundant copies of player ready', async () => {
+      const room = await createRoom();
+      const user = await createUser(room);
 
+      room.players.push({
+        userId: user._id,
+        isReady: false,
+      });
+
+      await room.save();
+      await setReady(room, user, true);
+      await expectPlayerIsReady(room, user, true);
     });
 
-    it('starts game if valid', () => {
+    it('starts game if valid', async () => {
+      let room = await createRoom();
+      const charlie = await createUser(room);
+      const mac = await createUser(room);
+      await setReady(room, charlie, true);
+      await setReady(room, mac, true);
 
+      room = await Room.retrieve({ id: room._id.toString() });
+      expect(room.isStarted).toBe(true);
     });
   });
 });
