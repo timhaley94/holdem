@@ -65,6 +65,7 @@ schema.virtual('shouldStart').get(function shouldStart() {
 
 schema.method('attemptStart', async function attemptStart() {
   if (this.shouldStart) {
+    console.log('attempting to start');
     const game = await Game.create({
       userIds: this.players.map(
         (p) => p.userId,
