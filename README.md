@@ -10,6 +10,9 @@
   <a href="https://circleci.com/gh/timhaley94/holdem">
     <img src="https://circleci.com/gh/timhaley94/holdem.svg?style=shield" />
   </a>
+  <a href="https://app.netlify.com/sites/wizardly-fermat-cab2a8/deploys">
+    <img src="https://api.netlify.com/api/v1/badges/1636d5c8-85c2-40cb-91b0-ede8fcd1e2fd/deploy-status">
+  </a>
 </p>
 
 Born of the pandemic, Hold'em Hounds is an (🚧 in development 🚧) poker app that's aiming to
