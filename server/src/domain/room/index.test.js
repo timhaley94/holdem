@@ -166,11 +166,13 @@ describe('Domain.Room', () => {
     );
   }
 
-  async function expectPlayerInRoom({ id, userId }) {
+  async function expectPlayerInRoom({ id, userId }, expected) {
     const room = await Room.retrieve({ id: id.toString() });
     expect(
-      room.players.find((player) => player.userId.toString() === userId.toString()),
-    ).toBeTruthy();
+      room.players.some(
+        (player) => player.userId.toString() === userId.toString(),
+      ),
+    ).toBe(expected);
   }
 
   describe('.addPlayer()', () => {
@@ -187,7 +189,10 @@ describe('Domain.Room', () => {
         userId: user._id.toString(),
       });
 
-      await expectPlayerInRoom({ id, userId: user._id });
+      await expectPlayerInRoom(
+        { id, userId: user._id },
+        true,
+      );
     });
 
     it('throws if room is full', async () => {
@@ -227,7 +232,11 @@ describe('Domain.Room', () => {
         userId: user._id.toString(),
       });
 
-      await expectPlayerInRoom({ id, userId: user._id });
+      await expectPlayerInRoom(
+        { id, userId: user._id },
+        true,
+      );
+
       expect(fn).not.toBeCalled();
     });
   });
@@ -236,15 +245,6 @@ describe('Domain.Room', () => {
     it('throws if room or user does not exist', async () => {
       await expectRequiresValidArgs('removePlayer');
     });
-
-    async function expectPlayerNotInRoom({ id, userId }) {
-      const room = await Room.retrieve({ id: id.toString() });
-      expect(
-        room.players.every(
-          (player) => player.userId.toString() !== userId.toString(),
-        ),
-      ).toBeTruthy();
-    }
 
     it('removes player from room', async () => {
       const mac = await User.create({ secret });
@@ -266,7 +266,10 @@ describe('Domain.Room', () => {
         userId: mac._id.toString(),
       });
 
-      await expectPlayerNotInRoom({ id, userId: mac._id });
+      await expectPlayerInRoom(
+        { id, userId: mac._id },
+        false,
+      );
     });
 
     it('removes redundant copy of player from room', async () => {
@@ -302,7 +305,10 @@ describe('Domain.Room', () => {
         userId: mac._id.toString(),
       });
 
-      await expectPlayerNotInRoom({ id, userId: mac._id });
+      await expectPlayerInRoom(
+        { id, userId: mac._id },
+        false,
+      );
     });
 
     it('starts game if valid', async () => {
@@ -312,32 +318,24 @@ describe('Domain.Room', () => {
 
       const { _id: id } = await Room.create({ name });
 
-      await Room.addPlayer({
-        id: id.toString(),
-        userId: charlie._id.toString(),
-      });
+      await Promise.all(
+        [charlie, mac, dennis].map((user) => (
+          Room.addPlayer({
+            id: id.toString(),
+            userId: user._id.toString(),
+          })
+        )),
+      );
 
-      await Room.addPlayer({
-        id: id.toString(),
-        userId: mac._id.toString(),
-      });
-
-      await Room.addPlayer({
-        id: id.toString(),
-        userId: dennis._id.toString(),
-      });
-
-      await Room.setPlayerReady({
-        id: id.toString(),
-        userId: charlie._id.toString(),
-        isReady: true,
-      });
-
-      await Room.setPlayerReady({
-        id: id.toString(),
-        userId: mac._id.toString(),
-        isReady: true,
-      });
+      await Promise.all(
+        [charlie, mac].map((user) => (
+          Room.setPlayerReady({
+            id: id.toString(),
+            userId: user._id.toString(),
+            isReady: true,
+          })
+        )),
+      );
 
       await Room.removePlayer({
         id: id.toString(),
