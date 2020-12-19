@@ -1,9 +1,14 @@
-const Game = require('./Game');
-const Room = require('./Room');
-const User = require('./User');
+const Renderer = require('./renderer');
+const Game = require('./game');
+const Room = require('./room');
+const User = require('./user');
 
 const NoOp = () => {};
 
 module.exports = {
-  Game, Room, User, NoOp,
+  Renderer,
+  Game,
+  Room,
+  User,
+  NoOp,
 };

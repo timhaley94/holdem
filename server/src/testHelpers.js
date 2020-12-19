@@ -8,7 +8,7 @@ function hasEqualIds(a, b) {
 }
 
 async function expectThrows(fn, err) {
-  expect.assertions(1);
+  expect.hasAssertions();
 
   try {
     await fn();

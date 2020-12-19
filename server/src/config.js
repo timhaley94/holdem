@@ -10,8 +10,8 @@ const config = {
   redis: {
     ttl: 1000,
     driftFactor: 0.01,
-    retryCount: 2,
-    retryDelay: 100,
+    retryCount: 3,
+    retryDelay: 200,
     retryJitter: 100,
     url: (
       isDevelopment()

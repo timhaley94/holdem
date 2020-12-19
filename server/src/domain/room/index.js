@@ -228,12 +228,22 @@ const removePlayer = Handler.wrap({
   lockModel: 'room',
   required: ['id', 'userId'],
   fn: async ({ id, userId }) => {
-    const room = await retrieve({ id });
+    await exists({ id });
     await User.exists({ id: userId });
 
-    room.players.pull({ userId });
+    await Room.updateOne(
+      { _id: Types.ObjectId(id) },
+      {
+        $pull: {
+          players: {
+            userId: Types.ObjectId(userId),
+          },
+        },
+      },
+      { new: true },
+    );
 
-    await room.save();
+    const room = await retrieve({ id });
     await room.attemptStart();
     await room.attemptCleanup();
 

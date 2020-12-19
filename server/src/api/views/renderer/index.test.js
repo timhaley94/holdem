@@ -75,5 +75,27 @@ describe('Views.Renderer', () => {
         mapping.bar(data.bar),
       );
     });
+
+    it('utilizes permissions', () => {
+      const fields = ['foo', 'bar', 'baz'];
+      const permissions = {
+        foo: () => true,
+        bar: () => false,
+      };
+
+      const fn = wrap({ fields, permissions });
+
+      const data = {
+        foo: 1,
+        bar: 2,
+        baz: 3,
+      };
+
+      const result = fn(data);
+
+      expect(result.foo).toEqual(data.foo);
+      expect(result.bar).toEqual(undefined);
+      expect(result.baz).toEqual(data.baz);
+    });
   });
 });
