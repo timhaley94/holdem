@@ -125,7 +125,7 @@ describe('Domain.Room', () => {
 
     it('throws otherwise', async () => {
       await expectThrows(
-        () => Room.exists({ id: ObjectId().toString() }),
+        () => Room.retrieve({ id: ObjectId().toString() }),
         Errors.NotFound,
       );
     });
