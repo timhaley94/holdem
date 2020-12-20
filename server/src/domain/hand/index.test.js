@@ -66,9 +66,5 @@ describe('Domain.Hand', () => {
         });
       },
     );
-
-    it('utilizes communityCards', () => {
-
-    });
   });
 });
