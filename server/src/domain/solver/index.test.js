@@ -106,6 +106,83 @@ describe('Domain.Solver', () => {
       });
     });
 
+    describe('hand comparison', () => {
+      const tests = {
+        STRAIGHT_FLUSH: [
+          ['H11', 'H10', 'H9', 'H8', 'H7'],
+          ['C9', 'C8', 'C7', 'C6', 'C5'],
+        ],
+        FOUR_OF_A_KIND: [
+          ['H9', 'D9', 'S9', 'C9', 'D3'],
+          ['H8', 'D8', 'S8', 'C8', 'D3'],
+        ],
+        FULL_HOUSE: [
+          ['H9', 'D9', 'S9', 'C4', 'D4'],
+          ['H8', 'D8', 'S8', 'C4', 'D4'],
+        ],
+        FLUSH: [
+          ['H11', 'H7', 'H6', 'H3', 'H2'],
+          ['D11', 'D7', 'D5', 'D3', 'D2'],
+        ],
+        STRAIGHT: [
+          ['H11', 'D10', 'H9', 'C8', 'D7'],
+          ['H9', 'C8', 'D7', 'C6', 'D5'],
+        ],
+        THREE_OF_A_KIND: [
+          ['H9', 'D9', 'S9', 'C4', 'D3'],
+          ['H8', 'D8', 'S8', 'C4', 'D3'],
+        ],
+        TWO_PAIR: [
+          ['H9', 'D9', 'S5', 'C5', 'D3'],
+          ['H8', 'D8', 'S5', 'C5', 'D3'],
+        ],
+        PAIR: [
+          ['H9', 'D9', 'S5', 'C4', 'D3'],
+          ['H8', 'D8', 'S5', 'C4', 'D3'],
+        ],
+        HIGH_CARD: [
+          ['H13', 'H8', 'S5', 'C4', 'D3'],
+          ['H9', 'H8', 'S5', 'C4', 'D3'],
+        ],
+      };
+
+      Object.entries(tests).forEach(([type, hands]) => {
+        it(`can compare hands with type, ${type}`, () => {
+          expectSolution(
+            {
+              charlie: Hand.create(hands[0]),
+              mac: Hand.create(hands[1]),
+            },
+            {
+              charlie: 100,
+              mac: 100,
+            },
+            {
+              charlie: 200,
+              mac: 0,
+            },
+          );
+        });
+      });
+
+      it('handles royal flushes', () => {
+        expectSolution(
+          {
+            charlie: Hand.create(['H14', 'H13', 'H12', 'H11', 'H10']),
+            mac: Hand.create(['D14', 'D13', 'D12', 'D11', 'D10']),
+          },
+          {
+            charlie: 100,
+            mac: 100,
+          },
+          {
+            charlie: 100,
+            mac: 100,
+          },
+        );
+      });
+    });
+
     describe('true ties', () => {
       const wagers = {
         charlie: 100,
@@ -147,7 +224,49 @@ describe('Domain.Solver', () => {
     });
 
     describe('kickers', () => {
+      const tests = {
+        FOUR_OF_A_KIND: [
+          ['H7', 'D7', 'S7', 'C7', 'H4'],
+          ['H7', 'D7', 'S7', 'C7', 'H3'],
+        ],
+        THREE_OF_A_KIND: [
+          ['H7', 'D7', 'S7', 'C2', 'H4'],
+          ['H7', 'D7', 'S7', 'C2', 'H3'],
+        ],
+        TWO_PAIR: [
+          ['H7', 'D7', 'S2', 'C2', 'H4'],
+          ['H7', 'D7', 'S2', 'C2', 'H3'],
+        ],
+        PAIR: [
+          ['H7', 'D7', 'S2', 'C3', 'H5'],
+          ['H7', 'D7', 'S2', 'C3', 'H4'],
+        ],
+        HIGH_CARD: [
+          ['H7', 'D6', 'S2', 'C3', 'H5'],
+          ['H7', 'D6', 'S2', 'C3', 'H4'],
+        ],
+      };
 
+      Object.entries(tests).forEach(
+        ([type, hands]) => {
+          it(`Can handle kickers with hand type, ${type}`, () => {
+            expectSolution(
+              {
+                charlie: Hand.create(hands[0]),
+                mac: Hand.create(hands[1]),
+              },
+              {
+                charlie: 100,
+                mac: 100,
+              },
+              {
+                charlie: 200,
+                mac: 0,
+              },
+            );
+          });
+        },
+      );
     });
 
     describe('side pots', () => {

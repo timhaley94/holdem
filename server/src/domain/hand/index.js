@@ -27,10 +27,42 @@ function bestCards(cards, count = 5) {
   );
 }
 
+function tieIndexes(shape) {
+  const { indexes } = shape.reduce(
+    (acc, val, i) => {
+      if (i < shape.length - 1) {
+        return {
+          ...acc,
+          sum: acc.sum + val,
+          indexes: [
+            ...acc.indexes,
+            acc.sum + val,
+          ],
+        };
+      }
+
+      return acc;
+    },
+    {
+      sum: 0,
+      indexes: [0],
+    },
+  );
+
+  const kickers = _.range(
+    shape.reduce((acc, val) => acc + val),
+    5,
+  );
+
+  return [
+    ...indexes,
+    ...kickers,
+  ];
+}
+
 function pairType(...shape) {
   return {
-    pairShape: [4],
-    tieIndexes: [0, 4],
+    tieIndexes: tieIndexes(shape),
     evaluate: ({ groupedRanks }) => {
       if (!Utils.hasShape(groupedRanks, shape)) {
         return null;

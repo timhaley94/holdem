@@ -35,7 +35,7 @@ function sort(a, b) {
     return aRank - bRank;
   }
 
-  const { tieIndexes } = Hand.TYPES.findIndex(
+  const { tieIndexes } = Hand.TYPES.find(
     (type) => type.name === a.type,
   );
 
@@ -44,8 +44,8 @@ function sort(a, b) {
   }
 
   return compareCards(
-    a.match,
-    b.match,
+    a.cards,
+    b.cards,
     tieIndexes,
   );
 }
