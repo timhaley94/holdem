@@ -9,12 +9,11 @@ function Opponent({
   userId,
   purse: { wagered, bankroll },
 }) {
-  console.log('amount', parseInt(bankroll, 10) - parseInt(wagered, 10));
   return (
-    <div className={ styles.container }>
-      <Avatar userId={userId} className={ styles.avatar } />
-      <h6 className={ styles.name }>{ name }</h6>
-      <Purse amount={ parseInt(bankroll, 10) - parseInt(wagered, 10) } />
+    <div className={styles.container}>
+      <Avatar userId={userId} className={styles.avatar} />
+      <h6 className={styles.name}>{ name }</h6>
+      <Purse amount={parseInt(bankroll, 10) - parseInt(wagered, 10)} />
     </div>
   );
 }

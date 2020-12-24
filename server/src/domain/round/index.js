@@ -41,22 +41,22 @@ function eligiblePlayers(round) {
   return round.players.filter(isEligible);
 }
 
-function nextPlayerId(round) {
-  const currentIndex = round.players.findIndex(
-    (player) => player.userId.toString() === round.currentPlayer.toString(),
-  );
+// function nextPlayerId(round) {
+//   const currentIndex = round.players.findIndex(
+//     (player) => player.userId.toString() === round.currentPlayer.toString(),
+//   );
 
-  const players = [
-    ...round.players.slice(currentIndex),
-    ...round.players.slice(0, currentIndex),
-  ];
+//   const players = [
+//     ...round.players.slice(currentIndex),
+//     ...round.players.slice(0, currentIndex),
+//   ];
 
-  return players.find(isEligible).userId;
-}
+//   return players.find(isEligible).userId;
+// }
 
-function firstPlayerId(round) {
-  return eligiblePlayers(round)[0].userId;
-}
+// function firstPlayerId(round) {
+//   return eligiblePlayers(round)[0].userId;
+// }
 
 function nextTurnOrder(ids, lastIds) {
   const firstIdIndex = Utils.mapFind(

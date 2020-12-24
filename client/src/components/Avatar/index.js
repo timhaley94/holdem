@@ -21,7 +21,7 @@ function Avatar({ className, userId }) {
   );
 
   return (
-    <div className={ classNames(className, styles.container) }>
+    <div className={classNames(className, styles.container)}>
       <MUIAvatar
         className={styles.avatar}
         src={avatar ? avatar.image : null}

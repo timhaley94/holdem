@@ -23,7 +23,7 @@ function Header() {
         rel="noreferrer noopener"
       >
         Code
-        <Emoji className={ styles.emoji }>🎉</Emoji>
+        <Emoji className={styles.emoji}>🎉</Emoji>
       </a>
     </div>
   );

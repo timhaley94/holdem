@@ -15,13 +15,10 @@ function Purse({
   const [value, setValue] = useState(null);
 
   useEffect(() => {
-    let id;
-
-    id = setInterval(() => {
+    const id = setInterval(() => {
       setValue((v) => {
         if (v === null || v === target) {
           clearInterval(id);
-          console.log('clearing', v, target);
           return target;
         }
 
@@ -64,8 +61,8 @@ function Purse({
         )
       }
     >
-      <span className={ styles.dollarSignContainer }>
-        <span className={ styles.dollarSign }>
+      <span className={styles.dollarSignContainer}>
+        <span className={styles.dollarSign}>
           $
         </span>
       </span>
@@ -75,7 +72,8 @@ function Purse({
             styles.text,
             colors,
           )
-        }>
+        }
+      >
         { value.toLocaleString() }
       </p>
     </div>

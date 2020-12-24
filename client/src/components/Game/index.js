@@ -10,11 +10,11 @@ import styles from './index.module.css';
 
 function Game() {
   return (
-    <Card className={ styles.container }>
+    <Card className={styles.container}>
       <Opponents />
       <CommunityCards />
       <Pot />
-      <div className={ styles.bottom }>
+      <div className={styles.bottom}>
         <Player />
         <PocketCards />
         <Controls />

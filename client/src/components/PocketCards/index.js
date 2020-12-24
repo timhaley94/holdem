@@ -14,14 +14,14 @@ function Purse() {
   );
 
   return (
-    <div className={ styles.container }>
+    <div className={styles.container}>
       {
         cards
           ? (
             cards.map((card) => (
               <Card
-                key={ card }
-                value={ card }
+                key={card}
+                value={card}
                 size="medium"
               />
             ))

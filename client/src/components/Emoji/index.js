@@ -6,7 +6,7 @@ function Emoji({ className, children }) {
     <span
       role="img"
       aria-label="party popper"
-      className={ className }
+      className={className}
     >
       { children }
     </span>

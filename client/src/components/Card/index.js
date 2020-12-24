@@ -7,19 +7,19 @@ import styles from './index.module.css';
 
 function getSuit(value) {
   return {
-    'c': {
+    c: {
       emoji: '♣️',
       color: styles.black,
     },
-    'd': {
+    d: {
       emoji: '♦️',
       color: styles.red,
     },
-    'h': {
+    h: {
       emoji: '♥️',
       color: styles.red,
     },
-    's': {
+    s: {
       emoji: '♠️',
       color: styles.black,
     },
@@ -49,22 +49,22 @@ function Card({ size, value }) {
   );
 
   if (!value) {
-    return <div className={ className } />;
+    return <div className={className} />;
   }
 
   const rank = getRank(parseInt(value.slice(1), 10));
   const { emoji, color } = getSuit(value[0]);
 
   return (
-    <MUICard className={ className }>
-      <p className={ classNames(styles.rank, color) }>
+    <MUICard className={className}>
+      <p className={classNames(styles.rank, color)}>
         { rank }
-        <Emoji className={ classNames(styles.suit, color) }>
+        <Emoji className={classNames(styles.suit, color)}>
           { emoji }
         </Emoji>
       </p>
     </MUICard>
-  )
+  );
 }
 
 Card.propTypes = {
@@ -77,6 +77,7 @@ Card.propTypes = {
 };
 
 Card.defaultProps = {
+  value: null,
   size: 'large',
 };
 

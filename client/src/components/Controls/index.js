@@ -12,8 +12,8 @@ function ControlButton({
   ...rest
 }) {
   return (
-    <div className={ styles.buttonContainer }>
-      <IconButton { ...rest }>
+    <div className={styles.buttonContainer}>
+      <IconButton {...rest}>
         { icon }
       </IconButton>
       <p>{ text }</p>
@@ -28,17 +28,17 @@ ControlButton.propTypes = {
 
 function Controls() {
   return (
-    <div className={ styles.container }>
+    <div className={styles.container}>
       <ControlButton
-        icon={ <ArrowUpwardIcon /> }
+        icon={<ArrowUpwardIcon />}
         text="Raise"
       />
       <ControlButton
-        icon={ <CheckIcon /> }
+        icon={<CheckIcon />}
         text="Check"
       />
       <ControlButton
-        icon={ <CloseIcon /> }
+        icon={<CloseIcon />}
         text="fold"
       />
     </div>

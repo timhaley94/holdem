@@ -4,7 +4,7 @@ import styles from './index.module.css';
 
 function Pot() {
   return (
-    <div className={ styles.container }>
+    <div className={styles.container}>
       <Purse
         amount={0}
         noColor
