@@ -1,25 +1,98 @@
-import React from 'react';
+import React, {
+  useEffect,
+  useState,
+} from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import styles from './index.module.css';
 
-function Purse({ wagered, bankroll }) {
+function Purse({
+  amount: target,
+  noColor,
+  size,
+  theme,
+}) {
+  const [value, setValue] = useState(null);
+
+  useEffect(() => {
+    let id;
+
+    id = setInterval(() => {
+      setValue((v) => {
+        if (v === null || v === target) {
+          clearInterval(id);
+          console.log('clearing', v, target);
+          return target;
+        }
+
+        const step = Math.max(
+          Math.floor(Math.abs(v - target) / 4),
+          1,
+        );
+
+        if (v < target) {
+          return v + step;
+        }
+
+        return v - step;
+      });
+    }, 25);
+
+    return () => clearInterval(id);
+  }, [target, setValue]);
+
+  const colors = (
+    noColor
+      ? {
+        [styles.green]: target > value,
+        [styles.red]: target < value,
+      }
+      : null
+  );
+
+  if (!value && value !== 0) {
+    return null;
+  }
+
   return (
-    <div>
-      <p>
-        $
-        { parseInt(bankroll, 10) - parseInt(wagered, 10) }
+    <div
+      className={
+        classNames(
+          styles.container,
+          styles[size],
+          styles[theme],
+        )
+      }
+    >
+      <span className={ styles.dollarSignContainer }>
+        <span className={ styles.dollarSign }>
+          $
+        </span>
+      </span>
+      <p
+        className={
+          classNames(
+            styles.text,
+            colors,
+          )
+        }>
+        { value.toLocaleString() }
       </p>
     </div>
   );
 }
 
-const type = PropTypes.oneOfType([
-  PropTypes.string,
-  PropTypes.number,
-]);
-
 Purse.propTypes = {
-  wagered: type.isRequired,
-  bankroll: type.isRequired,
+  amount: PropTypes.number.isRequired,
+  noColor: PropTypes.bool,
+  size: PropTypes.oneOf(['small', 'large']),
+  theme: PropTypes.oneOf(['light', 'dark']),
+};
+
+Purse.defaultProps = {
+  noColor: false,
+  size: 'small',
+  theme: 'light',
 };
 
 export default Purse;

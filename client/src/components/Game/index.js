@@ -4,15 +4,21 @@ import Opponents from '../Opponents';
 import CommunityCards from '../CommunityCards';
 import Pot from '../Pot';
 import Player from '../Player';
+import PocketCards from '../PocketCards';
+import Controls from '../Controls';
 import styles from './index.module.css';
 
 function Game() {
   return (
-    <Card className={styles.container}>
+    <Card className={ styles.container }>
       <Opponents />
       <CommunityCards />
       <Pot />
-      <Player />
+      <div className={ styles.bottom }>
+        <Player />
+        <PocketCards />
+        <Controls />
+      </div>
     </Card>
   );
 }

@@ -2,8 +2,8 @@ const Stage = require('./index');
 
 describe('Domain.Stage', () => {
   describe('.first()', () => {
-    it('returns ante', () => {
-      expect(Stage.first()).toEqual(Stage.ANTE);
+    it('returns pre-flop', () => {
+      expect(Stage.first()).toEqual(Stage.PRE_FLOP);
     });
   });
 
@@ -15,11 +15,11 @@ describe('Domain.Stage', () => {
     });
 
     it('returns next stage', () => {
-      expect(Stage.next(Stage.ANTE)).toEqual(Stage.PRE_FLOP);
+      expect(Stage.next(Stage.PRE_FLOP)).toEqual(Stage.FLOP);
     });
 
     it('returns null on final stage', () => {
-      expect(Stage.next(Stage.POST_RIVER)).toBe(null);
+      expect(Stage.next(Stage.RIVER)).toBe(null);
     });
   });
 });

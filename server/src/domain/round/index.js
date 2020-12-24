@@ -1,14 +1,13 @@
-const Joi = require('@hapi/joi');
 const { Schema } = require('mongoose');
 const { Errors } = require('../../modules');
 const Utils = require('../../utils');
-const Handler = require('../handler');
 const Card = require('../card');
 const Deck = require('../deck');
 const Hand = require('../hand');
 const Purse = require('../purse');
 const Solver = require('../solver');
 const Stage = require('../stage');
+const config = require('../../config');
 
 const schema = new Schema({
   players: [{
@@ -22,21 +21,61 @@ const schema = new Schema({
   deck: Deck.schema,
   communityCards: [Card.schema],
   stage: Stage.schema,
+  callOnly: Boolean,
   isComplete: Boolean,
 });
 
+function highestBet({ players }) {
+  const bets = players.map(
+    ({ purse }) => purse.wagered,
+  );
+
+  return Math.max(...bets);
+}
+
+function isEligible(player) {
+  return !player.hasFolded && !Purse.isAllIn(player.purse);
+}
+
+function eligiblePlayers(round) {
+  return round.players.filter(isEligible);
+}
+
+function nextPlayerId(round) {
+  const currentIndex = round.players.findIndex(
+    (player) => player.userId.toString() === round.currentPlayer.toString(),
+  );
+
+  const players = [
+    ...round.players.slice(currentIndex),
+    ...round.players.slice(0, currentIndex),
+  ];
+
+  return players.find(isEligible).userId;
+}
+
+function firstPlayerId(round) {
+  return eligiblePlayers(round)[0].userId;
+}
+
 function nextTurnOrder(ids, lastIds) {
-  let firstIdIndex = Utils.mapFind(
-    lastIds.slice(1),
+  const firstIdIndex = Utils.mapFind(
+    [
+      ...lastIds.slice(1),
+      lastIds[0],
+    ],
     (id) => {
-      const i = ids.findIndex((x) => x === id);
+      const i = ids.findIndex(
+        (x) => x.toString() === id.toString(),
+      );
+
       return i >= 0 ? i : null;
     },
   );
 
   if (!firstIdIndex) {
-    firstIdIndex = (
-      ids.findIndex((x) => x === lastIds[0]) || 0
+    throw new Errors.Fatal(
+      'Could not find first id index for new round',
     );
   }
 
@@ -44,43 +83,6 @@ function nextTurnOrder(ids, lastIds) {
     ...ids.slice(firstIdIndex),
     ...ids.slice(0, firstIdIndex),
   ];
-}
-
-function create({ players, lastRound }) {
-  const userIds = players.map((p) => p.userId);
-  const lastUserIds = (
-    lastRound
-      && lastRound.players
-      ? lastRound.players.map((p) => p.userId)
-      : null
-  );
-
-  const turnOrder = (
-    lastUserIds
-      ? nextTurnOrder(userIds, lastUserIds)
-      : userIds
-  );
-
-  return {
-    players: turnOrder.map((id) => {
-      const {
-        userId,
-        bankroll,
-      } = players.find(
-        (p) => p.userId === id,
-      );
-
-      return {
-        userId,
-        hasFolded: false,
-        purse: Purse.create(bankroll),
-      };
-    }),
-    currentPlayer: turnOrder[0],
-    deck: Deck.create(),
-    stage: Stage.first(),
-    isComplete: false,
-  };
 }
 
 function winnings({ isComplete, players }) {
@@ -205,42 +207,48 @@ function communityCount(stage) {
   }[stage] || 0;
 }
 
-function dealCommunityCards(round) {
+function advanceStage(round) {
+  const nextStage = Stage.next(round.stage);
+
+  if (!nextStage) {
+    return completeRound({
+      ...round,
+      stage: nextStage,
+    });
+  }
+
   const { deck, cards } = Deck.deal(
     round.deck,
-    communityCount(round.stage),
+    communityCount(nextStage),
   );
 
   return {
     ...round,
+    stage: nextStage,
     deck,
     communityCards: [
-      ...round.communityCards,
+      ...(round.communityCards || []),
       ...cards,
     ],
   };
 }
 
-function advanceStage(round) {
-  const next = {
-    ...round,
-    stage: Stage.next(round.stage),
-  };
-
-  if (next.stage === Stage.PRE_FLOP) {
-    return dealPocketCards(next);
-  }
-
-  if (next.stage === Stage.POST_RIVER) {
-    return completeRound(next);
-  }
-
-  return dealCommunityCards(next);
+function allCalled(round) {
+  const b = highestBet(round);
+  return eligiblePlayers(round).every(
+    (player) => player.purse.wagered === b,
+  );
 }
 
 function advance(round) {
+  const areAllCalled = allCalled(round);
+
+  if (round.callOnly && areAllCalled) {
+    return advanceStage(round);
+  }
+
   const i = round.players.findIndex(
-    (player) => player.userId === round.currentPlayer,
+    (player) => player.userId.toString() === round.currentPlayer.toString(),
   );
 
   if (i + 1 >= round.players.length) {
@@ -260,90 +268,58 @@ function advance(round) {
   };
 }
 
-const validators = {
-  round: Joi.object(),
-  userId: (
-    Joi
-      .string()
-      .regex(/^[a-z0-9-]+$/)
-      .min(1)
-      .max(36)
-  ),
-  amount: (
-    Joi
-      .number()
-      .integer()
-      .allow(Infinity)
-      .min(0)
-  ),
-};
+function bet({ round, userId, amount }) {
+  if (round.isComplete) {
+    throw new Errors.BadRequest('Can\'t bet on complete round');
+  }
 
-function highestBet({ players }) {
-  const bets = players.map(
-    ({ purse }) => purse.wagered,
+  if (round.currentPlayer.toString() !== userId.toString()) {
+    throw new Errors.BadRequest(`${userId} is not the current player`);
+  }
+
+  // check if bet is valid, throw otherwise
+  const player = round.players.find(
+    (p) => p.userId.toString() === userId.toString(),
   );
 
-  return Math.max(...bets);
+  const nextBet = player.purse.wagered + amount;
+  const isValid = nextBet >= highestBet(round);
+
+  if (!isValid) {
+    throw new Errors.BadRequest(`${amount} is not a valid bet at this time.`);
+  }
+
+  const next = {
+    ...round,
+    players: round.players.map(
+      (p) => {
+        if (p.userId.toString() !== userId.toString()) {
+          return p;
+        }
+
+        return {
+          ...p,
+          purse: Purse.bet(
+            p.purse,
+            amount,
+          ),
+        };
+      },
+    ),
+  };
+
+  return advance(next);
 }
 
-const bet = Handler.wrap({
-  validators,
-  required: ['round', 'userId', 'amount'],
-  fn: ({ round, userId, amount }) => {
-    if (round.isComplete) {
-      throw new Errors.BadRequest('Can\'t bet on complete round');
-    }
-
-    if (round.currentPlayer.toString() !== userId) {
-      throw new Errors.BadRequest(`${userId} is not the current player`);
-    }
-
-    // check if bet is valid, throw otherwise
-    const player = round.players.find(
-      (p) => p.userId.toString() === userId,
-    );
-
-    const nextBet = player.purse.wagered + amount;
-    const isValid = nextBet >= highestBet(round);
-
-    if (!isValid) {
-      throw new Errors.BadRequest(`${amount} is not a valid bet at this time.`);
-    }
-
-    const next = {
-      ...round,
-      players: round.players.map(
-        (p) => {
-          if (p.userId !== userId) {
-            return p;
-          }
-
-          return {
-            ...p,
-            purse: Purse.bet(
-              p.purse,
-              amount,
-            ),
-          };
-        },
-      ),
-    };
-
-    return advance(next);
-  },
-});
-
-const allIn = Handler.wrap({
-  validators,
-  required: ['round', 'userId'],
-  fn: ({ round, userId }) => bet({
+function allIn({ round, userId }) {
+  return bet({
     round,
     userId,
     // This looks goofy put Purse makes sure you
     // can only bet what you have.
     amount: Infinity,
-  }),
-});
+  });
+}
 
 function remainingPlayers({ players }) {
   return (
@@ -353,37 +329,94 @@ function remainingPlayers({ players }) {
   );
 }
 
-const fold = Handler.wrap({
-  validators,
-  required: ['round', 'userId'],
-  fn: ({ round, userId }) => {
-    if (round.isComplete) {
-      throw new Errors.BadRequest('Can\'t fold on complete round');
-    }
+function fold({ round, userId }) {
+  if (round.isComplete) {
+    throw new Errors.BadRequest('Can\'t fold on complete round');
+  }
 
-    const next = {
-      ...round,
-      players: round.players.map(
-        (player) => {
-          if (player.userId.toString() !== userId) {
-            return player;
-          }
+  const next = {
+    ...round,
+    players: round.players.map(
+      (player) => {
+        if (player.userId.toString() !== userId.toString()) {
+          return player;
+        }
 
-          return {
-            ...player,
-            hasFolded: true,
-          };
-        },
-      ),
-    };
+        return {
+          ...player,
+          hasFolded: true,
+        };
+      },
+    ),
+  };
 
-    if (remainingPlayers(next) <= 1) {
-      return completeRound(next);
-    }
+  if (remainingPlayers(next) <= 1) {
+    return completeRound(next);
+  }
 
-    return advance(next);
-  },
-});
+  return advance(next);
+}
+
+function create({ players, lastRound }) {
+  if (players.length < 2) {
+    throw new Errors.Fatal(
+      'Tried to create new round with less than 2 players',
+    );
+  }
+
+  const userIds = players.map((p) => p.userId);
+  const lastUserIds = (
+    lastRound
+      && lastRound.players
+      ? lastRound.players.map((p) => p.userId)
+      : null
+  );
+
+  const turnOrder = (
+    lastUserIds
+      ? nextTurnOrder(userIds, lastUserIds)
+      : userIds
+  );
+
+  const smallBlind = turnOrder[0];
+  const bigBlind = turnOrder[1];
+
+  let round = {
+    players: turnOrder.map((id) => {
+      const {
+        userId,
+        bankroll,
+      } = players.find(
+        (p) => p.userId === id,
+      );
+
+      return {
+        userId,
+        hasFolded: false,
+        purse: Purse.create(bankroll),
+      };
+    }),
+    currentPlayer: smallBlind,
+    deck: Deck.create(),
+    stage: Stage.first(),
+    isComplete: false,
+  };
+
+  round = bet({
+    round,
+    userId: smallBlind,
+    amount: config.game.smallBlind,
+  });
+
+  round = bet({
+    round,
+    userId: bigBlind,
+    amount: config.game.bigBlind,
+  });
+
+  round = dealPocketCards(round);
+  return round;
+}
 
 module.exports = {
   schema,
