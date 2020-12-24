@@ -37,7 +37,9 @@ const config = {
     maxPlayers: 9,
     minPlayers: 2,
     cleanupTimeout: 100000,
-    defaultBankroll: 300,
+    defaultBankroll: 100,
+    smallBlind: 1,
+    bigBlind: 2,
   },
 };
 

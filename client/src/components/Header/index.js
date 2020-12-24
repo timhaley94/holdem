@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Emoji from '../Emoji';
 import styles from './index.module.css';
 
 function Header() {
@@ -22,13 +23,7 @@ function Header() {
         rel="noreferrer noopener"
       >
         Code
-        <span
-          role="img"
-          aria-label="party popper"
-          className={styles.emoji}
-        >
-          🎉
-        </span>
+        <Emoji className={styles.emoji}>🎉</Emoji>
       </a>
     </div>
   );

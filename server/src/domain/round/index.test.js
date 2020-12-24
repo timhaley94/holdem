@@ -1,69 +1,159 @@
+const { Types } = require('mongoose');
+const config = require('../../config');
 const { init, close } = require('../../loaders');
-// const Stage = require('../stage');
-// const Round = require('./index');
+const { Errors } = require('../../modules');
+const Stage = require('../stage');
+const Round = require('./index');
 
 describe('Domain.round', () => {
   beforeAll(init);
   afterAll(close);
 
-  // const players = [
-  //   {
-  //     userId: 1,
-  //     bankroll: 200,
-  //   },
-  //   {
-  //     userId: 2,
-  //     bankroll: 300,
-  //   },
-  // ];
+  const players = [
+    {
+      userId: Types.ObjectId(),
+      bankroll: 200,
+    },
+    {
+      userId: Types.ObjectId(),
+      bankroll: 300,
+    },
+    {
+      userId: Types.ObjectId(),
+      bankroll: 200,
+    },
+    {
+      userId: Types.ObjectId(),
+      bankroll: 150,
+    },
+  ];
 
   describe('.create()', () => {
-    // it('starts at ante stage', () => {
-    //   const round = Round.create({ players });
-    //   expect(round.stage).toEqual(Stage.first());
+    it('starts at pre-flop stage', () => {
+      const round = Round.create({ players });
+      expect(round.stage).toEqual(Stage.first());
+    });
+
+    it('respects players bankroll', () => {
+      const round = Round.create({ players });
+      round.players.forEach(
+        (player) => {
+          const match = players.find(
+            (p) => p.userId === player.userId,
+          );
+
+          expect(player.userId).toEqual(match.userId);
+          expect(player.purse.bankroll).toEqual(match.bankroll);
+        },
+      );
+    });
+
+    it('under the gun is the current player', () => {
+      const round = Round.create({ players });
+      expect(
+        round.currentPlayer,
+      ).toEqual(players[2].userId);
+    });
+
+    // it('small blind is the current player in a two player game', () => {
+    //   const round = Round.create({
+    //     players: players.slice(0, 2),
+    //   });
+
+    //   expect(round.stage).toEqual(Stage.PRE_FLOP);
+    //   expect(
+    //     round.currentPlayer,
+    //   ).toEqual(players[0].userId);
     // });
 
-    // it('respects players bankroll', () => {
-    //   const round = Round.create({ players });
-    //   round.players.forEach(
-    //     (player) => {
-    //       const match = players.find(
-    //         (p) => p.userId === player.userId
-    //       );
+    it('automatically bets blinds', () => {
+      const round = Round.create({ players });
 
-    //       expect(player.userId).toEqual(match.userId);
-    //       expect(player.purse.bankroll).toEqual(match.bankroll);
-    //     },
-    //   );
-    // });
+      expect(
+        round.players[0].purse.wagered,
+      ).toEqual(config.game.smallBlind);
 
-    // it('maintains player order without lastRound', () => {
-    //   const round = Round.create({ players });
-    //   round.players.forEach(
-    //     (player, i) => {
-    //       expect(player.userId).toEqual(players[i].userId);
-    //     },
-    //   );
-    // });
+      expect(
+        round.players[1].purse.wagered,
+      ).toEqual(config.game.bigBlind);
+    });
 
-    // it('automatically bets blinds', () => {
+    it('maintains player order without lastRound', () => {
+      const round = Round.create({ players });
+      round.players.forEach(
+        (player, i) => {
+          expect(player.userId).toEqual(players[i].userId);
+        },
+      );
+    });
 
-    // });
+    it('takes player order from last round', () => {
+      const lastRound = Round.create({ players });
+      const round = Round.create({ players, lastRound });
+      const expected = [...players.slice(1), players[0]];
+      round.players.forEach(
+        (player, i) => {
+          expect(player.userId).toEqual(expected[i].userId);
+        },
+      );
+    });
 
-    // it('sets current player to small blind', () => {
-    //   const round = Round.create({ players });
-    //   expect(round.currentPlayer).toEqual(
-    //     players[0].userId,
-    //   );
-    // });
+    it('uses last round, even if players dropped out', () => {
+      const lastRound = Round.create({ players });
 
-    // it('takes player order form last round', () => {
-    //   const lastRound = Round.create({ players });
-    //   const round = Round.create({ players, lastRound });
-    //   expect(round.currentPlayer).toEqual(
-    //     players[1].userId,
-    //   );
-    // });
+      const round = Round.create({
+        players: [
+          players[0],
+          players[2],
+          players[3],
+        ],
+        lastRound,
+      });
+
+      const expected = [
+        players[2],
+        players[3],
+        players[0],
+      ];
+
+      round.players.forEach(
+        (player, i) => {
+          expect(player.userId).toEqual(expected[i].userId);
+        },
+      );
+    });
+
+    it('throws if players and last round are inconsistent', () => {
+      const lastRound = Round.create({ players });
+      const nextPlayers = [
+        {
+          userId: Types.ObjectId(),
+          bankroll: 200,
+        },
+        {
+          userId: Types.ObjectId(),
+          bankroll: 300,
+        },
+      ];
+
+      expect(() => {
+        Round.create({
+          players: nextPlayers,
+          lastRound,
+        });
+      }).toThrow(Errors.Fatal);
+    });
+
+    it('throws if less than two players are passed', () => {
+      const lastRound = Round.create({ players });
+
+      expect(() => {
+        Round.create({
+          players: [players[0]],
+          lastRound,
+        });
+      }).toThrow(Errors.Fatal);
+    });
   });
 
   describe('betting', () => {

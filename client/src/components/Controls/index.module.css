@@ -1,12 +1,13 @@
 .container {
-  margin: 2rem 2rem 0 2rem;
-  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.buttonContainer {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: stretch;
-}
-
-.button {
-  margin: 0.5rem;
+  align-items: center;
 }

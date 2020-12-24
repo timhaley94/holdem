@@ -16,9 +16,9 @@ const Player = Renderer.wrap({
     'pocketCards',
   ],
   permissions: {
-    pocketCards: ({ userId }, context) => (
-      userId === context.userId
-    ),
+    // pocketCards: ({ userId }, context) => (
+    //   userId === context.userId
+    // ),
   },
   mapping: {
     purse: Purse,

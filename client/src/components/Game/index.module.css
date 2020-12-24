@@ -2,10 +2,25 @@
   height: 100%;
   flex-grow: 1;
   border: 1px solid #e6e6e6;
-  overflow: scroll !important;
+  overflow-y: scroll;
   padding: 3rem 4rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+}
+
+.bottom {
+  width: 100%;
+  margin: 3rem 0 0 0;
+  padding: 0 3rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.bottom > * {
+  flex-basis: 33%;
+  flex-grow: 1;
 }

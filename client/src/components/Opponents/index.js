@@ -14,7 +14,7 @@ function Opponents() {
         players
           .filter((player) => player.userId !== userId)
           .map((player) => (
-            <Opponent {...player} />
+            <Opponent key={player.userId} {...player} />
           ))
       }
     </div>

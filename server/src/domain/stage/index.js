@@ -1,17 +1,13 @@
-const ANTE = 'ANTE';
 const PRE_FLOP = 'PRE_FLOP';
 const FLOP = 'FLOP';
 const TURN = 'TURN';
 const RIVER = 'RIVER';
-const POST_RIVER = 'POST_RIVER';
 
 const stages = [
-  ANTE,
   PRE_FLOP,
   FLOP,
   TURN,
   RIVER,
-  POST_RIVER,
 ];
 
 const schema = String;
@@ -35,12 +31,10 @@ function next(stage) {
 }
 
 module.exports = {
-  ANTE,
   PRE_FLOP,
   FLOP,
   TURN,
   RIVER,
-  POST_RIVER,
   stages,
   first,
   next,

@@ -1,0 +1,23 @@
+.container {
+  border-radius: 0.5rem;
+  background-color: #838383;
+  width: 100%;
+  max-width: 11rem;
+  padding: 0.45rem 1rem;
+}
+
+.dollarSignContainer {
+  background-color: white;
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+.dollarSign {
+  font-size: 16px;
+  color: #838383;
+}
+
+.text {
+  font-size: 18px;
+  color: white;
+}

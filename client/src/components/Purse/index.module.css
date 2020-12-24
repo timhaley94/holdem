@@ -1,0 +1,66 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.text {
+  /* font-weight: bold; */
+  transition: color 0.2s ease-in-out;
+  text-align: center;
+  margin: 0 0.3rem;
+}
+
+.large .text {
+  font-size: 18px;
+}
+
+.dark .text {
+  color: white;
+}
+
+.text.green {
+  color: #228032;
+}
+
+.text.red {
+  color: #AE2F11;
+}
+
+.dollarSignContainer {
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 50%;
+  background-color: #B1B1B1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.large .dollarSignContainer {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+.dark .dollarSignContainer {
+  background-color: white;
+}
+
+.dollarSign {
+  color: white;
+  font-family: 'Roboto';
+  font-size: 9px;
+}
+
+.large .dollarSign {
+  font-size: 16px;
+}
+
+.dark .dollarSign {
+  color: #838383;
+}

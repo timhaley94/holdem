@@ -1,0 +1,25 @@
+.container {
+  max-width: 5.6rem;
+  flex-grow: 1;
+  padding: 0.45rem 0.85rem;
+  margin: 0 0.1rem;
+  background-color: #E8E8E8;
+  box-shadow: none;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-self: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.container .avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.name {
+  font-size: 11px;
+  text-align: center;
+  margin: 0.25rem 0 0.3rem 0;
+}
