@@ -15,13 +15,13 @@ function Player() {
   );
 
   const bankroll = (
-    p.purse
+    p?.purse
       ? parseInt(p.purse.bankroll, 10)
       : null
   );
 
   const wagered = (
-    p.purse
+    p?.purse
       ? parseInt(p.purse.wagered, 10)
       : null
   );

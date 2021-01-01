@@ -16,7 +16,7 @@ function ControlButton({
       <IconButton {...rest}>
         { icon }
       </IconButton>
-      <p>{ text }</p>
+      <p className={styles.buttonText}>{ text }</p>
     </div>
   );
 }
