@@ -19,7 +19,7 @@
     "express": "^4.17.1",
     "express-jwt": "^6.0.0",
     "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "mongoose": "^5.11.8",
     "morgan": "^1.10.0",
     "pm2": "^4.4.0",
